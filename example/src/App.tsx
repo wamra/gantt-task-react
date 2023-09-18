@@ -3,6 +3,7 @@ import { Task, ViewMode, Gantt } from "gantt-task-react";
 import { ViewSwitcher } from "./components/view-switcher";
 import { getStartEndDateForProject, initTasks } from "./helper";
 import "gantt-task-react/dist/index.css";
+import { TaskListColumnEnum } from "gantt-task-react";
 
 // Init
 const App = () => {
@@ -67,6 +68,11 @@ const App = () => {
     console.log("On expander click Id:" + task.id);
   };
 
+  const columns = [
+    { columntype: TaskListColumnEnum.NAME, columnWidth: "155px" },
+    { columntype: TaskListColumnEnum.ASSIGNEE, columnWidth: "80px" },
+  ];
+
   return (
     <div className="Wrapper">
       <ViewSwitcher
@@ -85,12 +91,14 @@ const App = () => {
         onClick={handleClick}
         onSelect={handleSelect}
         onExpanderClick={handleExpanderClick}
-        listCellWidth={isChecked ? "155px" : ""}
+        displayTaskList={isChecked}
         columnWidth={columnWidth}
       />
-      <h3>Gantt With Limited Height</h3>
+      <h3>Gantt With Limited Height, custom columns</h3>
       <Gantt
         tasks={tasks}
+        columns={columns}
+        displayTaskList={isChecked}
         viewMode={view}
         onDateChange={handleTaskChange}
         onDelete={handleTaskDelete}
@@ -99,7 +107,6 @@ const App = () => {
         onClick={handleClick}
         onSelect={handleSelect}
         onExpanderClick={handleExpanderClick}
-        listCellWidth={isChecked ? "155px" : ""}
         ganttHeight={300}
         columnWidth={columnWidth}
       />

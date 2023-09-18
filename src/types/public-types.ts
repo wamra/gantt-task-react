@@ -89,7 +89,8 @@ export interface DisplayOption {
 export interface StylingOption {
   headerHeight?: number;
   columnWidth?: number;
-  listCellWidth?: string;
+  columns?: TaskListColumn[];
+  displayTaskList?: boolean;
   rowHeight?: number;
   ganttHeight?: number;
   barCornerRadius?: number;
@@ -121,13 +122,13 @@ export interface StylingOption {
   }>;
   TaskListHeader?: React.FC<{
     headerHeight: number;
-    rowWidth: string;
+    columns: TaskListColumn[];
     fontFamily: string;
     fontSize: string;
   }>;
   TaskListTable?: React.FC<{
     rowHeight: number;
-    rowWidth: string;
+    columns: TaskListColumn[];
     fontFamily: string;
     fontSize: string;
     locale: string;
@@ -139,6 +140,26 @@ export interface StylingOption {
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
   }>;
+}
+
+export interface TaskListProps {
+  headerHeight: number;
+  rowHeight: number;
+  columns: TaskListColumn[];
+  fontFamily: string;
+  fontSize: string;
+}
+
+export interface TaskListColumn {
+  columntype: TaskListColumnEnum;
+  columnWidth: string;
+}
+
+export enum TaskListColumnEnum {
+  NAME = "Name",
+  FROM = "From",
+  TO = "To",
+  ASSIGNEE = "Assignee",
 }
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {

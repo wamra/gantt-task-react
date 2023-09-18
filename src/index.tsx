@@ -6,4 +6,7 @@ export type {
   StylingOption,
   DisplayOption,
   EventOption,
+  TaskListColumn,
 } from "./types/public-types";
+
+export { TaskListColumnEnum } from "./types/public-types";

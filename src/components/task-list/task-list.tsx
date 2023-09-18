@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { BarTask } from "../../types/bar-task";
-import { Task } from "../../types/public-types";
+import { Task, TaskListColumn } from "../../types/public-types";
 
 export type TaskListProps = {
   headerHeight: number;
-  rowWidth: string;
+  columns: TaskListColumn[];
   fontFamily: string;
   fontSize: string;
   rowHeight: number;
@@ -19,13 +19,13 @@ export type TaskListProps = {
   onExpanderClick: (task: Task) => void;
   TaskListHeader: React.FC<{
     headerHeight: number;
-    rowWidth: string;
+    columns: TaskListColumn[];
     fontFamily: string;
     fontSize: string;
   }>;
   TaskListTable: React.FC<{
     rowHeight: number;
-    rowWidth: string;
+    columns: TaskListColumn[];
     fontFamily: string;
     fontSize: string;
     locale: string;
@@ -40,7 +40,7 @@ export const TaskList: React.FC<TaskListProps> = ({
   headerHeight,
   fontFamily,
   fontSize,
-  rowWidth,
+  columns,
   rowHeight,
   scrollY,
   tasks,
@@ -65,12 +65,12 @@ export const TaskList: React.FC<TaskListProps> = ({
     headerHeight,
     fontFamily,
     fontSize,
-    rowWidth,
+    columns,
   };
   const selectedTaskId = selectedTask ? selectedTask.id : "";
   const tableProps = {
     rowHeight,
-    rowWidth,
+    columns,
     fontFamily,
     fontSize,
     tasks,

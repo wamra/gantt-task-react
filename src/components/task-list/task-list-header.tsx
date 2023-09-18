@@ -1,12 +1,14 @@
 import React from "react";
 import styles from "./task-list-header.module.css";
+import { TaskListColumn } from "../../types/public-types";
 
 export const TaskListHeaderDefault: React.FC<{
   headerHeight: number;
-  rowWidth: string;
+  columns: TaskListColumn[];
   fontFamily: string;
   fontSize: string;
-}> = ({ headerHeight, fontFamily, fontSize, rowWidth }) => {
+}> = ({ headerHeight, fontFamily, fontSize, columns }) => {
+  // const rowWidth = "155px";
   return (
     <div
       className={styles.ganttTable}
@@ -22,29 +24,39 @@ export const TaskListHeaderDefault: React.FC<{
         }}
       >
         <div
+          key={columns[0].columntype}
           className={styles.ganttTable_HeaderItem}
           style={{
-            minWidth: rowWidth,
+            minWidth: columns[0].columnWidth,
           }}
         >
-          &nbsp;Name
+          &nbsp;{columns[0].columntype}
         </div>
-        <div
-          className={styles.ganttTable_HeaderSeparator}
-          style={{
-            height: headerHeight * 0.5,
-            marginTop: headerHeight * 0.2,
-          }}
-        />
-        <div
-          className={styles.ganttTable_HeaderItem}
-          style={{
-            minWidth: rowWidth,
-          }}
-        >
-          &nbsp;From
-        </div>
-        <div
+        {columns.map((column, index) => {
+          if (index > 0) {
+            return (
+              <React.Fragment key={column.columntype}>
+                <div
+                  className={styles.ganttTable_HeaderSeparator}
+                  style={{
+                    height: headerHeight * 0.5,
+                    marginTop: headerHeight * 0.2,
+                  }}
+                />
+                <div
+                  className={styles.ganttTable_HeaderItem}
+                  style={{
+                    minWidth: column.columnWidth,
+                  }}
+                >
+                  &nbsp;{column.columntype}
+                </div>
+              </React.Fragment>
+            );
+          }
+          return <React.Fragment key="empty"></React.Fragment>;
+        })}
+        {/* <div
           className={styles.ganttTable_HeaderSeparator}
           style={{
             height: headerHeight * 0.5,
@@ -58,7 +70,7 @@ export const TaskListHeaderDefault: React.FC<{
           }}
         >
           &nbsp;To
-        </div>
+        </div> */}
       </div>
     </div>
   );

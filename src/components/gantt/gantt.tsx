@@ -5,7 +5,12 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { ViewMode, GanttProps, Task } from "../../types/public-types";
+import {
+  ViewMode,
+  GanttProps,
+  Task,
+  TaskListColumnEnum,
+} from "../../types/public-types";
 import { GridProps } from "../grid/grid";
 import { ganttDateRange, seedDates } from "../../helpers/date-helper";
 import { CalendarProps } from "../calendar/calendar";
@@ -28,7 +33,12 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
   headerHeight = 50,
   columnWidth = 60,
-  listCellWidth = "155px",
+  displayTaskList = true,
+  columns = [
+    { columntype: TaskListColumnEnum.NAME, columnWidth: "155px" },
+    { columntype: TaskListColumnEnum.FROM, columnWidth: "155px" },
+    { columntype: TaskListColumnEnum.TO, columnWidth: "155px" },
+  ],
   rowHeight = 50,
   ganttHeight = 0,
   viewMode = ViewMode.Day,
@@ -232,13 +242,13 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   }, [failedTask, barTasks]);
 
   useEffect(() => {
-    if (!listCellWidth) {
+    if (!displayTaskList) {
       setTaskListWidth(0);
     }
     if (taskListRef.current) {
       setTaskListWidth(taskListRef.current.offsetWidth);
     }
-  }, [taskListRef, listCellWidth]);
+  }, [taskListRef, displayTaskList]);
 
   useEffect(() => {
     if (wrapperRef.current) {
@@ -284,11 +294,12 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     };
 
     // subscribe if scroll is necessary
-    wrapperRef.current?.addEventListener("wheel", handleWheel, {
+    const currentWrapperRef = wrapperRef.current;
+    currentWrapperRef?.addEventListener("wheel", handleWheel, {
       passive: false,
     });
     return () => {
-      wrapperRef.current?.removeEventListener("wheel", handleWheel);
+      currentWrapperRef?.removeEventListener("wheel", handleWheel);
     };
   }, [
     wrapperRef,
@@ -433,7 +444,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
 
   const tableProps: TaskListProps = {
     rowHeight,
-    rowWidth: listCellWidth,
+    columns,
     fontFamily,
     fontSize,
     tasks: barTasks,
@@ -449,6 +460,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     TaskListHeader,
     TaskListTable,
   };
+
   return (
     <div>
       <div
@@ -457,7 +469,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         tabIndex={0}
         ref={wrapperRef}
       >
-        {listCellWidth && <TaskList {...tableProps} />}
+        {displayTaskList && columns.length > 0 && <TaskList {...tableProps} />}
         <TaskGantt
           gridProps={gridProps}
           calendarProps={calendarProps}
