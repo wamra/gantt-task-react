@@ -7,15 +7,15 @@ import { TaskListColumnEnum } from "gantt-task-react";
 
 // Init
 const App = () => {
-  const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
+  const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
   const [tasks, setTasks] = React.useState<Task[]>(initTasks());
   const [isChecked, setIsChecked] = React.useState(true);
   let columnWidth = 65;
-  if (view === ViewMode.Year) {
+  if (viewMode === ViewMode.Year) {
     columnWidth = 350;
-  } else if (view === ViewMode.Month) {
+  } else if (viewMode === ViewMode.Month) {
     columnWidth = 300;
-  } else if (view === ViewMode.Week) {
+  } else if (viewMode === ViewMode.Week) {
     columnWidth = 250;
   }
 
@@ -68,6 +68,23 @@ const App = () => {
     console.log("On expander click Id:" + task.id);
   };
 
+  const handleWheel = (wheelEvent: WheelEvent) => {
+    const deltaY = wheelEvent.deltaY;
+
+    if (deltaY < 0 && viewMode !== ViewMode.Hour) {
+      const currentIndex = Object.values(ViewMode).indexOf(viewMode);
+      const newZoomLevel = Object.values(ViewMode).at(currentIndex - 1);
+      if (newZoomLevel) {
+        setView(newZoomLevel);
+      }
+    } else if (deltaY > 0 && viewMode !== ViewMode.Month) {
+      const currentIndex = Object.values(ViewMode).indexOf(viewMode);
+      const newZoomLevel = Object.values(ViewMode).at(currentIndex + 1);
+      if (newZoomLevel) {
+        setView(newZoomLevel);
+      }
+    }
+  };
   const columns = [
     { columntype: TaskListColumnEnum.NAME, columnWidth: "155px" },
     { columntype: TaskListColumnEnum.ASSIGNEE, columnWidth: "80px" },
@@ -83,7 +100,7 @@ const App = () => {
       <h3>Gantt With Unlimited Height</h3>
       <Gantt
         tasks={tasks}
-        viewMode={view}
+        viewMode={viewMode}
         onDateChange={handleTaskChange}
         onDelete={handleTaskDelete}
         onProgressChange={handleProgressChange}
@@ -94,12 +111,12 @@ const App = () => {
         displayTaskList={isChecked}
         columnWidth={columnWidth}
       />
-      <h3>Gantt With Limited Height, custom columns</h3>
+      <h3>Gantt With Limited Height, custom columns, custom Mouse behavior</h3>
       <Gantt
         tasks={tasks}
         columns={columns}
         displayTaskList={isChecked}
-        viewMode={view}
+        viewMode={viewMode}
         onDateChange={handleTaskChange}
         onDelete={handleTaskDelete}
         onProgressChange={handleProgressChange}
@@ -109,6 +126,7 @@ const App = () => {
         onExpanderClick={handleExpanderClick}
         ganttHeight={300}
         columnWidth={columnWidth}
+        onWheel={handleWheel}
       />
     </div>
   );

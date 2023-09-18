@@ -75,6 +75,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   onDelete,
   onSelect,
   onExpanderClick,
+  onWheel,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
@@ -267,26 +268,30 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   // scroll events
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
-      if (event.shiftKey || event.deltaX) {
-        const scrollMove = event.deltaX ? event.deltaX : event.deltaY;
-        let newScrollX = scrollX + scrollMove;
-        if (newScrollX < 0) {
-          newScrollX = 0;
-        } else if (newScrollX > svgWidth) {
-          newScrollX = svgWidth;
-        }
-        setScrollX(newScrollX);
-        event.preventDefault();
-      } else if (ganttHeight) {
-        let newScrollY = scrollY + event.deltaY;
-        if (newScrollY < 0) {
-          newScrollY = 0;
-        } else if (newScrollY > ganttFullHeight - ganttHeight) {
-          newScrollY = ganttFullHeight - ganttHeight;
-        }
-        if (newScrollY !== scrollY) {
-          setScrollY(newScrollY);
+      if (onWheel) {
+        onWheel(event);
+      } else {
+        if (event.shiftKey || event.deltaX) {
+          const scrollMove = event.deltaX ? event.deltaX : event.deltaY;
+          let newScrollX = scrollX + scrollMove;
+          if (newScrollX < 0) {
+            newScrollX = 0;
+          } else if (newScrollX > svgWidth) {
+            newScrollX = svgWidth;
+          }
+          setScrollX(newScrollX);
           event.preventDefault();
+        } else if (ganttHeight) {
+          let newScrollY = scrollY + event.deltaY;
+          if (newScrollY < 0) {
+            newScrollY = 0;
+          } else if (newScrollY > ganttFullHeight - ganttHeight) {
+            newScrollY = ganttFullHeight - ganttHeight;
+          }
+          if (newScrollY !== scrollY) {
+            setScrollY(newScrollY);
+            event.preventDefault();
+          }
         }
       }
 
@@ -309,6 +314,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     svgWidth,
     rtl,
     ganttFullHeight,
+    onWheel,
   ]);
 
   const handleScrollY = (event: SyntheticEvent<HTMLDivElement>) => {
