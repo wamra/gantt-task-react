@@ -12,6 +12,7 @@ export function initTasks() {
       type: "project",
       hideChildren: false,
       displayOrder: 1,
+      assignee: "Bob",
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
@@ -28,6 +29,7 @@ export function initTasks() {
       type: "task",
       project: "ProjectSample",
       displayOrder: 2,
+      assignee: "Peter",
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 2),
@@ -61,6 +63,7 @@ export function initTasks() {
       type: "task",
       project: "ProjectSample",
       displayOrder: 5,
+      assignee: "Caroline",
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
