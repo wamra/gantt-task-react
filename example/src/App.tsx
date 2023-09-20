@@ -111,9 +111,13 @@ const App = () => {
         displayTaskList={isChecked}
         columnWidth={columnWidth}
       />
-      <h3>Gantt With Limited Height, custom columns, custom Mouse behavior</h3>
+      <h3>
+        Gantt With Limited Height, custom columns, custom Mouse behavior,
+        draggable grid
+      </h3>
       <Gantt
         tasks={tasks}
+        enableGridDrag={true}
         columns={columns}
         displayTaskList={isChecked}
         viewMode={viewMode}

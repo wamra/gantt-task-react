@@ -80,6 +80,7 @@ npm start
 | onExpanderClick\*  | onExpanderClick: (task: Task) => void;                                        | Specifies the function to be executed on the table expander click                       |
 | onWheel\*          | onWheel: (wheelEvent: WheelEvent) => void;                                    | Specifies the function to be executed the mouse wheel is used                           |
 | timeStep           | number                                                                        | A time step value for onDateChange. Specify in milliseconds.                            |
+| enableGridDrag     | boolean                                                                       | Allow to move the grid with an effect on the gantt content scroll bars.                               |
 
 \* Chart undoes operation if method return false or error. Parameter children returns one level deep records.
 

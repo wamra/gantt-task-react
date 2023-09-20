@@ -68,6 +68,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   TooltipContent = StandardTooltipContent,
   TaskListHeader = TaskListHeaderDefault,
   TaskListTable = TaskListTableDefault,
+  enableGridDrag = false,
   onDateChange,
   onProgressChange,
   onDoubleClick,
@@ -404,6 +405,27 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       onExpanderClick({ ...task, hideChildren: !task.hideChildren });
     }
   };
+
+  const onGridDrag = (deltaX: number, deltaY: number) => {
+    if (deltaX) {
+      let newScrollX = scrollX - deltaX;
+      if (newScrollX < 0) {
+        newScrollX = 0;
+      } else if (newScrollX > svgWidth) {
+        newScrollX = svgWidth;
+      }
+      setScrollX(newScrollX);
+    } else if (deltaY) {
+      let newScrollY = scrollY - deltaY;
+      if (newScrollY < 0) {
+        newScrollY = 0;
+      } else if (newScrollY > ganttFullHeight - ganttHeight) {
+        newScrollY = ganttFullHeight - ganttHeight;
+      }
+      setScrollY(newScrollY);
+    }
+  };
+
   const gridProps: GridProps = {
     columnWidth,
     svgWidth,
@@ -412,6 +434,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     dates: dateSetup.dates,
     todayColor,
     rtl,
+    enableGridDrag,
+    onDrag: onGridDrag,
   };
   const calendarProps: CalendarProps = {
     dateSetup,
@@ -468,7 +492,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   };
 
   return (
-    <div>
+    <div className={styles.main}>
       <div
         className={styles.wrapper}
         onKeyDown={handleKeyDown}

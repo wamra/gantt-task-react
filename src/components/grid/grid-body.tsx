@@ -1,4 +1,9 @@
-import React, { ReactChild } from "react";
+import React, {
+  ReactChild,
+  MouseEvent as MouseEventReact,
+  useState,
+  useEffect,
+} from "react";
 import { Task } from "../../types/public-types";
 import { addToDate } from "../../helpers/date-helper";
 import styles from "./grid.module.css";
@@ -11,7 +16,10 @@ export type GridBodyProps = {
   columnWidth: number;
   todayColor: string;
   rtl: boolean;
+  enableGridDrag: boolean;
+  onDrag?: (deltaX: number, deltaY: number) => void;
 };
+type Point = { x: number; y: number };
 export const GridBody: React.FC<GridBodyProps> = ({
   tasks,
   dates,
@@ -20,6 +28,8 @@ export const GridBody: React.FC<GridBodyProps> = ({
   columnWidth,
   todayColor,
   rtl,
+  enableGridDrag,
+  onDrag,
 }) => {
   let y = 0;
   const gridRows: ReactChild[] = [];
@@ -116,8 +126,44 @@ export const GridBody: React.FC<GridBodyProps> = ({
     }
     tickX += columnWidth;
   }
+
+  // Manage the grid dragging
+  const [draggingCursorPosition, setDraggingCursorPosition] = useState<Point>();
+  const handleMouseDown = (event: MouseEventReact) => {
+    setDraggingCursorPosition({ x: event.clientX, y: event.clientY });
+  };
+  const handleMouseUp = () => {
+    setDraggingCursorPosition(undefined);
+  };
+
+  useEffect(() => {
+    const saveMousePosition = (event: MouseEvent) => {
+      if (onDrag && draggingCursorPosition) {
+        onDrag(
+          event.clientX - draggingCursorPosition.x,
+          event.clientY - draggingCursorPosition.y
+        );
+        setDraggingCursorPosition({ x: event.clientX, y: event.clientY });
+      }
+    };
+
+    if (enableGridDrag) {
+      document.addEventListener("mousemove", saveMousePosition);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener("mousemove", saveMousePosition);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [
+    setDraggingCursorPosition,
+    onDrag,
+    draggingCursorPosition,
+    enableGridDrag,
+  ]);
+
   return (
-    <g className="gridBody">
+    <g className="gridBody" onMouseDown={handleMouseDown}>
       <g className="rows">{gridRows}</g>
       <g className="rowLines">{rowLines}</g>
       <g className="ticks">{ticks}</g>

@@ -11,8 +11,15 @@
   overflow: hidden;
 }
 
+.main {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto min-content;
+}
 .wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: min-content auto min-content;
+  grid-template-rows: 1fr;
   padding: 0;
   margin: 0;
   list-style: none;

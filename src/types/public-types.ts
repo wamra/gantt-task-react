@@ -75,6 +75,8 @@ export interface EventOption {
   onExpanderClick?: (task: Task) => void;
 
   onWheel?: (wheelEvent: WheelEvent) => void;
+
+  enableGridDrag?: boolean;
 }
 
 export interface DisplayOption {
