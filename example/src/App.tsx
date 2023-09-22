@@ -1,9 +1,9 @@
 import React from "react";
-import { Task, ViewMode, Gantt } from "gantt-task-react";
+import { Task, ViewMode, Gantt } from "@ObeoNetwork/gantt-task-react";
 import { ViewSwitcher } from "./components/view-switcher";
 import { getStartEndDateForProject, initTasks } from "./helper";
-import "gantt-task-react/dist/index.css";
-import { TaskListColumnEnum } from "gantt-task-react";
+import "@ObeoNetwork/gantt-task-react/dist/index.css";
+import { TaskListColumnEnum } from "@ObeoNetwork/gantt-task-react";
 
 // Init
 const App = () => {
@@ -85,7 +85,7 @@ const App = () => {
       }
     }
   };
-  const columns = [
+  const columns: any[] = [
     { columntype: TaskListColumnEnum.NAME, columnWidth: "155px" },
     { columntype: TaskListColumnEnum.ASSIGNEE, columnWidth: "80px" },
   ];
