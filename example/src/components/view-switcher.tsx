@@ -1,5 +1,5 @@
 import React from "react";
-import "@ObeoNetwork/gantt-task-react/dist/index.css";
+import "../index.css";
 import { ViewMode } from "@ObeoNetwork/gantt-task-react";
 type ViewSwitcherProps = {
   isChecked: boolean;

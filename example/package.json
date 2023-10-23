@@ -4,28 +4,30 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ../node_modules/react-scripts/bin/react-scripts.js start",
-    "build": "node ../node_modules/react-scripts/bin/react-scripts.js build",
-    "test": "node ../node_modules/react-scripts/bin/react-scripts.js test",
-    "eject": "node ../node_modules/react-scripts/bin/react-scripts.js eject"
+    "build": "vite build && tsc",
+    "start": "vite --host",
+    "test": "vitest --run --config vite.config.js"
   },
   "dependencies": {
     "@ObeoNetwork/gantt-task-react": "file:..",
     "@material-ui/core": "file:../node_modules/@material-ui/core",
     "@material-ui/icons": "file:../node_modules/@material-ui/icons",
+    "@types/react": "file:../node_modules/@types/react",
+    "@types/react-dom": "file:../node_modules/@types/react-dom",
+    "react": "file:../node_modules/react",
+    "react-dom": "file:../node_modules/react-dom"
+  },
+  "devDependencies": {
     "@testing-library/jest-dom": "file:../node_modules/@testing-library/jest-dom",
     "@testing-library/react": "file:../node_modules/@testing-library/react",
     "@testing-library/user-event": "file:../node_modules/@testing-library/user-event",
     "@types/jest": "file:../node_modules/@types/jest",
     "@types/node": "file:../node_modules/@types/node",
-    "@types/react": "file:../node_modules/@types/react",
-    "@types/react-dom": "file:../node_modules/@types/react-dom",
+    "jsdom": "16.7.0",
     "postcss-preset-env": "file:../node_modules/postcss-preset-env",
-    "react": "file:../node_modules/react",
-    "react-dom": "file:../node_modules/react-dom",
-    "react-scripts": "file:../node_modules/react-scripts"
+    "typescript": "~5.1.6",
+    "vitest": "0.34.2"
   },
-  "devDependencies": {},
   "browserslist": {
     "production": [
       ">0.2%",
