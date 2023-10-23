@@ -6,7 +6,7 @@ import {
   TaskListColumnEnum,
 } from "../../types/public-types";
 
-const localeDateStringCache = {};
+const localeDateStringCache: any = {};
 const toLocaleDateStringFactory =
   (locale: string) =>
   (date: Date, dateTimeOptions: Intl.DateTimeFormatOptions) => {
