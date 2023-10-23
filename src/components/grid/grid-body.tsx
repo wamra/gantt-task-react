@@ -18,6 +18,7 @@ export type GridBodyProps = {
   rtl: boolean;
   enableGridDrag: boolean;
   onDrag?: (deltaX: number, deltaY: number) => void;
+  onClick: () => void;
 };
 type Point = { x: number; y: number };
 export const GridBody: React.FC<GridBodyProps> = ({
@@ -30,6 +31,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   rtl,
   enableGridDrag,
   onDrag,
+  onClick,
 }) => {
   let y = 0;
   const gridRows: ReactChild[] = [];
@@ -131,6 +133,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   const [draggingCursorPosition, setDraggingCursorPosition] = useState<Point>();
   const handleMouseDown = (event: MouseEventReact) => {
     setDraggingCursorPosition({ x: event.clientX, y: event.clientY });
+    onClick();
   };
   const handleMouseUp = () => {
     setDraggingCursorPosition(undefined);

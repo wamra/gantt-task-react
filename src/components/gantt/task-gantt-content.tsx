@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { EventOption } from "../../types/public-types";
+import {
+  EventOption,
+  Task,
+  TaskContextualPaletteProps,
+} from "../../types/public-types";
 import { BarTask } from "../../types/bar-task";
 import { Arrow } from "../other/arrow";
 import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
@@ -30,6 +34,8 @@ export type TaskGanttContentProps = {
   setGanttEvent: (value: GanttEvent) => void;
   setFailedTask: (value: BarTask | null) => void;
   setSelectedTask: (taskId: string) => void;
+  onClickTask: (task: Task, event: React.MouseEvent<SVGElement>) => void;
+  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
 } & EventOption;
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
@@ -53,7 +59,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   onDateChange,
   onProgressChange,
   onDoubleClick,
-  onClick,
+  onClickTask,
   onDelete,
 }) => {
   const point = svg?.current?.createSVGPoint();
@@ -198,7 +204,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   const handleBarEventStart = async (
     action: GanttContentMoveAction,
     task: BarTask,
-    event?: React.MouseEvent | React.KeyboardEvent
+    event?: React.MouseEvent<SVGElement> | React.KeyboardEvent
   ) => {
     if (!event) {
       if (action === "select") {
@@ -236,7 +242,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     } else if (action === "dblclick") {
       !!onDoubleClick && onDoubleClick(task);
     } else if (action === "click") {
-      !!onClick && onClick(task);
+      !!onClickTask && onClickTask(task, event);
     }
     // Change task event start
     else if (action === "move") {

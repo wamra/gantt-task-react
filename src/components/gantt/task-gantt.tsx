@@ -3,6 +3,9 @@ import { GridProps, Grid } from "../grid/grid";
 import { CalendarProps, Calendar } from "../calendar/calendar";
 import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
 import styles from "./gantt.module.css";
+import Popper from "@material-ui/core/Popper";
+import Paper from "@material-ui/core/Paper";
+import { TaskContextualPaletteProps, Task } from "../../types/public-types";
 
 export type TaskGanttProps = {
   gridProps: GridProps;
@@ -23,7 +26,6 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
-  const newBarProps = { ...barProps, svg: ganttSVGRef };
 
   useEffect(() => {
     if (horizontalContainerRef.current) {
@@ -36,6 +38,37 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
       verticalGanttContainerRef.current.scrollLeft = scrollX;
     }
   }, [scrollX]);
+
+  // Manage the contextual palette
+  const [anchorEl, setAnchorEl] = React.useState<null | SVGElement>(null);
+  const open = Boolean(anchorEl);
+  const onClickTask: (
+    task: Task,
+    event: React.MouseEvent<SVGElement>
+  ) => void = (task, event) => {
+    setAnchorEl(event.currentTarget);
+    barProps.onClickTask(task, event);
+  };
+  const newBarProps = {
+    ...barProps,
+    onClickTask,
+    svg: ganttSVGRef,
+  };
+  const onClose = () => {
+    setAnchorEl(null);
+  };
+
+  const selectedTask: Task | undefined = newBarProps.selectedTask;
+
+  let contextualPalette:
+    | React.FunctionComponentElement<TaskContextualPaletteProps>
+    | undefined = undefined;
+  if (newBarProps.ContextualPalette && selectedTask) {
+    contextualPalette = React.createElement(newBarProps.ContextualPalette, {
+      selectedTask,
+      onClose,
+    });
+  }
 
   return (
     <div
@@ -71,6 +104,17 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
           <TaskGanttContent {...newBarProps} />
         </svg>
       </div>
+      {barProps.ContextualPalette && (
+        <Popper
+          key={`contextual-palette`}
+          open={open}
+          anchorEl={anchorEl}
+          transition
+          disablePortal
+        >
+          <Paper>{contextualPalette}</Paper>
+        </Popper>
+      )}
     </div>
   );
 };

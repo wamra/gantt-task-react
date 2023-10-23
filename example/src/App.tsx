@@ -1,9 +1,14 @@
-import React from "react";
 import { Task, ViewMode, Gantt } from "@SemanticBoard/gantt-task-react";
 import { ViewSwitcher } from "./components/view-switcher";
 import { getStartEndDateForProject, initTasks } from "./helper";
 import "@SemanticBoard/gantt-task-react/dist/index.css";
 import { TaskListColumnEnum } from "@SemanticBoard/gantt-task-react";
+import { TaskContextualPaletteProps } from "../../dist/types/public-types";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import styles from "./App.module.css";
+import React from "react";
 
 // Init
 const App = () => {
@@ -90,6 +95,34 @@ const App = () => {
     { columntype: TaskListColumnEnum.ASSIGNEE, columnWidth: "80px" },
   ];
 
+  const ContextualPalette: React.FC<TaskContextualPaletteProps> = ({
+    selectedTask,
+    onClose,
+  }) => {
+    return (
+      <div className={styles.buttonEntries}>
+        <IconButton
+          size="small"
+          aria-label="Delete task"
+          title="Delete task"
+          onClick={() => handleTaskDelete(selectedTask)}
+          data-testid="delete-task"
+        >
+          <DeleteForeverIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          aria-label="Close toolbar"
+          title="Close toolbar"
+          onClick={onClose}
+          data-testid="close-toolbar"
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </div>
+    );
+  };
+
   return (
     <div className="Wrapper">
       <ViewSwitcher
@@ -131,6 +164,7 @@ const App = () => {
         ganttHeight={300}
         columnWidth={columnWidth}
         onWheel={handleWheel}
+        ContextualPalette={ContextualPalette}
       />
     </div>
   );

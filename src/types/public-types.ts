@@ -144,6 +144,12 @@ export interface StylingOption {
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
   }>;
+  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+}
+
+export interface TaskContextualPaletteProps {
+  selectedTask: Task;
+  onClose: () => void;
 }
 
 export interface TaskListProps {
