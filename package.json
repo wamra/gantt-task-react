@@ -1,6 +1,6 @@
 {
   "name": "@SemanticBoard/gantt-task-react",
-  "version": "0.3.11",
+  "version": "0.3.14",
   "description": "Interactive Gantt Chart for React with TypeScript.",
   "author": "MaTeMaTuK <maksym.vikarii@gmail.com>",
   "homepage": "https://github.com/MaTeMaTuK/gantt-task-react",
@@ -9,9 +9,9 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
-  "source": "src/index.tsx",
+  "main": "./dist/gantt-task-react.umd.js",
+  "module": "./dist/gantt-task-react.es.js",
+  "types": "./dist/index.d.ts",
   "engines": {
     "node": ">=10"
   },
@@ -27,9 +27,9 @@
     "task"
   ],
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
+    "build": "vite build && tsc",
+    "format": "prettier --write \"src/**/*.{js,ts,tsx,css}\"",
+    "format-lint": "prettier --list-different \"src/**/*.{js,ts,tsx,css}\"",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint --ext .tsx src/**/*",
@@ -39,10 +39,12 @@
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {
+    "@material-ui/core": "4.12.4",
+    "@material-ui/icons": "4.11.3",
     "@types/jest": "^27.5.1",
     "@types/node": "^15.0.1",
-    "@types/react": "17.0.2",
-    "@types/react-dom": "17.0.2",
+    "@types/react": "~17.0.37",
+    "@types/react-dom": "~17.0.2",
     "cross-env": "^7.0.3",
     "gh-pages": "^3.1.0",
     "microbundle-crl": "^0.13.11",
@@ -54,19 +56,19 @@
     "prettier": "^2.7.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-scripts": "^5.0.1",
-    "typescript": "^4.7.4",
-    "@material-ui/core": "4.12.4",
-    "@material-ui/icons": "4.11.3"
+    "typescript": "~5.1.6"
   },
   "devDependencies": {
+    "@material-ui/core": "4.12.4",
+    "@material-ui/icons": "4.11.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.2.1",
     "@types/jest": "^27.5.1",
     "@types/node": "^15.0.1",
-    "@types/react": "17.0.2",
-    "@types/react-dom": "17.0.2",
+    "@types/react": "~17.0.37",
+    "@types/react-dom": "~17.0.2",
+    "@vitejs/plugin-react": "4.0.4",
     "cross-env": "^7.0.3",
     "gh-pages": "^3.1.0",
     "microbundle-crl": "^0.13.11",
@@ -78,10 +80,9 @@
     "prettier": "^2.7.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-scripts": "^5.0.1",
-    "typescript": "^4.7.4",
-    "@material-ui/core": "4.12.4",
-    "@material-ui/icons": "4.11.3"
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "typescript": "~5.1.6",
+    "vite": "4.4.9"
   },
   "files": [
     "dist"

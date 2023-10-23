@@ -1,31 +1,39 @@
 {
   "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ES2019",
+    "verbatimModuleSyntax": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    /* generate TypeScript API only */
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "sourceMap": true,
+    
+
     "outDir": "dist",
-    "module": "esnext",
     "lib": [
       "dom",
       "esnext"
     ],
-    "moduleResolution": "node",
     "jsx": "react",
-    "sourceMap": true,
-    "declaration": true,
-    "esModuleInterop": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es5",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true
+    "isolatedModules": true
   },
   "include": [
     "src"

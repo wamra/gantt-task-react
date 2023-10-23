@@ -145,7 +145,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             newChangedTask,
             newChangedTask.barChildren
           );
-          if (result !== undefined) {
+          if (!!result) {
             operationSuccess = result;
           }
         } catch (error) {
@@ -157,7 +157,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             newChangedTask,
             newChangedTask.barChildren
           );
-          if (result !== undefined) {
+          if (!!result) {
             operationSuccess = result;
           }
         } catch (error) {

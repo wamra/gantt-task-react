@@ -1,14 +1,15 @@
 import { Task, ViewMode, Gantt } from "@SemanticBoard/gantt-task-react";
 import { ViewSwitcher } from "./components/view-switcher";
 import { getStartEndDateForProject, initTasks } from "./helper";
-import "@SemanticBoard/gantt-task-react/dist/index.css";
 import { TaskListColumnEnum } from "@SemanticBoard/gantt-task-react";
-import { TaskContextualPaletteProps } from "../../dist/types/public-types";
+import { TaskContextualPaletteProps } from "@SemanticBoard/gantt-task-react";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import styles from "./App.module.css";
+import "./App.module.css";
 import React from "react";
+import "./index.css";
+import "@SemanticBoard/gantt-task-react/dist/style.css";
 
 // Init
 const App = () => {
@@ -100,7 +101,7 @@ const App = () => {
     onClose,
   }) => {
     return (
-      <div className={styles.buttonEntries}>
+      <div className="buttonEntries">
         <IconButton
           size="small"
           aria-label="Delete task"

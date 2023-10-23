@@ -7,6 +7,7 @@ export type {
   DisplayOption,
   EventOption,
   TaskListColumn,
+  TaskContextualPaletteProps,
 } from "./types/public-types";
 
 export { TaskListColumnEnum } from "./types/public-types";
