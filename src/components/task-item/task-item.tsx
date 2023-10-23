@@ -19,7 +19,7 @@ export type TaskItemProps = {
   onEventStart: (
     action: GanttContentMoveAction,
     selectedTask: BarTask,
-    event?: React.MouseEvent | React.KeyboardEvent
+    event?: React.MouseEvent<SVGElement> | React.KeyboardEvent
   ) => any;
 };
 
@@ -54,7 +54,7 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         setTaskItem(<Bar {...props} />);
         break;
     }
-  }, [task, isSelected]);
+  }, [task, isSelected, setTaskItem, props]);
 
   useEffect(() => {
     if (textRef.current) {

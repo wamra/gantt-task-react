@@ -117,11 +117,13 @@ npm start
 | todayColor                 | string | Specifies the current period column fill color.                                                |
 | TooltipContent             |        | Specifies the Tooltip view for selected taskbar.                                               |
 | TaskListHeader             |        | Specifies the task list Header view                                                            |
-| TaskListTable              |        | Specifies the task list Table view                                                             |
+| TaskListHeader             |        | Specifies the task list Header view                                                            |
+| ContextualPalette          |        | Specifies the component displayed when the task is selected                                    |
 
 - TooltipContent: [`React.FC<{ task: Task; fontSize: string; fontFamily: string; }>;`](https://github.com/MaTeMaTuK/gantt-task-react/blob/main/src/components/other/tooltip.tsx#L56)
 - TaskListHeader: `React.FC<{ headerHeight: number; rowWidth: string; fontFamily: string; fontSize: string;}>;`
 - TaskListTable: `React.FC<{ rowHeight: number; rowWidth: string; fontFamily: string; fontSize: string; locale: string; tasks: Task[]; selectedTaskId: string; setSelectedTask: (taskId: string) => void; }>;`
+- ContextualPalette: `React.FC<{ selectedTask: Task; onClose: () => void; } : TaskContextualPaletteProps>;`
 
 ### Task
 

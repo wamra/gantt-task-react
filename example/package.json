@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@ObeoNetwork/gantt-task-react": "file:..",
+    "@material-ui/core": "file:../node_modules/@material-ui/core",
+    "@material-ui/icons": "file:../node_modules/@material-ui/icons",
     "@testing-library/jest-dom": "file:../node_modules/@testing-library/jest-dom",
     "@testing-library/react": "file:../node_modules/@testing-library/react",
     "@testing-library/user-event": "file:../node_modules/@testing-library/user-event",

@@ -68,6 +68,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   TooltipContent = StandardTooltipContent,
   TaskListHeader = TaskListHeaderDefault,
   TaskListTable = TaskListTableDefault,
+  ContextualPalette,
   enableGridDrag = false,
   onDateChange,
   onProgressChange,
@@ -426,6 +427,11 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     }
   };
 
+  // deselect the task if the user clicks on the grid. It allows to undisplay the contextual palette
+  const onClickGrid = () => {
+    handleSelectedTask("");
+  };
+
   const gridProps: GridProps = {
     columnWidth,
     svgWidth,
@@ -436,6 +442,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     rtl,
     enableGridDrag,
     onDrag: onGridDrag,
+    onClick: onClickGrid,
   };
   const calendarProps: CalendarProps = {
     dateSetup,
@@ -446,6 +453,15 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     fontFamily,
     fontSize,
     rtl,
+  };
+
+  const onClickTask: (
+    task: Task,
+    event: React.MouseEvent<SVGElement>
+  ) => void = (task: Task) => {
+    if (!!onClick) {
+      onClick(task);
+    }
   };
   const barProps: TaskGanttContentProps = {
     tasks: barTasks,
@@ -468,8 +484,9 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     onDateChange,
     onProgressChange,
     onDoubleClick,
-    onClick,
+    onClickTask,
     onDelete,
+    ContextualPalette,
   };
 
   const tableProps: TaskListProps = {
