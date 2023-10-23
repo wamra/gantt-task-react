@@ -11,16 +11,16 @@ type DateHelperScales =
   | "second"
   | "millisecond";
 
-const intlDTCache = {};
+const intlDTCache: any = {};
 export const getCachedDateTimeFormat = (
   locString: string | string[],
   opts: DateTimeFormatOptions = {}
 ): DateTimeFormat => {
   const key = JSON.stringify([locString, opts]);
-  let dtf = intlDTCache[key];
+  let dtf = intlDTCache[key as keyof DateTimeFormat];
   if (!dtf) {
     dtf = new Intl.DateTimeFormat(locString, opts);
-    intlDTCache[key] = dtf;
+    intlDTCache[key as keyof DateTimeFormat] = dtf;
   }
   return dtf;
 };
