@@ -1,5 +1,5 @@
 import React from "react";
-import "@SemanticBoard/gantt-task-react/dist/index.css";
+import "../index.css";
 import { ViewMode } from "@SemanticBoard/gantt-task-react";
 type ViewSwitcherProps = {
   isChecked: boolean;
