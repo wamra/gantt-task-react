@@ -294,7 +294,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
               taskHeight={taskHeight}
               isProgressChangeable={!!onProgressChange && !task.isDisabled}
               isDateChangeable={!!onDateChange && !task.isDisabled}
-              isDelete={!task.isDisabled}
+              isDelete={!!onDelete && !task.isDisabled}
               onEventStart={handleBarEventStart}
               key={task.id}
               isSelected={!!selectedTask && task.id === selectedTask.id}
