@@ -3,6 +3,15 @@
   outline: none;
 }
 
+.projectBackground {
+  user-select: none;
+  opacity: 0.6;
+}
+
+.projectTop {
+  user-select: none;
+}
+
 .barWrapper:hover .barHandle {
   visibility: visible;
   opacity: 1;

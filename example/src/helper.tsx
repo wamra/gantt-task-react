@@ -13,6 +13,7 @@ export function initTasks() {
       hideChildren: false,
       displayOrder: 1,
       assignee: "Bob",
+      isDisabled: true,
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
