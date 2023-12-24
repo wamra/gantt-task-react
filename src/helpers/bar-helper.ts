@@ -83,6 +83,22 @@ const convertToBarTask = (
   milestoneBackgroundSelectedColor: string
 ): BarTask => {
   let barTask: BarTask;
+
+  if (!task.start || !task.end) {
+    const styles = {
+      backgroundColor: barBackgroundColor,
+      backgroundSelectedColor: barBackgroundSelectedColor,
+      progressColor: barProgressColor,
+      progressSelectedColor: barProgressSelectedColor,
+    };
+    return {
+      ...task,
+      index,
+      typeInternal: task.type,
+      barChildren: [],
+      styles,
+    };
+  }
   switch (task.type) {
     case "milestone":
       barTask = convertToMilestone(
@@ -427,6 +443,8 @@ const handleTaskBySVGMouseEventForBar = (
   rtl: boolean
 ): { isChanged: boolean; changedTask: BarTask } => {
   const changedTask: BarTask = { ...selectedTask };
+  // console.log("handleTaskBySVGMouseEventForBar");
+  // console.log(changedTask);
   let isChanged = false;
   switch (action) {
     case "progress":

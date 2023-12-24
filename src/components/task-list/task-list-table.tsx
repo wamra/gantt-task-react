@@ -10,6 +10,9 @@ const localeDateStringCache: any = {};
 const toLocaleDateStringFactory =
   (locale: string) =>
   (date: Date, dateTimeOptions: Intl.DateTimeFormatOptions) => {
+    if (!date) {
+      return "";
+    }
     const key = date.toString();
     let lds = localeDateStringCache[key];
     if (!lds) {

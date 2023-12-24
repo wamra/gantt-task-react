@@ -24,37 +24,11 @@ export type TaskItemProps = {
 };
 
 export const TaskItem: React.FC<TaskItemProps> = props => {
-  const {
-    task,
-    arrowIndent,
-    isDelete,
-    taskHeight,
-    isSelected,
-    rtl,
-    onEventStart,
-  } = {
+  const { task, arrowIndent, isDelete, taskHeight, rtl, onEventStart } = {
     ...props,
   };
   const textRef = useRef<SVGTextElement>(null);
-  const [taskItem, setTaskItem] = useState<JSX.Element>(<div />);
   const [isTextInside, setIsTextInside] = useState(true);
-
-  useEffect(() => {
-    switch (task.typeInternal) {
-      case "milestone":
-        setTaskItem(<Milestone {...props} />);
-        break;
-      case "project":
-        setTaskItem(<Project {...props} />);
-        break;
-      case "smalltask":
-        setTaskItem(<BarSmall {...props} />);
-        break;
-      default:
-        setTaskItem(<Bar {...props} />);
-        break;
-    }
-  }, [task, isSelected, setTaskItem, props]);
 
   useEffect(() => {
     if (textRef.current) {
@@ -80,46 +54,71 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
     }
   };
 
-  return (
-    <g
-      onKeyDown={e => {
-        switch (e.key) {
-          case "Delete": {
-            if (isDelete) onEventStart("delete", task, e);
-            break;
+  let content: JSX.Element | null = null;
+
+  const displayNothing = !task.start || !task.end;
+  if (displayNothing) {
+    content = <g />;
+  } else {
+    let taskItem = null;
+    switch (task.typeInternal) {
+      case "milestone":
+        taskItem = <Milestone {...props} />;
+        break;
+      case "project":
+        taskItem = <Project {...props} />;
+        break;
+      case "smalltask":
+        taskItem = <BarSmall {...props} />;
+        break;
+      default:
+        taskItem = <Bar {...props} />;
+        break;
+    }
+
+    content = (
+      <g
+        onKeyDown={e => {
+          switch (e.key) {
+            case "Delete": {
+              if (isDelete) onEventStart("delete", task, e);
+              break;
+            }
           }
-        }
-        e.stopPropagation();
-      }}
-      onMouseEnter={e => {
-        onEventStart("mouseenter", task, e);
-      }}
-      onMouseLeave={e => {
-        onEventStart("mouseleave", task, e);
-      }}
-      onDoubleClick={e => {
-        onEventStart("dblclick", task, e);
-      }}
-      onClick={e => {
-        onEventStart("click", task, e);
-      }}
-      onFocus={() => {
-        onEventStart("select", task);
-      }}
-    >
-      {taskItem}
-      <text
-        x={getX()}
-        y={task.y + taskHeight * 0.5}
-        className={
-          isTextInside
-            ? style.barLabel
-            : style.barLabel && style.barLabelOutside
-        }
-        ref={textRef}
+          e.stopPropagation();
+        }}
+        onMouseEnter={e => {
+          onEventStart("mouseenter", task, e);
+        }}
+        onMouseLeave={e => {
+          onEventStart("mouseleave", task, e);
+        }}
+        onDoubleClick={e => {
+          onEventStart("dblclick", task, e);
+        }}
+        onClick={e => {
+          onEventStart("click", task, e);
+        }}
+        onFocus={() => {
+          onEventStart("select", task);
+        }}
       >
-        {task.name}
-      </text>
-    </g>
-  );
+        {taskItem}
+        <text
+          x={getX()}
+          y={task.y + taskHeight * 0.5}
+          className={
+            isTextInside
+              ? style.barLabel
+              : style.barLabel && style.barLabelOutside
+          }
+          ref={textRef}
+        >
+          {task.name}
+        </text>
+      </g>
+    );
+  }
+
+  return <>{content} </>;
 };
