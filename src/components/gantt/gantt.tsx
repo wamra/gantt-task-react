@@ -79,6 +79,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   onExpanderClick,
   onWheel,
 }) => {
+  handleMinimumTaskNumber(tasks);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
   const [dateSetup, setDateSetup] = useState<DateSetup>(() => {
@@ -89,9 +91,9 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     undefined
   );
 
+  const svgContainerHeight = tasks.length * rowHeight + headerHeight;
   const [taskListWidth, setTaskListWidth] = useState(0);
   const [svgContainerWidth, setSvgContainerWidth] = useState(0);
-  const [svgContainerHeight, setSvgContainerHeight] = useState(ganttHeight);
   const [barTasks, setBarTasks] = useState<BarTask[]>([]);
   const [ganttEvent, setGanttEvent] = useState<GanttEvent>({
     action: "",
@@ -258,14 +260,6 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       setSvgContainerWidth(wrapperRef.current.offsetWidth - taskListWidth);
     }
   }, [wrapperRef, taskListWidth]);
-
-  useEffect(() => {
-    if (ganttHeight) {
-      setSvgContainerHeight(ganttHeight + headerHeight);
-    } else {
-      setSvgContainerHeight(tasks.length * rowHeight + headerHeight);
-    }
-  }, [ganttHeight, tasks, headerHeight, rowHeight]);
 
   // scroll events
   useEffect(() => {
@@ -435,7 +429,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   const gridProps: GridProps = {
     columnWidth,
     svgWidth,
-    tasks: tasks,
+    tasks,
     rowHeight,
     dates: dateSetup.dates,
     todayColor,
@@ -561,4 +555,18 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       />
     </div>
   );
+};
+
+const handleMinimumTaskNumber = (tasks: Task[]) => {
+  tasks.slice(0).forEach(task => {
+    if (task.id.includes("fake")) {
+      tasks.splice(tasks.indexOf(task), 1);
+    }
+  });
+
+  const nbTasks = tasks.length;
+  for (let i = nbTasks; i < 5; i++) {
+    // Add fake tasks to display a mininum of lines in Gantt
+    tasks.push({ id: "fake" + i, name: "", type: "task", progress: 0 });
+  }
 };

@@ -84,6 +84,12 @@ export const ganttDateRange = (
       newEndDate = task.end;
     }
   }
+  if (!newStartDate || !newEndDate) {
+    const oneMonth = 15 * 24 * 3600 * 1000;
+    newStartDate = new Date(Date.now() - oneMonth);
+    newEndDate = new Date(Date.now() + oneMonth);
+  }
+
   switch (viewMode) {
     case ViewMode.Year:
       newStartDate = addToDate(newStartDate, -1, "year");
