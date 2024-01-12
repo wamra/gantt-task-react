@@ -4,17 +4,16 @@ const path = require('path');
 module.exports = {
   stories: ['../stories/**/*.stories.mdx'],
 
-  framework: '@storybook/react',
+  framework: {
+    name: '@storybook/react-vite',
+    options: {}
+  },
 
   addons: [
     '@storybook/preset-create-react-app',
     '@storybook/addon-controls',
     '@storybook/addon-docs',
   ],
-
-  core: {
-    builder: '@storybook/builder-vite',
-  },
 
   features: {
     storyStoreV7: true,
@@ -32,4 +31,8 @@ module.exports = {
       },
     });
   },
+
+  docs: {
+    autodocs: true
+  }
 };

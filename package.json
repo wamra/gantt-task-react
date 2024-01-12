@@ -30,14 +30,14 @@
     "test:lint": "eslint --ext .tsx src/**/*",
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "yarn build-storybook",
+    "predeploy": "yarn storybook build",
     "deploy-storybook": "gh-pages -d storybook-static",
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-dnd": "^16.0.0"
+    "react-dnd": "^16.0.0",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@babel/plugin-transform-regenerator": "^7.20.5",
@@ -47,7 +47,6 @@
     "@storybook/addon-controls": "^7.6.7",
     "@storybook/addon-docs": "^7.6.7",
     "@storybook/addons": "^7.6.7",
-    "@storybook/builder-vite": "7.6.7",
     "@storybook/channel-postmessage": "^7.6.7",
     "@storybook/channel-websocket": "^7.6.7",
     "@storybook/client-api": "^7.6.7",
@@ -55,6 +54,7 @@
     "@storybook/node-logger": "^7.6.7",
     "@storybook/preview-web": "^7.6.7",
     "@storybook/react": "^7.6.7",
+    "@storybook/react-vite": "^7.6.7",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.2.1",
@@ -62,6 +62,7 @@
     "@types/node": "^15.0.1",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.2",
+    "@vitejs/plugin-react": "4.0.4",
     "cross-env": "^7.0.3",
     "doctrine": "^3.0.0",
     "gh-pages": "^5.0.0",
@@ -77,11 +78,10 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^17.0.2",
     "rollup-plugin-peer-deps-external": "2.2.4",
-    "storybook": "next",
+    "storybook": "7.6.7",
     "typescript": "5.1.6",
     "vite": "4.4.9",
-    "vitest": "0.34.2",
-    "@vitejs/plugin-react": "4.0.4"
+    "vitest": "0.34.2"
   },
   "files": [
     "dist"
