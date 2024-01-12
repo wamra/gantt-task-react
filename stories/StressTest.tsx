@@ -1,27 +1,15 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import addDays from "date-fns/addDays";
 
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import {
-  Gantt,
-  OnChangeTasks,
-  Task,
-  TaskOrEmpty,
-} from "../src";
+import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
 
-import {
-  onAddTask,
-  onEditTask,
-} from "./helper";
+import { onAddTask, onEditTask } from "./helper";
 
-import "../dist/index.css";
+import "../dist/style.css";
 
 // 4 * ()
 
@@ -38,7 +26,7 @@ const initSubtasks = (
   parentName: string,
   currentDepth: number,
   numberOfSubtasks: number,
-  depth: number,
+  depth: number
 ) => {
   const restDepth = depth - currentDepth;
   const taskDuration = Math.pow(numberOfSubtasks, restDepth);
@@ -61,14 +49,14 @@ const initSubtasks = (
       type: "task",
       parent: parentId,
       dependencies: prevTaskId
-      ? [
-        {
-          ownTarget: "startOfTask",
-          sourceTarget: "endOfTask",
-          sourceId: prevTaskId,
-        },
-      ]
-      : undefined,
+        ? [
+            {
+              ownTarget: "startOfTask",
+              sourceTarget: "endOfTask",
+              sourceId: prevTaskId,
+            },
+          ]
+        : undefined,
     };
 
     prevTaskId = taskId;
@@ -82,7 +70,7 @@ const initSubtasks = (
         taskName,
         currentDepth + 1,
         numberOfSubtasks,
-        depth,
+        depth
       );
     }
   }
@@ -91,12 +79,15 @@ const initSubtasks = (
 const initTasks = (
   numberOfRoots: number,
   numberOfSubtasks: number,
-  depth: number,
+  depth: number
 ) => {
   const res: Task[] = [];
 
   const firstStartDate = new Date();
-  const firstEndDate = addDays(firstStartDate, Math.pow(numberOfSubtasks, depth));
+  const firstEndDate = addDays(
+    firstStartDate,
+    Math.pow(numberOfSubtasks, depth)
+  );
 
   for (let i = 0; i < numberOfRoots; ++i) {
     const projectStartDate = addDays(firstStartDate, i);
@@ -123,7 +114,7 @@ const initTasks = (
       `Task #${i + 1}`,
       1,
       numberOfSubtasks,
-      depth,
+      depth
     );
   }
 
@@ -135,34 +126,28 @@ export const StressTest: React.FC<AppProps> = ({
   numberOfSubtasks,
   depth,
 }) => {
-  const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(() => initTasks(
-    numberOfRoots,
-    numberOfSubtasks,
-    depth,
-  ));
+  const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(() =>
+    initTasks(numberOfRoots, numberOfSubtasks, depth)
+  );
 
   useEffect(() => {
-    setTasks(initTasks(
-      numberOfRoots,
-      numberOfSubtasks,
-      depth,
-    ));
-  }, [
-    numberOfRoots,
-    numberOfSubtasks,
-    depth,
-  ]);
+    setTasks(initTasks(numberOfRoots, numberOfSubtasks, depth));
+  }, [numberOfRoots, numberOfSubtasks, depth]);
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
-        if (window.confirm(`Do yo want to remove relation between ${action.payload.taskFrom.name} and ${action.payload.taskTo.name}?`)) {
+        if (
+          window.confirm(
+            `Do yo want to remove relation between ${action.payload.taskFrom.name} and ${action.payload.taskTo.name}?`
+          )
+        ) {
           setTasks(nextTasks);
         }
         break;
 
       case "delete_task":
-        if (window.confirm('Are you sure?')) {
+        if (window.confirm("Are you sure?")) {
           setTasks(nextTasks);
         }
         break;

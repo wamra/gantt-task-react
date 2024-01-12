@@ -1,28 +1,17 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
-import type {
-  MutableRefObject,
-  ReactElement,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef } from "react";
+// import type { MutableRefObject, ReactElement } from "react";
+import type { ReactElement } from "react";
 
-import {
-  autoUpdate,
-  flip,
-  shift,
-} from '@floating-ui/dom';
+import { autoUpdate, flip, shift } from "@floating-ui/dom";
 import {
   useFloating,
   useFocus,
   useDismiss,
   useRole,
   useInteractions,
-} from '@floating-ui/react';
+} from "@floating-ui/react";
 
-import { useOutsideClick } from 'use-dom-outside-click';
+// import { useOutsideClick } from 'use-dom-outside-click';
 
 import type {
   ActionMetaType,
@@ -32,9 +21,9 @@ import type {
   ContextMenuType,
   Distances,
   TaskOrEmpty,
-} from '../../types/public-types';
+} from "../../types/public-types";
 
-import { MenuOption } from './menu-option';
+import { MenuOption } from "./menu-option";
 
 type ContextMenuProps = {
   checkHasCopyTasks: () => boolean;
@@ -44,7 +33,7 @@ type ContextMenuProps = {
   distances: Distances;
   handleAction: (
     task: TaskOrEmpty,
-    action: (meta: ActionMetaType) => void,
+    action: (meta: ActionMetaType) => void
   ) => void;
   handleCloseContextMenu: () => void;
   options: ContextMenuOptionType[];
@@ -55,16 +44,9 @@ export function ContextMenu({
   checkHasCutTasks,
 
   colors,
-  colors: {
-    contextMenuBgColor,
-    contextMenuBoxShadow,
-  },
+  colors: { contextMenuBgColor, contextMenuBoxShadow },
 
-  contextMenu: {
-    task,
-    x,
-    y,
-  },
+  contextMenu: { task, x, y },
 
   distances,
   handleAction,
@@ -82,52 +64,38 @@ export function ContextMenu({
       checkHasCutTasks,
     };
 
-    return options.filter(({
-      checkIsAvailable,
-    }) => {
+    return options.filter(({ checkIsAvailable }) => {
       if (!checkIsAvailable) {
         return true;
       }
 
       return checkIsAvailable(meta);
     });
-  }, [
-    task,
-    checkHasCopyTasks,
-    checkHasCutTasks,
-    options,
-  ]);
+  }, [task, checkHasCopyTasks, checkHasCutTasks, options]);
 
-  const handleOptionAction = useCallback((option: ContextMenuOptionType) => {
-    handleCloseContextMenu();
+  const handleOptionAction = useCallback(
+    (option: ContextMenuOptionType) => {
+      handleCloseContextMenu();
 
-    if (!task) {
-      return;
-    }
+      if (!task) {
+        return;
+      }
 
-    handleAction(task, option.action);
-  }, [
-    handleAction,
-    handleCloseContextMenu,
-    task,
-  ]);
+      handleAction(task, option.action);
+    },
+    [handleAction, handleCloseContextMenu, task]
+  );
 
   const {
     x: menuX,
     y: menuY,
     strategy,
-    refs: {
-      setFloating,
-      setReference,
-    },
+    refs: { setFloating, setReference },
     context,
   } = useFloating({
     open: Boolean(task),
-    placement: 'bottom-start',
-    middleware: [
-      flip(),
-      shift(),
-    ],
+    placement: "bottom-start",
+    middleware: [flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
 
@@ -135,20 +103,13 @@ export function ContextMenu({
     if (task) {
       context.update();
     }
-  }, [
-    task,
-    x,
-    y,
-  ]);
+  }, [task, x, y]);
 
   const focus = useFocus(context);
   const dismiss = useDismiss(context);
-  const role = useRole(context, { role: 'tooltip' });
+  const role = useRole(context, { role: "tooltip" });
 
-  const {
-    getReferenceProps,
-    getFloatingProps,
-  } = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     focus,
     dismiss,
     role,
@@ -156,21 +117,24 @@ export function ContextMenu({
 
   const floatingRef = useRef<HTMLDivElement>();
 
-  const setFloatingRef = useCallback((el: HTMLDivElement | null) => {
-    floatingRef.current = el || undefined;
-    setFloating(el);
-  }, [setFloating]);
+  const setFloatingRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      floatingRef.current = el || undefined;
+      setFloating(el);
+    },
+    [setFloating]
+  );
 
-  useOutsideClick(floatingRef as MutableRefObject<HTMLDivElement>, () => {
-    handleCloseContextMenu();
-  });
+  // useOutsideClick(floatingRef as MutableRefObject<HTMLDivElement>, () => {
+  //   handleCloseContextMenu();
+  // });
 
   return (
     <>
       <div
         {...getReferenceProps()}
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: x,
           top: y,
         }}
@@ -184,7 +148,7 @@ export function ContextMenu({
             position: strategy,
             top: menuY ?? 0,
             left: menuX ?? 0,
-            width: 'max-content',
+            width: "max-content",
             backgroundColor: contextMenuBgColor,
             boxShadow: contextMenuBoxShadow,
           }}

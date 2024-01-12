@@ -1,7 +1,4 @@
-import React, {
-  useCallback,
-  useState,
-} from "react";
+import React, { useCallback, useState } from "react";
 
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -17,26 +14,13 @@ import {
   TitleColumn,
 } from "../src";
 
-import {
-  initTasks,
-  onAddTask,
-  onEditTask,
-} from "./helper";
+import { initTasks, onAddTask, onEditTask } from "./helper";
 
-import "../dist/index.css";
+import "../dist/style.css";
 
-const ProgressColumn: React.FC<ColumnProps> = ({
-  data: {
-    task,
-  },
-}) => {
+const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   if (task.type === "project" || task.type === "task") {
-    return (
-      <>
-        {task.progress}
-        %
-      </>
-    );
+    return <>{task.progress}%</>;
   }
 
   return null;
@@ -64,19 +48,23 @@ type AppProps = {
   ganttHeight?: number;
 };
 
-export const CustomColumns: React.FC<AppProps> = (props) => {
+export const CustomColumns: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
-        if (window.confirm(`Do yo want to remove relation between ${action.payload.taskFrom.name} and ${action.payload.taskTo.name}?`)) {
+        if (
+          window.confirm(
+            `Do yo want to remove relation between ${action.payload.taskFrom.name} and ${action.payload.taskTo.name}?`
+          )
+        ) {
           setTasks(nextTasks);
         }
         break;
 
       case "delete_task":
-        if (window.confirm('Are you sure?')) {
+        if (window.confirm("Are you sure?")) {
           setTasks(nextTasks);
         }
         break;
