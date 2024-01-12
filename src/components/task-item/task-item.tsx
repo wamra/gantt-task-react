@@ -6,12 +6,12 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import type {
-  MouseEvent,
-  MouseEventHandler,
-} from 'react';
+import type { MouseEvent, MouseEventHandler } from "react";
 
-import { BarMoveAction, RelationMoveTarget } from "../../types/gantt-task-actions";
+import {
+  BarMoveAction,
+  RelationMoveTarget,
+} from "../../types/gantt-task-actions";
 import {
   ChildOutOfParentWarnings,
   FixPosition,
@@ -59,28 +59,21 @@ export type TaskItemProps = {
     action: BarMoveAction,
     selectedTask: Task,
     clientX: number,
-    taskRootNode: Element,
+    taskRootNode: Element
   ) => any;
-  onRelationStart: (
-    target: RelationMoveTarget,
-    selectedTask: Task,
-  ) => void;
+  onRelationStart: (target: RelationMoveTarget, selectedTask: Task) => void;
   fixStartPosition?: FixPosition;
   fixEndPosition?: FixPosition;
   handleDeteleTasks: (task: TaskOrEmpty[]) => void;
   colorStyles: ColorStyles;
 };
 
-const TaskItemInner: React.FC<TaskItemProps> = (props) => {
+const TaskItemInner: React.FC<TaskItemProps> = props => {
   const {
     childOutOfParentWarnings,
     colorStyles: stylesProp,
 
-    distances: {
-      arrowIndent,
-      handleWidth,
-      taskWarningOffset,
-    },
+    distances: { arrowIndent, handleWidth, taskWarningOffset },
 
     fixEndPosition = undefined,
     fixStartPosition = undefined,
@@ -100,9 +93,7 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
     setTooltipTask,
 
     task,
-    task: {
-      styles: taskStyles,
-    },
+    task: { styles: taskStyles },
 
     taskHalfHeight,
     taskHeight,
@@ -130,10 +121,7 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
       return undefined;
     }
 
-    const {
-      id,
-      comparisonLevel = 1,
-    } = task;
+    const { id, comparisonLevel = 1 } = task;
 
     const warningsByLevel = childOutOfParentWarnings.get(comparisonLevel);
 
@@ -149,9 +137,7 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
       return;
     }
 
-    const {
-      start,
-    } = outOfParentWarnings;
+    const { start } = outOfParentWarnings;
 
     if (!start) {
       return;
@@ -159,11 +145,7 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
 
     const globalIndex = getTaskGlobalIndexByRef(task);
 
-    fixStartPosition(
-      task,
-      start.date,
-      globalIndex,
-    );
+    fixStartPosition(task, start.date, globalIndex);
   }, [task, fixStartPosition, outOfParentWarnings, getTaskGlobalIndexByRef]);
 
   const handleFixEndPosition = useCallback(() => {
@@ -171,9 +153,7 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
       return;
     }
 
-    const {
-      end,
-    } = outOfParentWarnings;
+    const { end } = outOfParentWarnings;
 
     if (!end) {
       return;
@@ -181,11 +161,7 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
 
     const globalIndex = getTaskGlobalIndexByRef(task);
 
-    fixEndPosition(
-      task,
-      end.date,
-      globalIndex,
-    );
+    fixEndPosition(task, end.date, globalIndex);
   }, [task, fixEndPosition, outOfParentWarnings, getTaskGlobalIndexByRef]);
 
   const handleClick = useCallback(() => {
@@ -200,47 +176,28 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
     }
   }, [onDoubleClick, task]);
 
-  const onTaskEventStart = useCallback((
-    action: BarMoveAction,
-    clientX: number,
-  ) => {
-    if (!isDateChangeable) {
-      return;
-    }
+  const onTaskEventStart = useCallback(
+    (action: BarMoveAction, clientX: number) => {
+      if (!isDateChangeable) {
+        return;
+      }
 
-    const taskRootNode = taskRootRef.current;
+      const taskRootNode = taskRootRef.current;
 
-    if (taskRootNode) {
-      onEventStart(
-        action,
-        task,
-        clientX,
-        taskRootNode,
-      );
-    }
-  }, [isDateChangeable, onEventStart, task]);
+      if (taskRootNode) {
+        onEventStart(action, task, clientX, taskRootNode);
+      }
+    },
+    [isDateChangeable, onEventStart, task]
+  );
 
   const onLeftRelationTriggerMouseDown = useCallback(() => {
-    onRelationStart(
-      rtl ? "endOfTask" : "startOfTask",
-      task,
-    );
-  }, [
-    onRelationStart,
-    rtl,
-    task,
-  ]);
+    onRelationStart(rtl ? "endOfTask" : "startOfTask", task);
+  }, [onRelationStart, rtl, task]);
 
   const onRightRelationTriggerMouseDown = useCallback(() => {
-    onRelationStart(
-      rtl ? "startOfTask" : "endOfTask",
-      task,
-    );
-  }, [
-    onRelationStart,
-    rtl,
-    task,
-  ]);
+    onRelationStart(rtl ? "startOfTask" : "endOfTask", task);
+  }, [onRelationStart, rtl, task]);
 
   const textRef = useRef<SVGTextElement>(null);
   const [isTextInside, setIsTextInside] = useState(true);
@@ -251,12 +208,12 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
         return (
           <Milestone
             {...props}
-              colorStyles={styles}
-              onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
-              onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
-              onTaskEventStart={onTaskEventStart}
-            />
-          );
+            colorStyles={styles}
+            onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
+            onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
+            onTaskEventStart={onTaskEventStart}
+          />
+        );
 
       case "project":
         return (
@@ -311,23 +268,25 @@ const TaskItemInner: React.FC<TaskItemProps> = (props) => {
     }
 
     if (rtl && textRef.current) {
-      return (
-        x1 -
-        textRef.current.getBBox().width -
-        arrowIndent * 0.8
-      );
+      return x1 - textRef.current.getBBox().width - arrowIndent * 0.8;
     }
 
     return x1 + width + arrowIndent * 1.2;
   }, [x1, width, isTextInside, rtl, arrowIndent]);
 
-  const onMouseDown = useCallback<MouseEventHandler>((event) => {
-    selectTaskOnMouseDown(task.id, event);
-  }, [selectTaskOnMouseDown, task]);
+  const onMouseDown = useCallback<MouseEventHandler>(
+    event => {
+      selectTaskOnMouseDown(task.id, event);
+    },
+    [selectTaskOnMouseDown, task]
+  );
 
-  const onMouseEnter = useCallback<MouseEventHandler<SVGGElement>>((event) => {
-    setTooltipTask(task, event.currentTarget);
-  }, [setTooltipTask, task]);
+  const onMouseEnter = useCallback<MouseEventHandler<SVGGElement>>(
+    event => {
+      setTooltipTask(task, event.currentTarget);
+    },
+    [setTooltipTask, task]
+  );
 
   const onMouseLeave = useCallback(() => {
     setTooltipTask(null, null);

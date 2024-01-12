@@ -1,17 +1,14 @@
-import {
-  useCallback,
-} from 'react';
-import type {
-  ReactElement,
-} from 'react';
+import { useCallback } from "react";
+import type { ReactElement } from "react";
 
 import type {
   ColorStyles,
   ContextMenuOptionType,
   Distances,
-} from '../../types/public-types';
+} from "../../types/public-types";
 
-import styles from './menu-option.module.css';
+import styles from "./menu-option.module.css";
+import React from "react";
 
 type MenuOptionProps = {
   colors: ColorStyles;
@@ -21,23 +18,17 @@ type MenuOptionProps = {
 };
 
 export function MenuOption({
-  colors: {
-    contextMenuTextColor,
-  },
+  colors: { contextMenuTextColor },
 
   distances: {
     contextMenuIconWidth,
     contextMenuOptionHeight,
     contextMenuSidePadding,
   },
-
   handleAction,
 
   option,
-  option: {
-    icon,
-    label,
-  },
+  option: { icon, label },
 }: MenuOptionProps): ReactElement {
   const onClick = useCallback(() => {
     handleAction(option);
@@ -63,11 +54,7 @@ export function MenuOption({
         {icon}
       </div>
 
-      <div
-        className={styles.label}
-      >
-        {label}
-      </div>
+      <div className={styles.label}>{label}</div>
     </div>
   );
 }

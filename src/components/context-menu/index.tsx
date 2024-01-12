@@ -24,6 +24,7 @@ import type {
 } from "../../types/public-types";
 
 import { MenuOption } from "./menu-option";
+import React from "react";
 
 type ContextMenuProps = {
   checkHasCopyTasks: () => boolean;
