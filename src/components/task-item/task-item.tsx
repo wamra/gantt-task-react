@@ -53,7 +53,7 @@ export type TaskItemProps = {
   isRelationDrawMode: boolean;
   rtl: boolean;
   onDoubleClick?: (task: Task) => void;
-  onClick?: (task: Task) => void;
+  onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
   setTooltipTask: (task: Task | null, element: Element | null) => void;
   onEventStart: (
     action: BarMoveAction,
@@ -164,11 +164,14 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     fixEndPosition(task, end.date, globalIndex);
   }, [task, fixEndPosition, outOfParentWarnings, getTaskGlobalIndexByRef]);
 
-  const handleClick = useCallback(() => {
-    if (onClick) {
-      onClick(task);
-    }
-  }, [onClick, task]);
+  const handleClick = useCallback(
+    (event: React.MouseEvent<SVGElement>) => {
+      if (onClick) {
+        onClick(task, event);
+      }
+    },
+    [onClick, task]
+  );
 
   const handleDoubleClick = useCallback(() => {
     if (onDoubleClick) {

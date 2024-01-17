@@ -1,0 +1,15 @@
+import { Meta, Story } from "@storybook/addon-docs";
+
+import { Gantt } from "../src";
+
+import { CustomPalette } from "./CustomPalette";
+
+<Meta title="CustomPalette" component={Gantt} />
+
+export const Template = props => {
+  return <CustomPalette {...props} />;
+};
+
+# CustomPalette example
+
+<Story name="CustomPalette">{Template.bind({})}</Story>

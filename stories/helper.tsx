@@ -70,7 +70,13 @@ export function initTasks() {
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 10, 0, 0),
+      end: new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        10,
+        0,
+        0
+      ),
       name: "Developing",
       id: "developing",
       progress: 50,
@@ -81,7 +87,7 @@ export function initTasks() {
           ownTarget: "startOfTask",
         },
       ],
-      type: "task",
+      type: "project",
       parent: "ProjectSample",
     },
     {
@@ -147,7 +153,7 @@ export function initTasks() {
     },
   ];
 
-  return tasks.map((task) => ({
+  return tasks.map(task => ({
     ...task,
     end: endOfDay(task.end),
     start: startOfDay(task.start),
@@ -161,17 +167,19 @@ export const getTaskFields = (initialValues: {
 }) => {
   const name = prompt("Name", initialValues.name);
 
-  const startDateStr = prompt(
-    "Start date",
-    initialValues.start ? format(initialValues.start, dateFormat) : "",
-  ) || "";
+  const startDateStr =
+    prompt(
+      "Start date",
+      initialValues.start ? format(initialValues.start, dateFormat) : ""
+    ) || "";
 
   const startDate = startOfMinute(parse(startDateStr, dateFormat, new Date()));
 
-  const endDateStr = prompt(
-    "End date",
-    initialValues.end ? format(initialValues.end, dateFormat) : "",
-  ) || "";
+  const endDateStr =
+    prompt(
+      "End date",
+      initialValues.end ? format(initialValues.end, dateFormat) : ""
+    ) || "";
 
   const endDate = startOfMinute(parse(endDateStr, dateFormat, new Date()));
 
@@ -188,26 +196,27 @@ export const onAddTask = (parentTask: Task) => {
     end: parentTask.end,
   });
 
-  const nextTask: TaskOrEmpty = (taskFields.start && taskFields.end)
-    ? {
-      type: "task",
-      start: taskFields.start,
-      end: taskFields.end,
-      comparisonLevel: parentTask.comparisonLevel,
-      id: String(Date.now()),
-      name: taskFields.name || "",
-      progress: 0,
-      parent: parentTask.id,
-      styles: parentTask.styles,
-    }
-    : {
-      type: "empty",
-      comparisonLevel: parentTask.comparisonLevel,
-      id: String(Date.now()),
-      name: taskFields.name || "",
-      parent: parentTask.id,
-      styles: parentTask.styles,
-    };
+  const nextTask: TaskOrEmpty =
+    taskFields.start && taskFields.end
+      ? {
+          type: "task",
+          start: taskFields.start,
+          end: taskFields.end,
+          comparisonLevel: parentTask.comparisonLevel,
+          id: String(Date.now()),
+          name: taskFields.name || "",
+          progress: 0,
+          parent: parentTask.id,
+          styles: parentTask.styles,
+        }
+      : {
+          type: "empty",
+          comparisonLevel: parentTask.comparisonLevel,
+          id: String(Date.now()),
+          name: taskFields.name || "",
+          parent: parentTask.id,
+          styles: parentTask.styles,
+        };
 
   return Promise.resolve(nextTask);
 };
@@ -219,40 +228,37 @@ export const onEditTask = (task: TaskOrEmpty) => {
     end: task.type === "empty" ? null : task.end,
   });
 
-  const nextTask: TaskOrEmpty = (task.type === "task" || task.type === "empty")
-    ? (taskFields.start && taskFields.end)
-      ? {
-        type: "task",
-        start: taskFields.start,
-        end: taskFields.end,
-        comparisonLevel: task.comparisonLevel,
-        id: task.id,
-        name: taskFields.name || task.name,
-        progress: task.type === "empty"
-          ? 0
-          : task.progress,
-        dependencies: task.type === "empty"
-          ? undefined
-          : task.dependencies,
-        parent: task.parent,
-        styles: task.styles,
-        isDisabled: task.isDisabled,
-      }
+  const nextTask: TaskOrEmpty =
+    task.type === "task" || task.type === "empty"
+      ? taskFields.start && taskFields.end
+        ? {
+            type: "task",
+            start: taskFields.start,
+            end: taskFields.end,
+            comparisonLevel: task.comparisonLevel,
+            id: task.id,
+            name: taskFields.name || task.name,
+            progress: task.type === "empty" ? 0 : task.progress,
+            dependencies: task.type === "empty" ? undefined : task.dependencies,
+            parent: task.parent,
+            styles: task.styles,
+            isDisabled: task.isDisabled,
+          }
+        : {
+            type: "empty",
+            comparisonLevel: task.comparisonLevel,
+            id: task.id,
+            name: taskFields.name || task.name,
+            parent: task.parent,
+            styles: task.styles,
+            isDisabled: task.isDisabled,
+          }
       : {
-        type: "empty",
-        comparisonLevel: task.comparisonLevel,
-        id: task.id,
-        name: taskFields.name || task.name,
-        parent: task.parent,
-        styles: task.styles,
-        isDisabled: task.isDisabled,
-      }
-    : {
-      ...task,
-      name: taskFields.name || task.name,
-      start: taskFields.start || task.start,
-      end: taskFields.end || task.end,
-    };
+          ...task,
+          name: taskFields.name || task.name,
+          start: taskFields.start || task.start,
+          end: taskFields.end || task.end,
+        };
 
   return Promise.resolve(nextTask);
 };

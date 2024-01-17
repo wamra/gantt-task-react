@@ -8,7 +8,7 @@ import React, {
 
 import useLatest from "use-latest";
 
-import enDateLocale from 'date-fns/locale/en-US';
+import enDateLocale from "date-fns/locale/en-US";
 
 import {
   ChangeAction,
@@ -56,7 +56,7 @@ import { getMapTaskToNestedIndex } from "../../helpers/get-map-task-to-nested-in
 import { getInitialClosedTasks } from "../../helpers/get-initial-closed-tasks";
 import { collectVisibleTasks } from "../../helpers/collect-visible-tasks";
 import { getTaskToHasDependencyWarningMap } from "../../helpers/get-task-to-has-dependency-warning-map";
- 
+
 import { TitleColumn } from "../task-list/columns/title-column";
 import { DateStartColumn } from "../task-list/columns/date-start-column";
 import { DateEndColumn } from "../task-list/columns/date-end-column";
@@ -180,6 +180,7 @@ export const Gantt: React.FC<GanttProps> = ({
   TaskListHeader = TaskListHeaderDefault,
   TaskListTable = TaskListTableDefault,
   TooltipContent = StandardTooltipContent,
+  ContextualPalette,
   canMoveTasks = true,
   canResizeColumns = true,
   checkIsHoliday: checkIsHolidayProp = defaultCheckIsHoliday,
@@ -236,11 +237,8 @@ export const Gantt: React.FC<GanttProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
 
-  const {
-    contextMenu,
-    handleCloseContextMenu,
-    handleOpenContextMenu,
-  } = useContextMenu(wrapperRef);
+  const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
+    useContextMenu(wrapperRef);
 
   const [
     horizontalContainerRef,
@@ -266,15 +264,17 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const roundEndDate = useCallback(
     (date: Date) => roundEndDateProp(date, viewMode),
-    [roundEndDateProp, viewMode],
+    [roundEndDateProp, viewMode]
   );
 
   const roundStartDate = useCallback(
     (date: Date) => roundStartDateProp(date, viewMode),
-    [roundStartDateProp, viewMode],
+    [roundStartDateProp, viewMode]
   );
 
-  const [closedTasks, setClosedTasks] = useState(() => getInitialClosedTasks(tasks));
+  const [closedTasks, setClosedTasks] = useState(() =>
+    getInitialClosedTasks(tasks)
+  );
 
   const tasksRef = useLatest(tasks);
 
@@ -284,165 +284,148 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const sortedTasks = useMemo<readonly TaskOrEmpty[]>(
     () => [...tasks].sort(sortTasks),
-    [tasks],
+    [tasks]
   );
 
   const [childTasksMap, rootTasksMap] = useMemo(
     () => getChildsAndRoots(sortedTasks, null),
-    [sortedTasks],
+    [sortedTasks]
   );
 
   const minAndMaxChildsMap = useMemo(
     () => getMinAndMaxChildsMap(rootTasksMap, childTasksMap),
-    [rootTasksMap, childTasksMap],
+    [rootTasksMap, childTasksMap]
   );
 
   const childTasksMapRef = useLatest(childTasksMap);
 
   const [visibleTasks, visibleTasksMirror] = useMemo(
-    () => collectVisibleTasks(
-      childTasksMap,
-      rootTasksMap,
-      closedTasks,
-    ),
-    [
-      childTasksMap,
-      rootTasksMap,
-      closedTasks,
-    ],
+    () => collectVisibleTasks(childTasksMap, rootTasksMap, closedTasks),
+    [childTasksMap, rootTasksMap, closedTasks]
   );
 
-  const tasksMap = useMemo(
-    () => getTasksMap(tasks),
-    [tasks],
-  );
+  const tasksMap = useMemo(() => getTasksMap(tasks), [tasks]);
 
   const tasksMapRef = useLatest(tasksMap);
 
-  const checkTaskIdExists = useCallback<CheckTaskIdExistsAtLevel>((
-    newId,
-    comparisonLevel = 1,
-  ) => {
-    const tasksAtLevelMap = tasksMapRef.current.get(comparisonLevel);
+  const checkTaskIdExists = useCallback<CheckTaskIdExistsAtLevel>(
+    (newId, comparisonLevel = 1) => {
+      const tasksAtLevelMap = tasksMapRef.current.get(comparisonLevel);
 
-    if (!tasksAtLevelMap) {
-      return false;
-    }
+      if (!tasksAtLevelMap) {
+        return false;
+      }
 
-    return tasksAtLevelMap.has(newId);
-  }, [tasksMapRef]);
+      return tasksAtLevelMap.has(newId);
+    },
+    [tasksMapRef]
+  );
 
-  const makeCopies = useCallback((tasksForCopy: readonly TaskOrEmpty[]) => copyTasks(
-    tasksForCopy,
-    getCopiedTaskId,
-    checkTaskIdExists,
-  ), [checkTaskIdExists, getCopiedTaskId]);
+  const makeCopies = useCallback(
+    (tasksForCopy: readonly TaskOrEmpty[]) =>
+      copyTasks(tasksForCopy, getCopiedTaskId, checkTaskIdExists),
+    [checkTaskIdExists, getCopiedTaskId]
+  );
 
   const mapTaskToGlobalIndex = useMemo(
     () => getMapTaskToGlobalIndex(tasks),
-    [tasks],
+    [tasks]
   );
 
   const mapTaskToGlobalIndexRef = useLatest(mapTaskToGlobalIndex);
 
-  const getTaskGlobalIndexByRef = useCallback((task: Task) => {
-    const {
-      id,
-      comparisonLevel = 1,
-    } = task;
+  const getTaskGlobalIndexByRef = useCallback(
+    (task: Task) => {
+      const { id, comparisonLevel = 1 } = task;
 
-    const indexesByLevel = mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesByLevel =
+        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
 
-    if (!indexesByLevel) {
-      return -1;
-    }
-
-    const res = indexesByLevel.get(id);
-
-    if (typeof res === 'number') {
-      return res;
-    }
-
-    return -1;
-  }, [mapTaskToGlobalIndexRef]);
-
-  const mapTaskToNestedIndex = useMemo(
-    () => getMapTaskToNestedIndex(
-      childTasksMap,
-      rootTasksMap,
-    ),
-    [
-      childTasksMap,
-      rootTasksMap,
-    ],
-  );
-
-  const childOutOfParentWarnings = useMemo(
-    () => {
-      if (!isShowChildOutOfParentWarnings) {
-        return null;
+      if (!indexesByLevel) {
+        return -1;
       }
 
-      return getChildOutOfParentWarnings(
-        tasks,
-        childTasksMap,
-      );
+      const res = indexesByLevel.get(id);
+
+      if (typeof res === "number") {
+        return res;
+      }
+
+      return -1;
     },
-    [tasks, childTasksMap, isShowChildOutOfParentWarnings],
+    [mapTaskToGlobalIndexRef]
   );
 
-  const distances = useMemo<Distances>(() => ({
-    ...defaultDistances,
-    ...distancesProp,
-  }), [distancesProp]);
+  const mapTaskToNestedIndex = useMemo(
+    () => getMapTaskToNestedIndex(childTasksMap, rootTasksMap),
+    [childTasksMap, rootTasksMap]
+  );
+
+  const childOutOfParentWarnings = useMemo(() => {
+    if (!isShowChildOutOfParentWarnings) {
+      return null;
+    }
+
+    return getChildOutOfParentWarnings(tasks, childTasksMap);
+  }, [tasks, childTasksMap, isShowChildOutOfParentWarnings]);
+
+  const distances = useMemo<Distances>(
+    () => ({
+      ...defaultDistances,
+      ...distancesProp,
+    }),
+    [distancesProp]
+  );
 
   const fullRowHeight = useMemo(
     () => distances.rowHeight * comparisonLevels,
-    [distances, comparisonLevels],
+    [distances, comparisonLevels]
   );
 
   const renderedRowIndexes = useOptimizedList(
     horizontalContainerRef,
-    'scrollTop',
-    distances.rowHeight,
+    "scrollTop",
+    distances.rowHeight
   );
 
-  const colorStyles = useMemo<ColorStyles>(() => ({
-    ...defaultColors,
-    ...colors,
-  }), [
-    colors,
-  ]);
+  const colorStyles = useMemo<ColorStyles>(
+    () => ({
+      ...defaultColors,
+      ...colors,
+    }),
+    [colors]
+  );
 
   const taskHeight = useMemo(
     () => (distances.rowHeight * distances.barFill) / 100,
-    [distances],
+    [distances]
   );
 
   const taskYOffset = useMemo(
     () => (distances.rowHeight - taskHeight) / 2,
-    [distances, taskHeight],
+    [distances, taskHeight]
   );
 
   const taskHalfHeight = useMemo(
     () => Math.round(taskHeight / 2),
-    [taskHeight],
+    [taskHeight]
   );
 
   const maxLevelLength = useMemo(() => {
     let maxLength = 0;
     const countByLevel: Record<string, number> = {};
 
-    visibleTasks.forEach(({
-      comparisonLevel = 1,
-    }) => {
+    visibleTasks.forEach(({ comparisonLevel = 1 }) => {
       if (!countByLevel[comparisonLevel]) {
         countByLevel[comparisonLevel] = 0;
       }
-  
+
       ++countByLevel[comparisonLevel];
 
-      if (comparisonLevel <= comparisonLevels && maxLength < countByLevel[comparisonLevel]) {
+      if (
+        comparisonLevel <= comparisonLevels &&
+        maxLength < countByLevel[comparisonLevel]
+      ) {
         maxLength = countByLevel[comparisonLevel];
       }
     });
@@ -452,21 +435,22 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const ganttFullHeight = useMemo(
     () => maxLevelLength * fullRowHeight,
-    [maxLevelLength, fullRowHeight],
+    [maxLevelLength, fullRowHeight]
   );
 
   const ganttHeight = useMemo(
-    () => distances.ganttHeight ? Math.min(distances.ganttHeight, ganttFullHeight) : ganttFullHeight,
-    [distances, ganttFullHeight],
+    () =>
+      distances.ganttHeight
+        ? Math.min(distances.ganttHeight, ganttFullHeight)
+        : ganttFullHeight,
+    [distances, ganttFullHeight]
   );
 
-  const [taskToRowIndexMap, rowIndexToTaskMap, mapGlobalRowIndexToTask] = useMemo(
-    () => getMapTaskToRowIndex(
-      visibleTasks,
-      comparisonLevels,
-    ),
-    [visibleTasks, comparisonLevels],
-  );
+  const [taskToRowIndexMap, rowIndexToTaskMap, mapGlobalRowIndexToTask] =
+    useMemo(
+      () => getMapTaskToRowIndex(visibleTasks, comparisonLevels),
+      [visibleTasks, comparisonLevels]
+    );
 
   const {
     checkHasCopyTasks,
@@ -480,48 +464,38 @@ export const Gantt: React.FC<GanttProps> = ({
     resetSelectedTasks,
     selectTaskOnMouseDown,
     selectedIdsMirror,
-  } = useSelection(
-    taskToRowIndexMap,
-    rowIndexToTaskMap,
-    checkTaskIdExists,
-  );
+  } = useSelection(taskToRowIndexMap, rowIndexToTaskMap, checkTaskIdExists);
 
-  const [startDate, minTaskDate, datesLength] = useMemo(() =>  ganttDateRange(
-    visibleTasks,
-    viewMode,
-    preStepsCount,
-  ), [visibleTasks, viewMode, preStepsCount]);
+  const [startDate, minTaskDate, datesLength] = useMemo(
+    () => ganttDateRange(visibleTasks, viewMode, preStepsCount),
+    [visibleTasks, viewMode, preStepsCount]
+  );
 
   const getDate = useCallback(
     (index: number) => getDateByOffset(startDate, index, viewMode),
-    [startDate, viewMode],
+    [startDate, viewMode]
   );
 
-  const dateFormats = useMemo<DateFormats>(() => ({
-    ...defaultDateFormats,
-    ...dateFormatsProp,
-  }), [
-    dateFormatsProp,
-  ]);
+  const dateFormats = useMemo<DateFormats>(
+    () => ({
+      ...defaultDateFormats,
+      ...dateFormatsProp,
+    }),
+    [dateFormatsProp]
+  );
 
-  const dateSetup = useMemo<DateSetup>(() => ({
-    dateFormats,
-    dateLocale,
-    isUnknownDates,
-    preStepsCount,
-    viewMode,
-  }), [
-    dateFormats,
-    dateLocale,
-    isUnknownDates,
-    preStepsCount,
-    viewMode,
-  ]);
+  const dateSetup = useMemo<DateSetup>(
+    () => ({
+      dateFormats,
+      dateLocale,
+      isUnknownDates,
+      preStepsCount,
+      viewMode,
+    }),
+    [dateFormats, dateLocale, isUnknownDates, preStepsCount, viewMode]
+  );
 
-  const {
-    checkIsHoliday,
-    adjustTaskToWorkingDates,
-  } = useHolidays({
+  const { checkIsHoliday, adjustTaskToWorkingDates } = useHolidays({
     checkIsHolidayProp,
     dateSetup,
     isAdjustToWorkingDates,
@@ -530,30 +504,33 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const svgWidth = useMemo(
     () => datesLength * distances.columnWidth,
-    [datesLength, distances],
+    [datesLength, distances]
   );
 
   const renderedColumnIndexes = useOptimizedList(
     verticalGanttContainerRef,
-    'scrollLeft',
-    distances.columnWidth,
+    "scrollLeft",
+    distances.columnWidth
   );
 
-  const svgClientWidthRef = useLatest(renderedColumnIndexes && renderedColumnIndexes[4]);
+  const svgClientWidthRef = useLatest(
+    renderedColumnIndexes && renderedColumnIndexes[4]
+  );
 
   const countTaskCoordinates = useCallback(
-    (task: Task) => defaultCountTaskCoordinates(
-      task,
-      taskToRowIndexMap,
-      startDate,
-      viewMode,
-      rtl,
-      fullRowHeight,
-      taskHeight,
-      taskYOffset,
-      distances,
-      svgWidth,
-    ),
+    (task: Task) =>
+      defaultCountTaskCoordinates(
+        task,
+        taskToRowIndexMap,
+        startDate,
+        viewMode,
+        rtl,
+        fullRowHeight,
+        taskHeight,
+        taskYOffset,
+        distances,
+        svgWidth
+      ),
     [
       taskToRowIndexMap,
       startDate,
@@ -564,58 +541,64 @@ export const Gantt: React.FC<GanttProps> = ({
       taskYOffset,
       distances,
       svgWidth,
-    ],
+    ]
   );
 
-  const mapTaskToCoordinates = useMemo(() => getMapTaskToCoordinates(
-    tasks,
-    visibleTasksMirror,
-    taskToRowIndexMap,
-    startDate,
-    viewMode,
-    rtl,
-    fullRowHeight,
-    taskHeight,
-    taskYOffset,
-    distances,
-    svgWidth,
-  ), [
-    distances,
-    fullRowHeight,
-    taskToRowIndexMap,
-    rtl,
-    startDate,
-    svgWidth,
-    taskHeight,
-    tasks,
-    taskYOffset,
-    viewMode,
-    visibleTasksMirror,
-  ]);
+  const mapTaskToCoordinates = useMemo(
+    () =>
+      getMapTaskToCoordinates(
+        tasks,
+        visibleTasksMirror,
+        taskToRowIndexMap,
+        startDate,
+        viewMode,
+        rtl,
+        fullRowHeight,
+        taskHeight,
+        taskYOffset,
+        distances,
+        svgWidth
+      ),
+    [
+      distances,
+      fullRowHeight,
+      taskToRowIndexMap,
+      rtl,
+      startDate,
+      svgWidth,
+      taskHeight,
+      tasks,
+      taskYOffset,
+      viewMode,
+      visibleTasksMirror,
+    ]
+  );
 
   const mapTaskToCoordinatesRef = useLatest(mapTaskToCoordinates);
 
-  const scrollToTask = useCallback((task: Task) => {
-    const {
-      x1,
-    } = getTaskCoordinatesDefault(task, mapTaskToCoordinatesRef.current);
+  const scrollToTask = useCallback(
+    (task: Task) => {
+      const { x1 } = getTaskCoordinatesDefault(
+        task,
+        mapTaskToCoordinatesRef.current
+      );
 
-    setScrollXProgrammatically(x1 - 100);
-  }, [
-    mapTaskToCoordinatesRef,
-    setScrollXProgrammatically,
-  ]);
+      setScrollXProgrammatically(x1 - 100);
+    },
+    [mapTaskToCoordinatesRef, setScrollXProgrammatically]
+  );
 
   const [dependencyMap, dependentMap, dependencyMarginsMap] = useMemo(
-    () => getDependencyMapAndWarnings(
-      tasks,
-      visibleTasksMirror,
-      tasksMap,
-      mapTaskToCoordinates,
-      fullRowHeight,
-      isShowDependencyWarnings,
-      isShowCriticalPath,
-    ),
+    () =>
+      getDependencyMapAndWarnings(
+        tasks,
+        visibleTasksMirror,
+        tasksMap,
+        mapTaskToCoordinates,
+        fullRowHeight,
+        isShowDependencyWarnings,
+        isShowCriticalPath
+      ),
     [
       tasks,
       visibleTasksMirror,
@@ -624,7 +607,7 @@ export const Gantt: React.FC<GanttProps> = ({
       fullRowHeight,
       isShowDependencyWarnings,
       isShowCriticalPath,
-    ],
+    ]
   );
 
   const dependentMapRef = useLatest(dependentMap);
@@ -636,7 +619,7 @@ export const Gantt: React.FC<GanttProps> = ({
         childTasksMap,
         tasksMap,
         dependencyMarginsMap,
-        dependencyMap,
+        dependencyMap
       );
     }
 
@@ -650,33 +633,24 @@ export const Gantt: React.FC<GanttProps> = ({
     dependencyMap,
   ]);
 
-  const taskToHasDependencyWarningMap = useMemo(
-    () => {
-      if (!isShowDependencyWarnings) {
-        return null;
-      }
+  const taskToHasDependencyWarningMap = useMemo(() => {
+    if (!isShowDependencyWarnings) {
+      return null;
+    }
 
-      return getTaskToHasDependencyWarningMap(dependencyMarginsMap);
-    },
-    [dependencyMarginsMap, isShowDependencyWarnings],
-  );
+    return getTaskToHasDependencyWarningMap(dependencyMarginsMap);
+  }, [dependencyMarginsMap, isShowDependencyWarnings]);
 
   useEffect(() => {
     if (rtl) {
       setScrollXProgrammatically(datesLength * distances.columnWidth);
     }
-  }, [
-    datesLength,
-    distances,
-    rtl,
-    setScrollXProgrammatically,
-    scrollX,
-  ]);
+  }, [datesLength, distances, rtl, setScrollXProgrammatically, scrollX]);
 
   useEffect(() => {
     if (
-      ((viewDate && !currentViewDate) ||
-        (viewDate && currentViewDate?.valueOf() !== viewDate.valueOf()))
+      (viewDate && !currentViewDate) ||
+      (viewDate && currentViewDate?.valueOf() !== viewDate.valueOf())
     ) {
       const index = getDatesDiff(viewDate, startDate, viewMode);
 
@@ -744,10 +718,7 @@ export const Gantt: React.FC<GanttProps> = ({
    * Handles arrow keys events and transform it to new scroll
    */
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const {
-      columnWidth,
-      rowHeight,
-    } = distances;
+    const { columnWidth, rowHeight } = distances;
 
     event.preventDefault();
     let newScrollY = scrollY;
@@ -791,7 +762,7 @@ export const Gantt: React.FC<GanttProps> = ({
   };
 
   const handleExpanderClick = useCallback((task: Task) => {
-    setClosedTasks((prevClosedTasks) => {
+    setClosedTasks(prevClosedTasks => {
       const nextClosedTasks = {
         ...prevClosedTasks,
       };
@@ -865,78 +836,81 @@ export const Gantt: React.FC<GanttProps> = ({
     ];
   });
 
-  const columns = (columnsProp && onResizeColumn) ? columnsProp : columnsState;
+  const columns = columnsProp && onResizeColumn ? columnsProp : columnsState;
 
   const taskListWidth = useMemo(
     () => columns.reduce((res, { width }) => res + width, 0),
-    [columns],
+    [columns]
   );
 
-  const onResizeColumnWithDelta = useCallback((columnIndex: number, delta: number) => {
-    const {
-      width,
-    } = columns[columnIndex];
+  const onResizeColumnWithDelta = useCallback(
+    (columnIndex: number, delta: number) => {
+      const { width } = columns[columnIndex];
 
-    const nextWidth = Math.max(10, width + delta);
+      const nextWidth = Math.max(10, width + delta);
 
-    const nextColumns = [...columns];
-    nextColumns[columnIndex] = {
-      ...columns[columnIndex],
-      width: nextWidth,
-    };
+      const nextColumns = [...columns];
+      nextColumns[columnIndex] = {
+        ...columns[columnIndex],
+        width: nextWidth,
+      };
 
-    setColumns(nextColumns);
+      setColumns(nextColumns);
 
-    if (onResizeColumn) {
-      onResizeColumn(nextColumns, columnIndex, Math.max(10, width + delta));
-    }
-  }, [columns, onResizeColumn]);
+      if (onResizeColumn) {
+        onResizeColumn(nextColumns, columnIndex, Math.max(10, width + delta));
+      }
+    },
+    [columns, onResizeColumn]
+  );
 
-  const [columnResizeEvent, onColumnResizeStart] = useColumnResize(onResizeColumnWithDelta);
+  const [columnResizeEvent, onColumnResizeStart] = useColumnResize(
+    onResizeColumnWithDelta
+  );
 
-  const [tableWidthState, setTableWidth] = useState(() => distances.tableWidth || taskListWidth);
+  const [tableWidthState, setTableWidth] = useState(
+    () => distances.tableWidth || taskListWidth
+  );
 
-  const onResizeTableWithDelta = useCallback((delta: number) => {
-    setTableWidth((prevValue) => Math.min(
-      Math.max(
-        prevValue + delta,
-        50,
-      ),
-      taskListWidth,
-    ));
-  }, [taskListWidth]);
+  const onResizeTableWithDelta = useCallback(
+    (delta: number) => {
+      setTableWidth(prevValue =>
+        Math.min(Math.max(prevValue + delta, 50), taskListWidth)
+      );
+    },
+    [taskListWidth]
+  );
 
-  const [tableResizeEvent, onTableResizeStart] = useTableResize(onResizeTableWithDelta);
+  const [tableResizeEvent, onTableResizeStart] = useTableResize(
+    onResizeTableWithDelta
+  );
 
   const tableWidth = useMemo(() => {
     if (tableResizeEvent) {
       return Math.min(
         Math.max(
           tableWidthState + tableResizeEvent.endX - tableResizeEvent.startX,
-          50,
+          50
         ),
-        taskListWidth,
+        taskListWidth
       );
     }
 
     return tableWidthState;
-  }, [
-    tableResizeEvent,
-    tableWidthState,
-    taskListWidth,
-  ]);
+  }, [tableResizeEvent, tableWidthState, taskListWidth]);
 
   const getMetadata = useCallback(
-    (changeAction: ChangeAction) => getChangeTaskMetadata({
-      adjustTaskToWorkingDates,
-      changeAction,
-      childTasksMap: childTasksMapRef.current,
-      dependentMap: dependentMapRef.current,
-      mapTaskToGlobalIndex: mapTaskToGlobalIndexRef.current,
-      isRecountParentsOnChange,
-      isMoveChildsWithParent,
-      tasksMap: tasksMapRef.current,
-    }),
+    (changeAction: ChangeAction) =>
+      getChangeTaskMetadata({
+        adjustTaskToWorkingDates,
+        changeAction,
+        childTasksMap: childTasksMapRef.current,
+        dependentMap: dependentMapRef.current,
+        mapTaskToGlobalIndex: mapTaskToGlobalIndexRef.current,
+        isRecountParentsOnChange,
+        isMoveChildsWithParent,
+        tasksMap: tasksMapRef.current,
+      }),
     [
       adjustTaskToWorkingDates,
       childTasksMapRef,
@@ -945,67 +919,66 @@ export const Gantt: React.FC<GanttProps> = ({
       isRecountParentsOnChange,
       mapTaskToGlobalIndexRef,
       tasksMapRef,
-    ],
+    ]
   );
 
   /**
    * Result is not readonly for optimization
    */
-  const prepareSuggestions = useCallback((
-    suggestions: readonly OnDateChangeSuggestionType[],
-  ): TaskOrEmpty[] => {
-    const prevTasks = [...tasksRef.current];
+  const prepareSuggestions = useCallback(
+    (suggestions: readonly OnDateChangeSuggestionType[]): TaskOrEmpty[] => {
+      const prevTasks = [...tasksRef.current];
 
-    const nextTasks = prevTasks;
+      const nextTasks = prevTasks;
 
-    suggestions.forEach(([start, end, task, index]) => {
-      nextTasks[index] = {
-        ...task,
-        start,
-        end,
-      };
-    });
+      suggestions.forEach(([start, end, task, index]) => {
+        nextTasks[index] = {
+          ...task,
+          start,
+          end,
+        };
+      });
 
-    return nextTasks;
-  }, [
-    tasksRef,
-  ]);
+      return nextTasks;
+    },
+    [tasksRef]
+  );
 
-  const handleEditTask = useCallback((task: TaskOrEmpty) => {
-    if (!onEditTaskClick && (!onEditTask || !onChangeTasks)) {
-      return;
-    }
+  const handleEditTask = useCallback(
+    (task: TaskOrEmpty) => {
+      if (!onEditTaskClick && (!onEditTask || !onChangeTasks)) {
+        return;
+      }
 
-    const {
-      id,
-      comparisonLevel = 1,
-    } = task;
+      const { id, comparisonLevel = 1 } = task;
 
-    const indexesOnLevel = mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesOnLevel =
+        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
 
-    if (!indexesOnLevel) {
-      throw new Error(`Indexes are not found for level ${comparisonLevel}`);
-    }
+      if (!indexesOnLevel) {
+        throw new Error(`Indexes are not found for level ${comparisonLevel}`);
+      }
 
-    const taskIndex = indexesOnLevel.get(id);
+      const taskIndex = indexesOnLevel.get(id);
 
-    if (typeof taskIndex !== "number") {
-      throw new Error(`Index is not found for task ${id}`);
-    }
+      if (typeof taskIndex !== "number") {
+        throw new Error(`Index is not found for task ${id}`);
+      }
 
-    if (onEditTaskClick) {
-      onEditTaskClick(task, taskIndex, (changedTask: TaskOrEmpty) => getMetadata({
-        type: "change",
-        task: changedTask,
-      }));
-    } else if (onEditTask && onChangeTasks) {
-      onEditTask(task)
-        .then((nextTask) => {
+      if (onEditTaskClick) {
+        onEditTaskClick(task, taskIndex, (changedTask: TaskOrEmpty) =>
+          getMetadata({
+            type: "change",
+            task: changedTask,
+          })
+        );
+      } else if (onEditTask && onChangeTasks) {
+        onEditTask(task).then(nextTask => {
           if (!nextTask) {
             return;
           }
 
-          const [,,, suggestions] = getMetadata({
+          const [, , , suggestions] = getMetadata({
             type: "change",
             task: nextTask,
           });
@@ -1018,53 +991,69 @@ export const Gantt: React.FC<GanttProps> = ({
             type: "edit_task",
           });
         });
-    }
-  }, [
-    onChangeTasks,
-    onEditTask,
-    onEditTaskClick,
-    getMetadata,
-    mapTaskToGlobalIndexRef,
-    prepareSuggestions,
-  ]);
+      }
+    },
+    [
+      onChangeTasks,
+      onEditTask,
+      onEditTaskClick,
+      getMetadata,
+      mapTaskToGlobalIndexRef,
+      prepareSuggestions,
+    ]
+  );
 
-  const handleAddChilds = useCallback((
-    parent: Task,
-    descendants: readonly TaskOrEmpty[],
-  ) => {
-    if (!onChangeTasks) {
-      return;
-    }
+  const handleAddChilds = useCallback(
+    (parent: Task, descendants: readonly TaskOrEmpty[]) => {
+      if (!onChangeTasks) {
+        return;
+      }
 
-    const addedIdsMap = new Map<number, Set<string>>();
+      const addedIdsMap = new Map<number, Set<string>>();
 
-    descendants.forEach((descendant) => {
-      const {
-        id: descendantId,
-        comparisonLevel = 1,
-      } = descendant;
+      descendants.forEach(descendant => {
+        const { id: descendantId, comparisonLevel = 1 } = descendant;
 
-      const addedIdsAtLevelSet = addedIdsMap.get(comparisonLevel) || new Set<string>();
+        const addedIdsAtLevelSet =
+          addedIdsMap.get(comparisonLevel) || new Set<string>();
 
-      addedIdsAtLevelSet.add(descendantId);
+        addedIdsAtLevelSet.add(descendantId);
 
-      addedIdsMap.set(comparisonLevel, addedIdsAtLevelSet);
-    });
+        addedIdsMap.set(comparisonLevel, addedIdsAtLevelSet);
+      });
 
-    const [
-      addedChildsByLevelMap,
-      addedRootsByLevelMap,
-    ] = getChildsAndRoots(
-      descendants,
-      (descendant) => {
-        const {
-          comparisonLevel = 1,
-          parent,
-        } = descendant;
+      const [addedChildsByLevelMap, addedRootsByLevelMap] = getChildsAndRoots(
+        descendants,
+        descendant => {
+          const { comparisonLevel = 1, parent } = descendant;
 
-        if (!parent) {
-          return true;
+          if (!parent) {
+            return true;
+          }
+
+          const addedIdsAtLevelSet = addedIdsMap.get(comparisonLevel);
+
+          if (!addedIdsAtLevelSet) {
+            throw new Error(`Ids are not found at level ${comparisonLevel}`);
+          }
+
+          return !addedIdsAtLevelSet.has(parent);
         }
+      );
+
+      const [, [{ index: taskIndex }], , suggestions] = getMetadata({
+        type: "add-childs",
+        parent,
+        addedIdsMap,
+        addedChildsByLevelMap,
+        addedRootsByLevelMap,
+        descendants,
+      });
+
+      const withSuggestions = prepareSuggestions(suggestions);
+
+      descendants.forEach((descendant, index) => {
+        const { parent: parentId, comparisonLevel = 1 } = descendant;
 
         const addedIdsAtLevelSet = addedIdsMap.get(comparisonLevel);
 
@@ -1072,95 +1061,62 @@ export const Gantt: React.FC<GanttProps> = ({
           throw new Error(`Ids are not found at level ${comparisonLevel}`);
         }
 
-        return !addedIdsAtLevelSet.has(parent);
-      },
-    );
+        const nextTask =
+          !parentId || !addedIdsAtLevelSet.has(parentId)
+            ? {
+                ...descendant,
+                parent: parent.id,
+              }
+            : descendant;
 
-    const [, [{ index: taskIndex }], , suggestions] = getMetadata({
-      type: "add-childs",
-      parent,
-      addedIdsMap,
-      addedChildsByLevelMap,
-      addedRootsByLevelMap,
-      descendants,
-    });
+        withSuggestions.splice(taskIndex + 1 + index, 0, nextTask);
+      });
 
-    const withSuggestions = prepareSuggestions(suggestions);
+      onChangeTasks(withSuggestions, {
+        type: "add_tasks",
+      });
+    },
+    [onChangeTasks, getMetadata, prepareSuggestions]
+  );
 
-    descendants.forEach((descendant, index) => {
-      const {
-        parent: parentId,
-        comparisonLevel = 1,
-      } = descendant;
-
-      const addedIdsAtLevelSet = addedIdsMap.get(comparisonLevel);
-
-      if (!addedIdsAtLevelSet) {
-        throw new Error(`Ids are not found at level ${comparisonLevel}`);
-      }
-
-      const nextTask = !parentId || !addedIdsAtLevelSet.has(parentId)
-        ? {
-          ...descendant,
-          parent: parent.id,
-        }
-        : descendant;
-
-      withSuggestions.splice(taskIndex + 1 + index, 0, nextTask);
-    });
-
-    onChangeTasks(withSuggestions, {
-      type: "add_tasks",
-    });
-  }, [
-    onChangeTasks,
-    getMetadata,
-    prepareSuggestions,
-  ]);
-
-  const handleAddTask = useCallback((task: Task) => {
-    if (onAddTaskClick) {
-      onAddTaskClick(task, (newTask: TaskOrEmpty) => getMetadata({
-        type: "add-childs",
-        parent: task,
-        descendants: [newTask],
-        addedIdsMap: new Map([
-          [
-            newTask.comparisonLevel || 1,
-            new Set([newTask.id]),
-          ],
-        ]),
-        addedChildsByLevelMap: new Map([
-          [
-            newTask.comparisonLevel || 1,
-            new Map(),
-          ],
-        ]),
-        addedRootsByLevelMap: new Map([
-          [
-            newTask.comparisonLevel || 1,
-            [newTask],
-          ],
-        ])
-      }));
-    } else if (onAddTask && onChangeTasks) {
-      onAddTask(task)
-        .then((nextTask) => {
+  const handleAddTask = useCallback(
+    (task: Task) => {
+      if (onAddTaskClick) {
+        onAddTaskClick(task, (newTask: TaskOrEmpty) =>
+          getMetadata({
+            type: "add-childs",
+            parent: task,
+            descendants: [newTask],
+            addedIdsMap: new Map([
+              [newTask.comparisonLevel || 1, new Set([newTask.id])],
+            ]),
+            addedChildsByLevelMap: new Map([
+              [newTask.comparisonLevel || 1, new Map()],
+            ]),
+            addedRootsByLevelMap: new Map([
+              [newTask.comparisonLevel || 1, [newTask]],
+            ]),
+          })
+        );
+      } else if (onAddTask && onChangeTasks) {
+        onAddTask(task).then(nextTask => {
           if (!nextTask) {
             return;
           }
 
           handleAddChilds(task, [nextTask]);
         });
-    }
-  }, [
-    handleAddChilds,
-    onAddTask,
-    onAddTaskClick,
-    onChangeTasks,
-    getMetadata,
-    prepareSuggestions,
-  ]);
+      }
+    },
+    [
+      handleAddChilds,
+      onAddTask,
+      onAddTaskClick,
+      onChangeTasks,
+      getMetadata,
+      prepareSuggestions,
+    ]
+  );
 
   const xStep = useMemo(() => {
     const secondDate = getDateByOffset(startDate, 1, viewMode);
@@ -1174,102 +1130,84 @@ export const Gantt: React.FC<GanttProps> = ({
     const newXStep = (timeStep * distances.columnWidth) / dateDelta;
 
     return newXStep;
-  }, [
-    distances,
-    startDate,
-    timeStep,
-    viewMode,
-  ]);
+  }, [distances, startDate, timeStep, viewMode]);
 
-  const onDateChange = useCallback((
-    action: BarMoveAction,
-    changedTask: Task,
-    originalTask: Task,
-  ) => {
-    const adjustedTask = adjustTaskToWorkingDates({
-      action,
-      changedTask,
-      originalTask,
-    });
-
-    const changeAction: ChangeAction = action === "move"
-      ? {
-        type: "change_start_and_end",
-        task: adjustedTask,
+  const onDateChange = useCallback(
+    (action: BarMoveAction, changedTask: Task, originalTask: Task) => {
+      const adjustedTask = adjustTaskToWorkingDates({
+        action,
         changedTask,
         originalTask,
+      });
+
+      const changeAction: ChangeAction =
+        action === "move"
+          ? {
+              type: "change_start_and_end",
+              task: adjustedTask,
+              changedTask,
+              originalTask,
+            }
+          : {
+              type: "change",
+              task: adjustedTask,
+            };
+
+      const [dependentTasks, taskIndexes, parents, suggestions] =
+        getMetadata(changeAction);
+
+      const taskIndex = taskIndexes[0].index;
+
+      if (onDateChangeProp) {
+        onDateChangeProp(
+          adjustedTask,
+          dependentTasks,
+          taskIndex,
+          parents,
+          suggestions
+        );
       }
-      : {
+
+      if (onChangeTasks) {
+        const withSuggestions = prepareSuggestions(suggestions);
+        withSuggestions[taskIndex] = adjustedTask;
+        onChangeTasks(withSuggestions, {
+          type: "date_change",
+        });
+      }
+    },
+    [
+      adjustTaskToWorkingDates,
+      getMetadata,
+      prepareSuggestions,
+      onChangeTasks,
+      onDateChangeProp,
+    ]
+  );
+
+  const onProgressChange = useCallback(
+    (task: Task) => {
+      const [dependentTasks, taskIndexes] = getMetadata({
         type: "change",
-        task: adjustedTask,
-      };
-
-    const [
-      dependentTasks,
-      taskIndexes,
-      parents,
-      suggestions,
-    ] = getMetadata(changeAction);
-
-    const taskIndex = taskIndexes[0].index;
-
-    if (onDateChangeProp) {
-      onDateChangeProp(
-        adjustedTask,
-        dependentTasks,
-        taskIndex,
-        parents,
-        suggestions,
-      );
-    }
-
-    if (onChangeTasks) {
-      const withSuggestions = prepareSuggestions(suggestions);
-      withSuggestions[taskIndex] = adjustedTask;
-      onChangeTasks(withSuggestions, {
-        type: "date_change",
-      });
-    }
-  }, [
-    adjustTaskToWorkingDates,
-    getMetadata,
-    prepareSuggestions,
-    onChangeTasks,
-    onDateChangeProp,
-  ]);
-
-  const onProgressChange = useCallback((task: Task) => {
-    const [
-      dependentTasks,
-      taskIndexes,
-    ] = getMetadata({
-      type: "change",
-      task,
-    });
-
-    const taskIndex = taskIndexes[0].index;
-
-    if (onProgressChangeProp) {
-      onProgressChangeProp(
         task,
-        dependentTasks,
-        taskIndex,
-      );
-    }
-
-    if (onChangeTasks) {
-      const nextTasks = [...tasksRef.current];
-      nextTasks[taskIndex] = task;
-      onChangeTasks(nextTasks, {
-        type: "progress_change",
       });
-    }
-  }, [
-    getMetadata,
-    onChangeTasks,
-    onProgressChangeProp,
-    tasksRef,
-  ]);
+
+      const taskIndex = taskIndexes[0].index;
+
+      if (onProgressChangeProp) {
+        onProgressChangeProp(task, dependentTasks, taskIndex);
+      }
+
+      if (onChangeTasks) {
+        const nextTasks = [...tasksRef.current];
+        nextTasks[taskIndex] = task;
+        onChangeTasks(nextTasks, {
+          type: "progress_change",
+        });
+      }
+    },
+    [getMetadata, onChangeTasks, onProgressChangeProp, tasksRef]
+  );
 
   const [changeInProgress, handleTaskDragStart] = useTaskDrag({
     childTasksMap,
@@ -1303,414 +1241,400 @@ export const Gantt: React.FC<GanttProps> = ({
     onChangeTooltipTask,
   } = useTaskTooltip(changeInProgress);
 
-  const handleDeteleTasks = useCallback((tasksForDelete: readonly TaskOrEmpty[]) => {
-    if (!onDelete && !onChangeTasks) {
-      return;
-    }
+  const handleDeteleTasks = useCallback(
+    (tasksForDelete: readonly TaskOrEmpty[]) => {
+      if (!onDelete && !onChangeTasks) {
+        return;
+      }
 
-    onChangeTooltipTask(null, null);
-    
-    const deletedIdsMap = new Map<number, Set<string>>();
+      onChangeTooltipTask(null, null);
 
-    tasksForDelete.forEach((task) => {
-      const {
-        id: taskId,
-        comparisonLevel = 1,
-      } = task;
+      const deletedIdsMap = new Map<number, Set<string>>();
 
-      const deletedIdsAtLevel = deletedIdsMap.get(comparisonLevel) || new Set<string>();
-      deletedIdsAtLevel.add(taskId);
+      tasksForDelete.forEach(task => {
+        const { id: taskId, comparisonLevel = 1 } = task;
 
-      deletedIdsMap.set(comparisonLevel, deletedIdsAtLevel);
-    });
+        const deletedIdsAtLevel =
+          deletedIdsMap.get(comparisonLevel) || new Set<string>();
+        deletedIdsAtLevel.add(taskId);
 
-    const [
-      dependentTasks,
-      taskIndexes,
-      parents,
-      suggestions,
-    ] = getMetadata({
-      type: "delete",
-      tasks: tasksForDelete,
-      deletedIdsMap,
-    });
-
-    if (onDelete) {
-      onDelete(
-        tasksForDelete,
-        dependentTasks,
-        taskIndexes,
-        parents,
-        suggestions,
-      );
-    }
-
-    if (onChangeTasks) {
-      let withSuggestions = prepareSuggestions(suggestions);
-
-      suggestions.forEach(([start, end, task, index]) => {
-        withSuggestions[index] = {
-          ...task,
-          start,
-          end,
-        };
+        deletedIdsMap.set(comparisonLevel, deletedIdsAtLevel);
       });
 
-      const deletedIndexesSet = new Set(taskIndexes.map(({ index }) => index));
-
-      withSuggestions = withSuggestions.filter((_, index) => !deletedIndexesSet.has(index));
-
-      onChangeTasks(withSuggestions, {
-        type: "delete_task",
-        payload: {
-          tasks: tasksForDelete,
-          taskIndexes: [...deletedIndexesSet],
-        },
+      const [dependentTasks, taskIndexes, parents, suggestions] = getMetadata({
+        type: "delete",
+        tasks: tasksForDelete,
+        deletedIdsMap,
       });
-    }
-  }, [
-    getMetadata,
-    onChangeTasks,
-    onDelete,
-    prepareSuggestions,
-    onChangeTooltipTask,
-  ]);
 
-  const handleMoveTaskAfter = useCallback((target: TaskOrEmpty, taskForMove: TaskOrEmpty) => {
-    if (!onMoveTaskAfter && !onChangeTasks) {
-      return;
-    }
+      if (onDelete) {
+        onDelete(
+          tasksForDelete,
+          dependentTasks,
+          taskIndexes,
+          parents,
+          suggestions
+        );
+      }
 
-    onChangeTooltipTask(null, null);
+      if (onChangeTasks) {
+        let withSuggestions = prepareSuggestions(suggestions);
 
-    const [
-      dependentTasks,
-      taskIndexes,
-      parents,
-      suggestions,
-    ] = getMetadata({
-      type: "move-after",
-      target,
-      taskForMove,
-    });
+        suggestions.forEach(([start, end, task, index]) => {
+          withSuggestions[index] = {
+            ...task,
+            start,
+            end,
+          };
+        });
 
-    const taskIndex = taskIndexes[0].index;
+        const deletedIndexesSet = new Set(
+          taskIndexes.map(({ index }) => index)
+        );
 
-    const {
-      id,
-      comparisonLevel = 1,
-    } = taskForMove;
+        withSuggestions = withSuggestions.filter(
+          (_, index) => !deletedIndexesSet.has(index)
+        );
 
-    const indexesOnLevel = mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+        onChangeTasks(withSuggestions, {
+          type: "delete_task",
+          payload: {
+            tasks: tasksForDelete,
+            taskIndexes: [...deletedIndexesSet],
+          },
+        });
+      }
+    },
+    [
+      getMetadata,
+      onChangeTasks,
+      onDelete,
+      prepareSuggestions,
+      onChangeTooltipTask,
+    ]
+  );
 
-    if (!indexesOnLevel) {
-      throw new Error(`Indexes are not found for level ${comparisonLevel}`);
-    }
+  const handleMoveTaskAfter = useCallback(
+    (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => {
+      if (!onMoveTaskAfter && !onChangeTasks) {
+        return;
+      }
 
-    const taskForMoveIndex = indexesOnLevel.get(id);
+      onChangeTooltipTask(null, null);
 
-    if (typeof taskForMoveIndex !== "number") {
-      throw new Error(`Index is not found for task ${id}`);
-    }
-
-    if (onMoveTaskAfter) {
-      onMoveTaskAfter(
+      const [dependentTasks, taskIndexes, parents, suggestions] = getMetadata({
+        type: "move-after",
         target,
         taskForMove,
-        dependentTasks,
-        taskIndex,
-        taskForMoveIndex,
-        parents,
-        suggestions,
-      );
-    }
-
-    if (onChangeTasks) {
-      const withSuggestions = prepareSuggestions(suggestions);
-
-      const isMovedTaskBefore = taskForMoveIndex < taskIndex;
-
-      withSuggestions.splice(taskForMoveIndex, 1);
-      withSuggestions.splice(isMovedTaskBefore ? taskIndex : (taskIndex + 1), 0, {
-        ...taskForMove,
-        parent: target.parent,
       });
 
-      onChangeTasks(withSuggestions, {
-        type: "move_task_after",
-      });
-    }
-  }, [
-    getMetadata,
-    onChangeTasks,
-    onMoveTaskAfter,
-    mapTaskToGlobalIndexRef,
-    prepareSuggestions,
-    onChangeTooltipTask,
-  ]);
+      const taskIndex = taskIndexes[0].index;
 
-  const handleMoveTasksInside = useCallback((parent: Task, childs: readonly TaskOrEmpty[]) => {
-    if (!onMoveTaskInside && !onChangeTasks) {
-      return;
-    }
+      const { id, comparisonLevel = 1 } = taskForMove;
 
-    onChangeTooltipTask(null, null);
+      const indexesOnLevel =
+        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
 
-    const {
-      comparisonLevel = 1,
-    } = parent;
-
-    const indexesAtLevel = mapTaskToGlobalIndexRef.current.get(comparisonLevel);
-
-    if (!indexesAtLevel) {
-      throw new Error(`Indexes are not found at level ${comparisonLevel}`);
-    }
-
-    const childIndexes: number[] = [];
-    const movedIdsMap = new Map<number, Set<string>>();
-
-    childs.forEach((child) => {
-      const {
-        id: childId,
-        comparisonLevel: childComparisonLevel = 1,
-      } = child;
-
-      const movedIdsAtLevelSet = movedIdsMap.get(childComparisonLevel) || new Set<string>();
-      movedIdsAtLevelSet.add(childId);
-      movedIdsMap.set(childComparisonLevel, movedIdsAtLevelSet);
-
-      if (comparisonLevel !== childComparisonLevel) {
-        return;
+      if (!indexesOnLevel) {
+        throw new Error(`Indexes are not found for level ${comparisonLevel}`);
       }
 
-      const childIndex = indexesAtLevel.get(childId);
+      const taskForMoveIndex = indexesOnLevel.get(id);
 
-      if (typeof childIndex !== "number") {
-        return;
+      if (typeof taskForMoveIndex !== "number") {
+        throw new Error(`Index is not found for task ${id}`);
       }
 
-      childIndexes.push(childIndex);
-    });
+      if (onMoveTaskAfter) {
+        onMoveTaskAfter(
+          target,
+          taskForMove,
+          dependentTasks,
+          taskIndex,
+          taskForMoveIndex,
+          parents,
+          suggestions
+        );
+      }
 
-    const [
-      dependentTasks,
-      parentIndexes,
-      parents,
-      suggestions,
-    ] = getMetadata({
-      type: "move-inside",
-      parent,
-      childs,
-      movedIdsMap,
-    });
+      if (onChangeTasks) {
+        const withSuggestions = prepareSuggestions(suggestions);
 
-    const parentIndex = parentIndexes[0].index;
+        const isMovedTaskBefore = taskForMoveIndex < taskIndex;
 
-    if (onMoveTaskInside) {
-      onMoveTaskInside(
-        parent,
-        childs,
-        dependentTasks,
-        parentIndex,
-        childIndexes,
-        parents,
-        suggestions,
-      );
-    }
+        withSuggestions.splice(taskForMoveIndex, 1);
+        withSuggestions.splice(
+          isMovedTaskBefore ? taskIndex : taskIndex + 1,
+          0,
+          {
+            ...taskForMove,
+            parent: target.parent,
+          }
+        );
 
-    if (onChangeTasks) {
-      let withSuggestions = prepareSuggestions(suggestions);
-
-      const parentDisplacement = childIndexes
-        .filter((childIndex) => childIndex < parentIndex)
-        .length;
-      const childIndexesSet = new Set(childIndexes);
-
-      withSuggestions = withSuggestions.filter((_, index) => !childIndexesSet.has(index));
-
-      const startNewChildIndex = parentIndex - parentDisplacement + 1;
-
-      childs.forEach((child, indexInChildsArray) => {
-        withSuggestions.splice(startNewChildIndex + indexInChildsArray, 0, {
-          ...child,
-          parent: parent.id,
+        onChangeTasks(withSuggestions, {
+          type: "move_task_after",
         });
-      });
+      }
+    },
+    [
+      getMetadata,
+      onChangeTasks,
+      onMoveTaskAfter,
+      mapTaskToGlobalIndexRef,
+      prepareSuggestions,
+      onChangeTooltipTask,
+    ]
+  );
 
-      onChangeTasks(withSuggestions, {
-        type: "move_task_inside",
-      });
-    }
-  }, [
-    getMetadata,
-    onChangeTasks,
-    onMoveTaskInside,
-    mapTaskToGlobalIndexRef,
-    prepareSuggestions,
-    onChangeTooltipTask,
-  ]);
-
-  const fixStartPosition = useCallback<FixPosition>((task, date, index) => {
-    if (fixStartPositionProp) {
-      fixStartPositionProp(task, date, index);
-    }
-
-    if (onChangeTasks) {
-      const nextTasks = [...tasksRef.current];
-      nextTasks[index] = {
-        ...task,
-        start: date,
-      };
-
-      onChangeTasks(nextTasks, {
-        type: "fix_start_position",
-      });
-    }
-  }, [
-    fixStartPositionProp,
-    onChangeTasks,
-    tasksRef,
-  ]);
-
-  const fixEndPosition = useCallback<FixPosition>((task, date, index) => {
-    if (fixEndPositionProp) {
-      fixEndPositionProp(task, date, index);
-    }
-
-    if (onChangeTasks) {
-      const nextTasks = [...tasksRef.current];
-      nextTasks[index] = {
-        ...task,
-        end: date,
-      };
-
-      onChangeTasks(nextTasks, {
-        type: "fix_end_position",
-      });
-    }
-  }, [
-    fixEndPositionProp,
-    onChangeTasks,
-    tasksRef,
-  ]);
-
-  const onFixDependencyPosition = useCallback<OnDateChange>((
-    task,
-    dependentTasks,
-    taskIndex,
-    parents,
-    suggestions,
-  ) => {
-    if (onFixDependencyPositionProp) {
-      onFixDependencyPositionProp(
-        task,
-        dependentTasks,
-        taskIndex,
-        parents,
-        suggestions,
-      );
-    }
-
-    if (onChangeTasks) {
-      const nextTasks = [...tasksRef.current];
-      nextTasks[taskIndex] = task;
-
-      onChangeTasks(nextTasks, {
-        type: "fix_dependency_position",
-      });
-    }
-  }, [
-    onFixDependencyPositionProp,
-    onChangeTasks,
-    tasksRef,
-  ]);
-
-  const handleFixDependency = useCallback((task: Task, delta: number) => {
-    const {
-      start,
-      end,
-    } = task;
-
-    const newStart = new Date(start.getTime() + delta);
-    const newEnd = new Date(end.getTime() + delta);
-
-    const newChangedTask = {
-      ...task,
-      start: newStart,
-      end: newEnd,
-    };
-
-    const [
-      dependentTasks,
-      taskIndexes,
-      parents,
-      suggestions,
-    ] = getMetadata({
-      type: "change",
-      task: newChangedTask,
-    });
-
-    const taskIndex = taskIndexes[0].index;
-
-    onFixDependencyPosition(
-      newChangedTask,
-      dependentTasks,
-      taskIndex,
-      parents,
-      suggestions,
-    );
-  }, [
-    getMetadata,
-    onFixDependencyPosition,
-  ]);
-
-  const onRelationChange = useCallback<OnRelationChange>((from, to, isOneDescendant) => {
-    if (onRelationChangeProp) {
-      onRelationChangeProp(from, to, isOneDescendant);
-    }
-
-    if (onChangeTasks) {
-      if (isOneDescendant) {
+  const handleMoveTasksInside = useCallback(
+    (parent: Task, childs: readonly TaskOrEmpty[]) => {
+      if (!onMoveTaskInside && !onChangeTasks) {
         return;
       }
 
-      const nextTasks = [...tasksRef.current];
+      onChangeTooltipTask(null, null);
 
-      const [taskFrom, targetFrom, fromIndex] = from;
-      const [taskTo, targetTo, toIndex] = to;
+      const { comparisonLevel = 1 } = parent;
 
-      const newDependency: Dependency = {
-        sourceId: taskFrom.id,
-        sourceTarget: targetFrom,
-        ownTarget: targetTo,
-      };
+      const indexesAtLevel =
+        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
 
-      nextTasks[toIndex] = {
-        ...taskTo,
-        dependencies: taskTo.dependencies
-          ? [
-            ...taskTo.dependencies.filter(({ sourceId }) => sourceId !== taskFrom.id),
-            newDependency,
-          ]
-          : [newDependency],
-      };
+      if (!indexesAtLevel) {
+        throw new Error(`Indexes are not found at level ${comparisonLevel}`);
+      }
 
-      nextTasks[fromIndex] = {
-        ...taskFrom,
-        dependencies: taskFrom.dependencies
-          ? taskFrom.dependencies.filter(({ sourceId }) => sourceId !== taskTo.id)
-          : undefined,
-      };
+      const childIndexes: number[] = [];
+      const movedIdsMap = new Map<number, Set<string>>();
 
-      onChangeTasks(nextTasks, {
-        type: "relation_change",
+      childs.forEach(child => {
+        const { id: childId, comparisonLevel: childComparisonLevel = 1 } =
+          child;
+
+        const movedIdsAtLevelSet =
+          movedIdsMap.get(childComparisonLevel) || new Set<string>();
+        movedIdsAtLevelSet.add(childId);
+        movedIdsMap.set(childComparisonLevel, movedIdsAtLevelSet);
+
+        if (comparisonLevel !== childComparisonLevel) {
+          return;
+        }
+
+        const childIndex = indexesAtLevel.get(childId);
+
+        if (typeof childIndex !== "number") {
+          return;
+        }
+
+        childIndexes.push(childIndex);
       });
-    }
-  }, [
-    onRelationChangeProp,
-    onChangeTasks,
-    tasksRef,
-  ]);
+
+      const [dependentTasks, parentIndexes, parents, suggestions] = getMetadata(
+        {
+          type: "move-inside",
+          parent,
+          childs,
+          movedIdsMap,
+        }
+      );
+
+      const parentIndex = parentIndexes[0].index;
+
+      if (onMoveTaskInside) {
+        onMoveTaskInside(
+          parent,
+          childs,
+          dependentTasks,
+          parentIndex,
+          childIndexes,
+          parents,
+          suggestions
+        );
+      }
+
+      if (onChangeTasks) {
+        let withSuggestions = prepareSuggestions(suggestions);
+
+        const parentDisplacement = childIndexes.filter(
+          childIndex => childIndex < parentIndex
+        ).length;
+        const childIndexesSet = new Set(childIndexes);
+
+        withSuggestions = withSuggestions.filter(
+          (_, index) => !childIndexesSet.has(index)
+        );
+
+        const startNewChildIndex = parentIndex - parentDisplacement + 1;
+
+        childs.forEach((child, indexInChildsArray) => {
+          withSuggestions.splice(startNewChildIndex + indexInChildsArray, 0, {
+            ...child,
+            parent: parent.id,
+          });
+        });
+
+        onChangeTasks(withSuggestions, {
+          type: "move_task_inside",
+        });
+      }
+    },
+    [
+      getMetadata,
+      onChangeTasks,
+      onMoveTaskInside,
+      mapTaskToGlobalIndexRef,
+      prepareSuggestions,
+      onChangeTooltipTask,
+    ]
+  );
+
+  const fixStartPosition = useCallback<FixPosition>(
+    (task, date, index) => {
+      if (fixStartPositionProp) {
+        fixStartPositionProp(task, date, index);
+      }
+
+      if (onChangeTasks) {
+        const nextTasks = [...tasksRef.current];
+        nextTasks[index] = {
+          ...task,
+          start: date,
+        };
+
+        onChangeTasks(nextTasks, {
+          type: "fix_start_position",
+        });
+      }
+    },
+    [fixStartPositionProp, onChangeTasks, tasksRef]
+  );
+
+  const fixEndPosition = useCallback<FixPosition>(
+    (task, date, index) => {
+      if (fixEndPositionProp) {
+        fixEndPositionProp(task, date, index);
+      }
+
+      if (onChangeTasks) {
+        const nextTasks = [...tasksRef.current];
+        nextTasks[index] = {
+          ...task,
+          end: date,
+        };
+
+        onChangeTasks(nextTasks, {
+          type: "fix_end_position",
+        });
+      }
+    },
+    [fixEndPositionProp, onChangeTasks, tasksRef]
+  );
+
+  const onFixDependencyPosition = useCallback<OnDateChange>(
+    (task, dependentTasks, taskIndex, parents, suggestions) => {
+      if (onFixDependencyPositionProp) {
+        onFixDependencyPositionProp(
+          task,
+          dependentTasks,
+          taskIndex,
+          parents,
+          suggestions
+        );
+      }
+
+      if (onChangeTasks) {
+        const nextTasks = [...tasksRef.current];
+        nextTasks[taskIndex] = task;
+
+        onChangeTasks(nextTasks, {
+          type: "fix_dependency_position",
+        });
+      }
+    },
+    [onFixDependencyPositionProp, onChangeTasks, tasksRef]
+  );
+
+  const handleFixDependency = useCallback(
+    (task: Task, delta: number) => {
+      const { start, end } = task;
+
+      const newStart = new Date(start.getTime() + delta);
+      const newEnd = new Date(end.getTime() + delta);
+
+      const newChangedTask = {
+        ...task,
+        start: newStart,
+        end: newEnd,
+      };
+
+      const [dependentTasks, taskIndexes, parents, suggestions] = getMetadata({
+        type: "change",
+        task: newChangedTask,
+      });
+
+      const taskIndex = taskIndexes[0].index;
+
+      onFixDependencyPosition(
+        newChangedTask,
+        dependentTasks,
+        taskIndex,
+        parents,
+        suggestions
+      );
+    },
+    [getMetadata, onFixDependencyPosition]
+  );
+
+  const onRelationChange = useCallback<OnRelationChange>(
+    (from, to, isOneDescendant) => {
+      if (onRelationChangeProp) {
+        onRelationChangeProp(from, to, isOneDescendant);
+      }
+
+      if (onChangeTasks) {
+        if (isOneDescendant) {
+          return;
+        }
+
+        const nextTasks = [...tasksRef.current];
+
+        const [taskFrom, targetFrom, fromIndex] = from;
+        const [taskTo, targetTo, toIndex] = to;
+
+        const newDependency: Dependency = {
+          sourceId: taskFrom.id,
+          sourceTarget: targetFrom,
+          ownTarget: targetTo,
+        };
+
+        nextTasks[toIndex] = {
+          ...taskTo,
+          dependencies: taskTo.dependencies
+            ? [
+                ...taskTo.dependencies.filter(
+                  ({ sourceId }) => sourceId !== taskFrom.id
+                ),
+                newDependency,
+              ]
+            : [newDependency],
+        };
+
+        nextTasks[fromIndex] = {
+          ...taskFrom,
+          dependencies: taskFrom.dependencies
+            ? taskFrom.dependencies.filter(
+                ({ sourceId }) => sourceId !== taskTo.id
+              )
+            : undefined,
+        };
+
+        onChangeTasks(nextTasks, {
+          type: "relation_change",
+        });
+      }
+    },
+    [onRelationChangeProp, onChangeTasks, tasksRef]
+  );
 
   const onArrowDoubleClick = useCallback(
     (taskFrom: Task, taskTo: Task) => {
@@ -1718,11 +1642,10 @@ export const Gantt: React.FC<GanttProps> = ({
         return;
       }
 
-      const {
-        comparisonLevel = 1,
-      } = taskFrom;
+      const { comparisonLevel = 1 } = taskFrom;
 
-      const indexesOnLevel = mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesOnLevel =
+        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
 
       if (!indexesOnLevel) {
         throw new Error(`Indexes are not found for level ${comparisonLevel}`);
@@ -1749,7 +1672,9 @@ export const Gantt: React.FC<GanttProps> = ({
         nextTasks[taskToIndex] = {
           ...taskTo,
           dependencies: taskTo.dependencies
-            ? taskTo.dependencies.filter(({ sourceId }) => sourceId !== taskFrom.id)
+            ? taskTo.dependencies.filter(
+                ({ sourceId }) => sourceId !== taskFrom.id
+              )
             : undefined,
         };
 
@@ -1770,7 +1695,7 @@ export const Gantt: React.FC<GanttProps> = ({
       onArrowDoubleClickProp,
       onChangeTasks,
       tasksRef,
-    ],
+    ]
   );
 
   const handleAction = useHandleAction({
@@ -1818,7 +1743,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const getTaskCoordinates = useCallback(
     (task: Task) => countTaskCoordinates(getTaskCurrentState(task)),
-    [countTaskCoordinates, getTaskCurrentState],
+    [countTaskCoordinates, getTaskCurrentState]
   );
 
   const contextMenuOptions = useMemo<ContextMenuOptionType[]>(() => {
@@ -1826,15 +1751,8 @@ export const Gantt: React.FC<GanttProps> = ({
       return contextMenuOptionsProp;
     }
 
-    return [
-      cutOption,
-      copyOption,
-      pasteOption,
-      deleteOption,
-    ];
-  }, [
-    contextMenuOptionsProp,
-  ]);
+    return [cutOption, copyOption, pasteOption, deleteOption];
+  }, [contextMenuOptionsProp]);
 
   /**
    * Prevent crash after task delete
@@ -1844,17 +1762,15 @@ export const Gantt: React.FC<GanttProps> = ({
       return null;
     }
 
-    const {
-      id,
-      comparisonLevel = 1,
-    } = tooltipTask;
+    const { id, comparisonLevel = 1 } = tooltipTask;
 
     if (changeInProgress) {
-      const {
-        changedTask,
-      } = changeInProgress;
+      const { changedTask } = changeInProgress;
 
-      if (changedTask.id === id && (changedTask.comparisonLevel || 1) === comparisonLevel) {
+      if (
+        changedTask.id === id &&
+        (changedTask.comparisonLevel || 1) === comparisonLevel
+      ) {
         return changedTask;
       }
     }
@@ -1879,169 +1795,180 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const additionalStartColumns = useMemo(
     () => Math.ceil(additionalLeftSpace / distances.columnWidth),
-    [additionalLeftSpace, distances],
+    [additionalLeftSpace, distances]
   );
 
-  const [defaultStartColumnIndex, defaultEndColumnIndex] = renderedColumnIndexes || [0, -1];
+  const [defaultStartColumnIndex, defaultEndColumnIndex] =
+    renderedColumnIndexes || [0, -1];
 
   const startColumnIndex = defaultStartColumnIndex - additionalStartColumns;
   const endColumnIndex = defaultEndColumnIndex - additionalStartColumns + 1;
 
   const fullSvgWidth = useMemo(
     () => svgWidth + additionalLeftSpace + additionalRightSpace,
+    [additionalLeftSpace, additionalRightSpace, svgWidth]
+  );
+
+  const gridProps: GridProps = useMemo(
+    () => ({
+      additionalLeftSpace,
+      distances,
+      ganttFullHeight,
+      isUnknownDates,
+      rtl,
+      startDate,
+      todayColor: colorStyles.todayColor,
+      viewMode,
+    }),
+    [
+      additionalLeftSpace,
+      colorStyles.todayColor,
+      distances,
+      ganttFullHeight,
+      isUnknownDates,
+      rtl,
+      startDate,
+      viewMode,
+    ]
+  );
+
+  const calendarProps: CalendarProps = useMemo(
+    () => ({
+      additionalLeftSpace,
+      dateSetup,
+      distances,
+      endColumnIndex,
+      fontFamily,
+      fontSize,
+      fullSvgWidth,
+      getDate,
+      isUnknownDates,
+      renderBottomHeader,
+      renderTopHeader,
+      rtl,
+      startColumnIndex,
+    }),
+    [
+      additionalLeftSpace,
+      dateSetup,
+      distances,
+      endColumnIndex,
+      fontFamily,
+      fontSize,
+      fullSvgWidth,
+      getDate,
+      isUnknownDates,
+      renderBottomHeader,
+      renderTopHeader,
+      rtl,
+      startColumnIndex,
+    ]
+  );
+
+  const onClickTask = (task: Task) => {
+    onClick(task);
+  };
+
+  const barProps: TaskGanttContentProps = useMemo(
+    () => ({
+      additionalLeftSpace,
+      additionalRightSpace,
+      checkIsHoliday,
+      childOutOfParentWarnings,
+      childTasksMap,
+      colorStyles,
+      comparisonLevels,
+      criticalPaths,
+      dependencyMap,
+      dependentMap,
+      distances,
+      endColumnIndex,
+      fixEndPosition,
+      fixStartPosition,
+      fontFamily,
+      fontSize,
+      fullRowHeight,
+      ganttRelationEvent,
+      getDate,
+      getTaskCoordinates,
+      getTaskGlobalIndexByRef,
+      handleBarRelationStart,
+      handleDeteleTasks,
+      handleFixDependency,
+      handleTaskDragStart,
+      isShowDependencyWarnings,
+      mapGlobalRowIndexToTask,
+      onArrowDoubleClick,
+      onClick: onClickTask,
+      onDoubleClick,
+      onFixDependencyPosition,
+      onProgressChange,
+      onRelationChange,
+      renderedRowIndexes,
+      rtl,
+      selectTaskOnMouseDown,
+      selectedIdsMirror,
+      setTooltipTask: onChangeTooltipTask,
+      startColumnIndex,
+      taskHalfHeight,
+      taskHeight,
+      taskToHasDependencyWarningMap,
+      taskToRowIndexMap,
+      taskYOffset,
+      timeStep,
+      visibleTasksMirror,
+      ContextualPalette,
+    }),
     [
       additionalLeftSpace,
       additionalRightSpace,
-      svgWidth,
-    ],
+      checkIsHoliday,
+      childOutOfParentWarnings,
+      childTasksMap,
+      colorStyles,
+      comparisonLevels,
+      criticalPaths,
+      dependencyMap,
+      dependentMap,
+      distances,
+      endColumnIndex,
+      fixEndPosition,
+      fixStartPosition,
+      fontFamily,
+      fontSize,
+      fullRowHeight,
+      ganttRelationEvent,
+      getDate,
+      getTaskCoordinates,
+      getTaskGlobalIndexByRef,
+      handleBarRelationStart,
+      handleDeteleTasks,
+      handleTaskDragStart,
+      isShowDependencyWarnings,
+      mapGlobalRowIndexToTask,
+      mapTaskToCoordinates,
+      onArrowDoubleClick,
+      onChangeTooltipTask,
+      onClick,
+      onDoubleClick,
+      onFixDependencyPosition,
+      onProgressChange,
+      onRelationChange,
+      renderedRowIndexes,
+      rtl,
+      selectTaskOnMouseDown,
+      selectedIdsMirror,
+      startColumnIndex,
+      taskHalfHeight,
+      taskHeight,
+      taskToHasDependencyWarningMap,
+      taskToRowIndexMap,
+      taskYOffset,
+      timeStep,
+      visibleTasks,
+      visibleTasksMirror,
+    ]
   );
-
-  const gridProps: GridProps = useMemo(() => ({
-    additionalLeftSpace,
-    distances,
-    ganttFullHeight,
-    isUnknownDates,
-    rtl,
-    startDate,
-    todayColor: colorStyles.todayColor,
-    viewMode,
-  }), [
-    additionalLeftSpace,
-    colorStyles.todayColor,
-    distances,
-    ganttFullHeight,
-    isUnknownDates,
-    rtl,
-    startDate,
-    viewMode,
-  ]);
-
-  const calendarProps: CalendarProps = useMemo(() => ({
-    additionalLeftSpace,
-    dateSetup,
-    distances,
-    endColumnIndex,
-    fontFamily,
-    fontSize,
-    fullSvgWidth,
-    getDate,
-    isUnknownDates,
-    renderBottomHeader,
-    renderTopHeader,
-    rtl,
-    startColumnIndex,
-  }), [
-    additionalLeftSpace,
-    dateSetup,
-    distances,
-    endColumnIndex,
-    fontFamily,
-    fontSize,
-    fullSvgWidth,
-    getDate,
-    isUnknownDates,
-    renderBottomHeader,
-    renderTopHeader,
-    rtl,
-    startColumnIndex,
-  ]);
-
-  const barProps: TaskGanttContentProps = useMemo(() => ({
-    additionalLeftSpace,
-    additionalRightSpace,
-    checkIsHoliday,
-    childOutOfParentWarnings,
-    childTasksMap,
-    colorStyles,
-    comparisonLevels,
-    criticalPaths,
-    dependencyMap,
-    dependentMap,
-    distances,
-    endColumnIndex,
-    fixEndPosition,
-    fixStartPosition,
-    fontFamily,
-    fontSize,
-    fullRowHeight,
-    ganttRelationEvent,
-    getDate,
-    getTaskCoordinates,
-    getTaskGlobalIndexByRef,
-    handleBarRelationStart,
-    handleDeteleTasks,
-    handleFixDependency,
-    handleTaskDragStart,
-    isShowDependencyWarnings,
-    mapGlobalRowIndexToTask,
-    onArrowDoubleClick,
-    onClick,
-    onDoubleClick,
-    onFixDependencyPosition,
-    onProgressChange,
-    onRelationChange,
-    renderedRowIndexes,
-    rtl,
-    selectTaskOnMouseDown,
-    selectedIdsMirror,
-    setTooltipTask: onChangeTooltipTask,
-    startColumnIndex,
-    taskHalfHeight,
-    taskHeight,
-    taskToHasDependencyWarningMap,
-    taskToRowIndexMap,
-    taskYOffset,
-    timeStep,
-    visibleTasksMirror,
-  }), [
-    additionalLeftSpace,
-    additionalRightSpace,
-    checkIsHoliday,
-    childOutOfParentWarnings,
-    childTasksMap,
-    colorStyles,
-    comparisonLevels,
-    criticalPaths,
-    dependencyMap,
-    dependentMap,
-    distances,
-    endColumnIndex,
-    fixEndPosition,
-    fixStartPosition,
-    fontFamily,
-    fontSize,
-    fullRowHeight,
-    ganttRelationEvent,
-    getDate,
-    getTaskCoordinates,
-    getTaskGlobalIndexByRef,
-    handleBarRelationStart,
-    handleDeteleTasks,
-    handleTaskDragStart,
-    isShowDependencyWarnings,
-    mapGlobalRowIndexToTask,
-    mapTaskToCoordinates,
-    onArrowDoubleClick,
-    onChangeTooltipTask,
-    onClick,
-    onDoubleClick,
-    onFixDependencyPosition,
-    onProgressChange,
-    onRelationChange,
-    renderedRowIndexes,
-    rtl,
-    selectTaskOnMouseDown,
-    selectedIdsMirror,
-    startColumnIndex,
-    taskHalfHeight,
-    taskHeight,
-    taskToHasDependencyWarningMap,
-    taskToRowIndexMap,
-    taskYOffset,
-    timeStep,
-    visibleTasks,
-    visibleTasksMirror,
-  ]);
 
   const tableProps: TaskListProps = {
     TaskListHeader,
@@ -2094,7 +2021,7 @@ export const Gantt: React.FC<GanttProps> = ({
       tabIndex={0}
       ref={wrapperRef}
     >
-      {(columns.length > 0) && <TaskList {...tableProps} />}
+      {columns.length > 0 && <TaskList {...tableProps} />}
 
       <TaskGantt
         barProps={barProps}

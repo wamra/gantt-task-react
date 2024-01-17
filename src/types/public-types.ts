@@ -1,8 +1,4 @@
-import type {
-  ComponentType,
-  MouseEvent,
-  ReactNode,
-} from "react";
+import type { ComponentType, MouseEvent, ReactNode } from "react";
 
 import type { Locale as DateLocale } from "date-fns";
 
@@ -31,7 +27,7 @@ export interface DateSetup {
 export type RenderTopHeader = (
   date: Date,
   viewMode: ViewMode,
-  dateSetup: DateSetup,
+  dateSetup: DateSetup
 ) => ReactNode;
 
 export type RenderBottomHeader = (
@@ -39,7 +35,7 @@ export type RenderBottomHeader = (
   viewMode: ViewMode,
   dateSetup: DateSetup,
   index: number,
-  isUnknownDates: boolean,
+  isUnknownDates: boolean
 ) => ReactNode;
 
 export interface Dependency {
@@ -68,7 +64,7 @@ export interface ExpandedDependent {
   dependent: Task;
   dependentTarget: RelationMoveTarget;
   ownTarget: RelationMoveTarget;
-};
+}
 
 export interface ColorStyles {
   arrowColor: string;
@@ -195,7 +191,7 @@ export type OnArrowDoubleClick = (
   taskFrom: Task,
   taskFromIndex: number,
   taskTo: Task,
-  taskToIndex: number,
+  taskToIndex: number
 ) => void;
 
 export type OnRelationChange = (
@@ -210,7 +206,7 @@ export type OnRelationChange = (
   /**
    * One of tasks is descendant of other task
    */
-  isOneDescendant: boolean,
+  isOneDescendant: boolean
 ) => void;
 
 export type OnDateChangeSuggestionType = [
@@ -229,7 +225,7 @@ export type OnDateChangeSuggestionType = [
   /**
    * Index in array of tasks
    */
-  number,
+  number
 ];
 
 export type OnDateChange = (
@@ -237,19 +233,19 @@ export type OnDateChange = (
   dependentTasks: readonly Task[],
   index: number,
   parents: readonly Task[],
-  suggestions: readonly OnDateChangeSuggestionType[],
+  suggestions: readonly OnDateChangeSuggestionType[]
 ) => void;
 
 export type OnProgressChange = (
   task: Task,
   children: readonly Task[],
-  index: number,
+  index: number
 ) => void;
 
 export type OnEditTask = (
   task: TaskOrEmpty,
   index: number,
-  getMetadata: GetMetadata,
+  getMetadata: GetMetadata
 ) => void;
 
 export type OnMoveTaskAfter = (
@@ -259,7 +255,7 @@ export type OnMoveTaskAfter = (
   taskIndex: number,
   taskForMoveIndex: number,
   parents: readonly Task[],
-  suggestions: readonly OnDateChangeSuggestionType[],
+  suggestions: readonly OnDateChangeSuggestionType[]
 ) => void;
 
 export type OnMoveTaskInside = (
@@ -269,13 +265,10 @@ export type OnMoveTaskInside = (
   parentIndex: number,
   childIndexes: readonly number[],
   parents: readonly Task[],
-  suggestions: readonly OnDateChangeSuggestionType[],
+  suggestions: readonly OnDateChangeSuggestionType[]
 ) => void;
 
-export type OnAddTask = (
-  parentTask: Task,
-  getMetadata: GetMetadata,
-) => void;
+export type OnAddTask = (parentTask: Task, getMetadata: GetMetadata) => void;
 
 export type FixPosition = (
   task: Task,
@@ -283,60 +276,60 @@ export type FixPosition = (
   /**
    * index in the array of tasks
    */
-  index: number,
+  index: number
 ) => void;
 
 export type OnChangeTasksAction =
   | {
-    type: "add_tasks";
-  }
+      type: "add_tasks";
+    }
   | {
-    type: "date_change";
-  }
+      type: "date_change";
+    }
   | {
-    type: "delete_relation";
-    payload: {
-      taskFrom: Task;
-      taskFromIndex: number;
-      taskTo: Task;
-      taskToIndex: number;
+      type: "delete_relation";
+      payload: {
+        taskFrom: Task;
+        taskFromIndex: number;
+        taskTo: Task;
+        taskToIndex: number;
+      };
+    }
+  | {
+      type: "delete_task";
+      payload: {
+        tasks: readonly TaskOrEmpty[];
+        taskIndexes: readonly number[];
+      };
+    }
+  | {
+      type: "edit_task";
+    }
+  | {
+      type: "fix_dependency_position";
+    }
+  | {
+      type: "fix_end_position";
+    }
+  | {
+      type: "fix_start_position";
+    }
+  | {
+      type: "move_task_after";
+    }
+  | {
+      type: "move_task_inside";
+    }
+  | {
+      type: "progress_change";
+    }
+  | {
+      type: "relation_change";
     };
-  }
-  | {
-    type: "delete_task";
-    payload: {
-      tasks: readonly TaskOrEmpty[];
-      taskIndexes: readonly number[];
-    };
-  }
-  | {
-    type: "edit_task";
-  }
-  | {
-    type: "fix_dependency_position";
-  }
-  | {
-    type: "fix_end_position";
-  }
-  | {
-    type: "fix_start_position";
-  }
-  | {
-    type: "move_task_after";
-  }
-  | {
-    type: "move_task_inside";
-  }
-  | {
-    type: "progress_change";
-  }
-  | {
-    type: "relation_change";
-  };
 
 export type OnChangeTasks = (
   nextTasks: readonly TaskOrEmpty[],
-  action: OnChangeTasksAction,
+  action: OnChangeTasksAction
 ) => void;
 
 export interface EventOption {
@@ -399,7 +392,7 @@ export interface EventOption {
       index: number;
     }>,
     parents: readonly Task[],
-    suggestions: readonly OnDateChangeSuggestionType[],
+    suggestions: readonly OnDateChangeSuggestionType[]
   ) => void;
   /**
    * Callback for getting new data of the edited task
@@ -521,6 +514,12 @@ export interface StylingOption {
    * @returns next date
    */
   roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
+  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+}
+
+export interface TaskContextualPaletteProps {
+  selectedTask: Task;
+  onClose: () => void;
 }
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
@@ -528,13 +527,13 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
    * Check is current date holiday
    * @param date the date
    * @param minTaskDate lower date of all tasks
-   * @param dateSetup 
-   * @returns 
+   * @param dateSetup
+   * @returns
    */
   checkIsHoliday?: (
     date: Date,
     minTaskDate: Date,
-    dateSetup: DateSetup,
+    dateSetup: DateSetup
   ) => boolean;
   /**
    * Can be used to compare multiple graphs. This prop is the number of graps being compared
@@ -573,7 +572,11 @@ export interface TaskListTableProps {
   handleEditTask: (task: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
-  handleOpenContextMenu: (task: TaskOrEmpty, clientX: number, clientY: number) => void;
+  handleOpenContextMenu: (
+    task: TaskOrEmpty,
+    clientX: number,
+    clientY: number
+  ) => void;
   icons?: Partial<Icons>;
   isShowTaskNumbers: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
@@ -623,12 +626,12 @@ export type MapTaskToNestedIndex = Map<number, Map<string, [number, string]>>;
 export interface TaskOutOfParentWarning {
   isOutside: boolean;
   date: Date;
-};
+}
 
 export interface TaskOutOfParentWarnings {
   start?: TaskOutOfParentWarning;
   end?: TaskOutOfParentWarning;
-};
+}
 
 /**
  * comparison level -> task id -> {
@@ -636,14 +639,17 @@ export interface TaskOutOfParentWarnings {
  *     isOutsie: false,
  *     date: Date,
  *   },
- * 
+ *
  *   end: {
  *     isOutsie: false,
  *     date: Date,
  *   },
  * }
  */
-export type ChildOutOfParentWarnings = Map<number, Map<string, TaskOutOfParentWarnings>>;
+export type ChildOutOfParentWarnings = Map<
+  number,
+  Map<string, TaskOutOfParentWarnings>
+>;
 
 // comparison level -> task id -> expanded dependencies
 export type DependencyMap = Map<number, Map<string, ExpandedDependency[]>>;
@@ -671,7 +677,7 @@ export type MinAndMaxChildsOfTask = [
     /**
      * Second min
      */
-    Task | null,
+    Task | null
   ],
   [
     /**
@@ -681,12 +687,15 @@ export type MinAndMaxChildsOfTask = [
     /**
      * Second max
      */
-    Task | null,
-  ],
+    Task | null
+  ]
 ];
 
 // comparison level -> task id -> [[first min, second min], [first max, second max]]
-export type MinAndMaxChildsMap = Map<number, Map<string, MinAndMaxChildsOfTask>>;
+export type MinAndMaxChildsMap = Map<
+  number,
+  Map<string, MinAndMaxChildsOfTask>
+>;
 
 // comparison level -> critical path
 export type CriticalPaths = Map<number, CriticalPath>;
@@ -807,47 +816,47 @@ export type TableResizeEvent = {
 export type OnResizeColumn = (
   nextColumns: readonly Column[],
   columnIndex: number,
-  nextWidth: number,
+  nextWidth: number
 ) => void;
 
 export type ChangeAction =
   | {
-    type: "add-childs";
-    parent: Task;
-    // comparison level -> task id
-    addedIdsMap: Map<number, Set<string>>;
-    addedChildsByLevelMap: ChildByLevelMap;
-    addedRootsByLevelMap: RootMapByLevel;
-    descendants: readonly TaskOrEmpty[];
-  }
+      type: "add-childs";
+      parent: Task;
+      // comparison level -> task id
+      addedIdsMap: Map<number, Set<string>>;
+      addedChildsByLevelMap: ChildByLevelMap;
+      addedRootsByLevelMap: RootMapByLevel;
+      descendants: readonly TaskOrEmpty[];
+    }
   | {
-    type: "change";
-    task: TaskOrEmpty;
-  }
+      type: "change";
+      task: TaskOrEmpty;
+    }
   | {
-    type: "change_start_and_end"
-    task: Task;
-    changedTask: Task;
-    originalTask: Task;
-  }
+      type: "change_start_and_end";
+      task: Task;
+      changedTask: Task;
+      originalTask: Task;
+    }
   | {
-    type: "delete";
-    tasks: readonly TaskOrEmpty[];
-    // comparison level -> task id
-    deletedIdsMap: Map<number, Set<string>>;
-  }
+      type: "delete";
+      tasks: readonly TaskOrEmpty[];
+      // comparison level -> task id
+      deletedIdsMap: Map<number, Set<string>>;
+    }
   | {
-    type: "move-after";
-    target: TaskOrEmpty;
-    taskForMove: TaskOrEmpty;
-  }
+      type: "move-after";
+      target: TaskOrEmpty;
+      taskForMove: TaskOrEmpty;
+    }
   | {
-    type: "move-inside";
-    parent: Task;
-    childs: readonly TaskOrEmpty[];
-    // comparison level -> task id
-    movedIdsMap: Map<number, Set<string>>;
-  };
+      type: "move-inside";
+      parent: Task;
+      childs: readonly TaskOrEmpty[];
+      // comparison level -> task id
+      movedIdsMap: Map<number, Set<string>>;
+    };
 
 export type ChangeMetadata = [
   /**
@@ -868,7 +877,7 @@ export type ChangeMetadata = [
   /**
    * array of suggesgions for change parent
    */
-  OnDateChangeSuggestionType[],
+  OnDateChangeSuggestionType[]
 ];
 
 export type ContextMenuType = {
@@ -965,12 +974,12 @@ export type ActionMetaType = {
 
 export type CheckIsAvailableMetaType = {
   /**
-   * 
+   *
    * @returns Check are there tasks under the copy action
    */
   checkHasCopyTasks: () => boolean;
   /**
-   * 
+   *
    * @returns Check are there tasks under the cut action
    */
   checkHasCutTasks: () => boolean;
@@ -997,12 +1006,12 @@ export type ContextMenuOptionType = {
 
 export type CheckTaskIdExistsAtLevel = (
   newId: string,
-  comparisonLevel?: number,
+  comparisonLevel?: number
 ) => boolean;
 
 export type GetCopiedTaskId = (
   task: TaskOrEmpty,
-  checkExists: (newId: string) => boolean,
+  checkExists: (newId: string) => boolean
 ) => string;
 
 export type AdjustTaskToWorkingDatesParams = {

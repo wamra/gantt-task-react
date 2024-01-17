@@ -1,10 +1,5 @@
-import React, {
-  useMemo,
-} from "react";
-import type {
-  MouseEvent,
-  ReactNode,
-} from 'react';
+import React, { useMemo } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 import {
   ChildByLevelMap,
@@ -17,6 +12,7 @@ import {
   FixPosition,
   GlobalRowIndexToTaskMap,
   Task,
+  TaskContextualPaletteProps,
   TaskCoordinates,
   TaskOrEmpty,
   TaskToHasDependencyWarningMap,
@@ -62,12 +58,12 @@ export type TaskGanttContentProps = {
     action: BarMoveAction,
     task: Task,
     clientX: number,
-    taskRootNode: Element,
+    taskRootNode: Element
   ) => void;
   isShowDependencyWarnings: boolean;
   mapGlobalRowIndexToTask: GlobalRowIndexToTaskMap;
   onArrowDoubleClick: (taskFrom: Task, taskTo: Task) => void;
-  onClick?: (task: Task) => void;
+  onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
   onDoubleClick?: (task: Task) => void;
   renderedRowIndexes: OptimizedListParams | null;
   rtl: boolean;
@@ -80,6 +76,7 @@ export type TaskGanttContentProps = {
   visibleTasksMirror: Readonly<Record<string, true>>;
   taskHeight: number;
   taskHalfHeight: number;
+  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
 };
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
@@ -128,12 +125,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   const isRelationDrawMode = Boolean(ganttRelationEvent);
 
   const renderedHolidays = useMemo(() => {
-    const {
-      holidayBackgroundColor,
-    } = colorStyles;
-    const {
-      columnWidth,
-    } = distances;
+    const { holidayBackgroundColor } = colorStyles;
+    const { columnWidth } = distances;
 
     const res: ReactNode[] = [];
 
@@ -181,7 +174,10 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
     // avoid duplicates
     // comparison level -> task from id -> task to id -> true
-    const addedDependencies: Record<string, Record<string, Record<string, true>>> = {};
+    const addedDependencies: Record<
+      string,
+      Record<string, Record<string, true>>
+    > = {};
 
     for (let index = start; index <= end; ++index) {
       const task = mapGlobalRowIndexToTask.get(index);
@@ -190,10 +186,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         continue;
       }
 
-      const {
-        comparisonLevel = 1,
-        id: taskId,
-      } = task;
+      const { comparisonLevel = 1, id: taskId } = task;
 
       if (selectedIdsMirror[taskId] && !addedSelectedTasks[taskId]) {
         addedSelectedTasks[taskId] = true;
@@ -214,7 +207,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         continue;
       }
 
-      if (task.type === 'empty') {
+      if (task.type === "empty") {
         continue;
       }
 
@@ -242,6 +235,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
       tasksRes.push(
         <svg
+          id={task.id}
+          className="TaskItemClassName"
           x={containerX + (additionalLeftSpace || 0)}
           y={levelY}
           width={containerWidth}
@@ -251,11 +246,14 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
           <TaskItem
             getTaskGlobalIndexByRef={getTaskGlobalIndexByRef}
             hasChildren={checkHasChildren(task, childTasksMap)}
-            hasDependencyWarning={(
+            hasDependencyWarning={
               taskToHasDependencyWarningMap
-                ? checkTaskHasDependencyWarning(task, taskToHasDependencyWarningMap)
+                ? checkTaskHasDependencyWarning(
+                    task,
+                    taskToHasDependencyWarningMap
+                  )
                 : false
-            )}
+            }
             progressWidth={progressWidth}
             progressX={rtl ? innerX2 : innerX1}
             selectTaskOnMouseDown={selectTaskOnMouseDown}
@@ -286,7 +284,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             handleDeteleTasks={handleDeteleTasks}
             colorStyles={colorStyles}
           />
-        </svg>,
+        </svg>
       );
 
       const addedDependenciesAtLevel = addedDependencies[comparisonLevel] || {};
@@ -311,70 +309,70 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         const criticalPathForTask = criticalPathOnLevel
           ? criticalPathOnLevel.dependencies.get(task.id)
           : undefined;
-  
-         dependenciesByTask
+
+        dependenciesByTask
           .filter(({ source }) => visibleTasksMirror[source.id])
-          .forEach(({
-            containerHeight,
-            containerY,
-            innerFromY,
-            innerToY,
-            marginBetweenTasks,
-            ownTarget,
-            source,
-            sourceTarget,
-          }) => {
-            if (addedDependenciesAtTask[source.id]) {
-              return;
+          .forEach(
+            ({
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              marginBetweenTasks,
+              ownTarget,
+              source,
+              sourceTarget,
+            }) => {
+              if (addedDependenciesAtTask[source.id]) {
+                return;
+              }
+
+              addedDependenciesAtTask[source.id] = true;
+
+              const isCritical = criticalPathForTask
+                ? criticalPathForTask.has(source.id)
+                : false;
+
+              const { x1: fromX1, x2: fromX2 } = getTaskCoordinates(source);
+
+              const containerX = Math.min(fromX1, taskX1) - 300;
+              const containerWidth =
+                Math.max(fromX2, taskX2) - containerX + 300;
+
+              arrowsRes.push(
+                <svg
+                  x={containerX + (additionalLeftSpace || 0)}
+                  y={containerY}
+                  width={containerWidth}
+                  height={containerHeight}
+                  key={`Arrow from ${source.id} to ${taskId} on ${comparisonLevel}`}
+                >
+                  <Arrow
+                    colorStyles={colorStyles}
+                    distances={distances}
+                    taskFrom={source}
+                    targetFrom={sourceTarget}
+                    fromX1={fromX1 - containerX}
+                    fromX2={fromX2 - containerX}
+                    fromY={innerFromY}
+                    taskTo={task}
+                    targetTo={ownTarget}
+                    toX1={taskX1 - containerX}
+                    toX2={taskX2 - containerX}
+                    toY={innerToY}
+                    marginBetweenTasks={marginBetweenTasks}
+                    fullRowHeight={fullRowHeight}
+                    taskHeight={taskHeight}
+                    isShowDependencyWarnings={isShowDependencyWarnings}
+                    isCritical={isCritical}
+                    rtl={rtl}
+                    onArrowDoubleClick={onArrowDoubleClick}
+                    handleFixDependency={handleFixDependency}
+                  />
+                </svg>
+              );
             }
-
-            addedDependenciesAtTask[source.id] = true;
-
-            const isCritical = criticalPathForTask
-              ? criticalPathForTask.has(source.id)
-              : false;
-  
-            const {
-              x1: fromX1,
-              x2: fromX2,
-            } = getTaskCoordinates(source);
-  
-            const containerX = Math.min(fromX1, taskX1) - 300;
-            const containerWidth = Math.max(fromX2, taskX2) - containerX + 300;
-  
-            arrowsRes.push(
-              <svg
-                x={containerX + (additionalLeftSpace || 0)}
-                y={containerY}
-                width={containerWidth}
-                height={containerHeight}
-                key={`Arrow from ${source.id} to ${taskId} on ${comparisonLevel}`}
-              >
-                <Arrow
-                  colorStyles={colorStyles}
-                  distances={distances}
-                  taskFrom={source}
-                  targetFrom={sourceTarget}
-                  fromX1={fromX1 - containerX}
-                  fromX2={fromX2 - containerX}
-                  fromY={innerFromY}
-                  taskTo={task}
-                  targetTo={ownTarget}
-                  toX1={taskX1 - containerX}
-                  toX2={taskX2 - containerX}
-                  toY={innerToY}
-                  marginBetweenTasks={marginBetweenTasks}
-                  fullRowHeight={fullRowHeight}
-                  taskHeight={taskHeight}
-                  isShowDependencyWarnings={isShowDependencyWarnings}
-                  isCritical={isCritical}
-                  rtl={rtl}
-                  onArrowDoubleClick={onArrowDoubleClick}
-                  handleFixDependency={handleFixDependency}
-                />
-              </svg>,
-            );
-          });
+          );
       }
 
       const dependentsAtLevel = dependentMap.get(comparisonLevel);
@@ -388,76 +386,77 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
       if (dependentsByTask) {
         dependentsByTask
           .filter(({ dependent }) => visibleTasksMirror[dependent.id])
-          .forEach(({
-            containerHeight,
-            containerY,
-            innerFromY,
-            innerToY,
-            marginBetweenTasks,
-            ownTarget,
-            dependent,
-            dependentTarget,
-          }) => {
-            const addedDependenciesAtDependent = addedDependenciesAtLevel[dependent.id] || {};
-            if (!addedDependenciesAtLevel[dependent.id]) {
-              addedDependenciesAtLevel[dependent.id] = addedDependenciesAtDependent;
+          .forEach(
+            ({
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              marginBetweenTasks,
+              ownTarget,
+              dependent,
+              dependentTarget,
+            }) => {
+              const addedDependenciesAtDependent =
+                addedDependenciesAtLevel[dependent.id] || {};
+              if (!addedDependenciesAtLevel[dependent.id]) {
+                addedDependenciesAtLevel[dependent.id] =
+                  addedDependenciesAtDependent;
+              }
+
+              if (addedDependenciesAtDependent[taskId]) {
+                return;
+              }
+
+              addedDependenciesAtDependent[taskId] = true;
+
+              const criticalPathForTask = criticalPathOnLevel
+                ? criticalPathOnLevel.dependencies.get(dependent.id)
+                : undefined;
+
+              const isCritical = criticalPathForTask
+                ? criticalPathForTask.has(task.id)
+                : false;
+
+              const { x1: toX1, x2: toX2 } = getTaskCoordinates(dependent);
+
+              const containerX = Math.min(toX1, taskX1) - 300;
+              const containerWidth = Math.max(toX2, taskX2) - containerX + 300;
+
+              arrowsRes.push(
+                <svg
+                  x={containerX + (additionalLeftSpace || 0)}
+                  y={containerY}
+                  width={containerWidth}
+                  height={containerHeight}
+                  key={`Arrow from ${taskId} to ${dependent.id} on ${comparisonLevel}`}
+                >
+                  <Arrow
+                    colorStyles={colorStyles}
+                    distances={distances}
+                    taskFrom={task}
+                    targetFrom={ownTarget}
+                    fromX1={taskX1 - containerX}
+                    fromX2={taskX2 - containerX}
+                    fromY={innerFromY}
+                    taskTo={dependent}
+                    targetTo={dependentTarget}
+                    toX1={toX1 - containerX}
+                    toX2={toX2 - containerX}
+                    toY={innerToY}
+                    marginBetweenTasks={marginBetweenTasks}
+                    fullRowHeight={fullRowHeight}
+                    taskHeight={taskHeight}
+                    isShowDependencyWarnings={isShowDependencyWarnings}
+                    isCritical={isCritical}
+                    rtl={rtl}
+                    onArrowDoubleClick={onArrowDoubleClick}
+                    handleFixDependency={handleFixDependency}
+                  />
+                </svg>
+              );
             }
-
-            if (addedDependenciesAtDependent[taskId]) {
-              return;
-            }
-
-            addedDependenciesAtDependent[taskId] = true;
-
-            const criticalPathForTask = criticalPathOnLevel
-              ? criticalPathOnLevel.dependencies.get(dependent.id)
-              : undefined;
-
-            const isCritical = criticalPathForTask
-              ? criticalPathForTask.has(task.id)
-              : false;
-  
-            const {
-              x1: toX1,
-              x2: toX2,
-            } = getTaskCoordinates(dependent);
-  
-            const containerX = Math.min(toX1, taskX1) - 300;
-            const containerWidth = Math.max(toX2, taskX2) - containerX + 300;
-  
-            arrowsRes.push(
-              <svg
-                x={containerX + (additionalLeftSpace || 0)}
-                y={containerY}
-                width={containerWidth}
-                height={containerHeight}
-                key={`Arrow from ${taskId} to ${dependent.id} on ${comparisonLevel}`}
-              >
-                <Arrow
-                  colorStyles={colorStyles}
-                  distances={distances}
-                  taskFrom={task}
-                  targetFrom={ownTarget}
-                  fromX1={taskX1 - containerX}
-                  fromX2={taskX2 - containerX}
-                  fromY={innerFromY}
-                  taskTo={dependent}
-                  targetTo={dependentTarget}
-                  toX1={toX1 - containerX}
-                  toX2={toX2 - containerX}
-                  toY={innerToY}
-                  marginBetweenTasks={marginBetweenTasks}
-                  fullRowHeight={fullRowHeight}
-                  taskHeight={taskHeight}
-                  isShowDependencyWarnings={isShowDependencyWarnings}
-                  isCritical={isCritical}
-                  rtl={rtl}
-                  onArrowDoubleClick={onArrowDoubleClick}
-                  handleFixDependency={handleFixDependency}
-                />
-              </svg>,
-            );
-          });
+          );
       }
     }
 
@@ -481,9 +480,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     <g className="content">
       {renderedSelectedTasks}
 
-      <g>
-        {renderedHolidays}
-      </g>
+      <g>{renderedHolidays}</g>
 
       <g
         className="arrows"
