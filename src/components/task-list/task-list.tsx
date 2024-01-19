@@ -1,14 +1,7 @@
-import React, {
-  memo,
-  useEffect,
-} from "react";
-import type {
-  ComponentType,
-  MouseEvent,
-  RefObject,
-} from "react";
+import React, { memo, useEffect } from "react";
+import type { ComponentType, MouseEvent, RefObject } from "react";
 
-import cx from 'classnames';
+import cx from "classnames";
 
 import { useDrop } from "react-dnd";
 
@@ -16,7 +9,6 @@ import {
   ChildByLevelMap,
   ColorStyles,
   Column,
-  ColumnResizeEvent,
   DateSetup,
   DependencyMap,
   Distances,
@@ -31,7 +23,7 @@ import {
 import { ROW_DRAG_TYPE } from "../../constants";
 import { useOptimizedList } from "../../helpers/use-optimized-list";
 
-import styles from './task-list.module.css';
+import styles from "./task-list.module.css";
 
 const SCROLL_DELAY = 25;
 
@@ -42,7 +34,6 @@ export type TaskListProps = {
   closedTasks: Readonly<Record<string, true>>;
   colors: ColorStyles;
   columns: readonly Column[];
-  columnResizeEvent: ColumnResizeEvent | null;
   cutIdsMirror: Readonly<Record<string, true>>;
   dateSetup: DateSetup;
   dependencyMap: DependencyMap;
@@ -58,7 +49,11 @@ export type TaskListProps = {
   handleEditTask: (task: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
-  handleOpenContextMenu: (task: TaskOrEmpty, clientX: number, clientY: number) => void;
+  handleOpenContextMenu: (
+    task: TaskOrEmpty,
+    clientX: number,
+    clientY: number
+  ) => void;
   icons?: Partial<Icons>;
   isShowTaskNumbers: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
@@ -85,7 +80,6 @@ const TaskListInner: React.FC<TaskListProps> = ({
   childTasksMap,
   closedTasks,
   colors,
-  columnResizeEvent,
   columns,
   cutIdsMirror,
   dateSetup,
@@ -124,29 +118,35 @@ const TaskListInner: React.FC<TaskListProps> = ({
 }) => {
   const renderedIndexes = useOptimizedList(
     taskListContainerRef,
-    'scrollTop',
-    fullRowHeight,
+    "scrollTop",
+    fullRowHeight
   );
 
-  const [{ isScrollingToTop }, scrollToTopRef] = useDrop({
-    accept: ROW_DRAG_TYPE,
+  const [{ isScrollingToTop }, scrollToTopRef] = useDrop(
+    {
+      accept: ROW_DRAG_TYPE,
 
-    collect: (monitor) => ({
-      isScrollingToTop: monitor.isOver(),
-    }),
+      collect: monitor => ({
+        isScrollingToTop: monitor.isOver(),
+      }),
 
-    canDrop: () => false,
-  }, []);
+      canDrop: () => false,
+    },
+    []
+  );
 
-  const [{ isScrollingToBottom }, scrollToBottomRef] = useDrop({
-    accept: ROW_DRAG_TYPE,
+  const [{ isScrollingToBottom }, scrollToBottomRef] = useDrop(
+    {
+      accept: ROW_DRAG_TYPE,
 
-    collect: (monitor) => ({
-      isScrollingToBottom: monitor.isOver(),
-    }),
+      collect: monitor => ({
+        isScrollingToBottom: monitor.isOver(),
+      }),
 
-    canDrop: () => false,
-  }, [scrollToBottomStep]);
+      canDrop: () => false,
+    },
+    [scrollToBottomStep]
+  );
 
   useEffect(() => {
     if (!isScrollingToTop) {
@@ -159,7 +159,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
 
     return () => {
       clearInterval(intervalId);
-    }
+    };
   }, [isScrollingToTop, scrollToTopStep]);
 
   useEffect(() => {
@@ -173,14 +173,11 @@ const TaskListInner: React.FC<TaskListProps> = ({
 
     return () => {
       clearInterval(intervalId);
-    }
+    };
   }, [isScrollingToBottom, scrollToBottomStep]);
 
   return (
-    <div
-      className={styles.taskListRoot}
-      ref={taskListRef}
-    >
+    <div className={styles.taskListRoot} ref={taskListRef}>
       <div
         className={styles.taskListHorizontalScroll}
         style={{
@@ -192,7 +189,6 @@ const TaskListInner: React.FC<TaskListProps> = ({
           fontFamily={fontFamily}
           fontSize={fontSize}
           columns={columns}
-          columnResizeEvent={columnResizeEvent}
           onColumnResizeStart={onColumnResizeStart}
           canResizeColumns={canResizeColumns}
         />
@@ -218,7 +214,6 @@ const TaskListInner: React.FC<TaskListProps> = ({
                 childTasksMap={childTasksMap}
                 closedTasks={closedTasks}
                 colors={colors}
-                columnResizeEvent={columnResizeEvent}
                 columns={columns}
                 cutIdsMirror={cutIdsMirror}
                 dateSetup={dateSetup}
@@ -267,10 +262,10 @@ const TaskListInner: React.FC<TaskListProps> = ({
 
       <div
         className={styles.taskListResizer}
-        onMouseDown={(event) => {
+        onMouseDown={event => {
           onTableResizeStart(event.clientX);
         }}
-        onTouchStart={(event) => {
+        onTouchStart={event => {
           const firstTouch = event.touches[0];
 
           if (firstTouch) {

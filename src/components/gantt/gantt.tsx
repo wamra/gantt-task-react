@@ -14,7 +14,6 @@ import {
   ChangeAction,
   CheckTaskIdExistsAtLevel,
   ColorStyles,
-  Column,
   ContextMenuOptionType,
   DateFormats,
   DateSetup,
@@ -57,14 +56,7 @@ import { getInitialClosedTasks } from "../../helpers/get-initial-closed-tasks";
 import { collectVisibleTasks } from "../../helpers/collect-visible-tasks";
 import { getTaskToHasDependencyWarningMap } from "../../helpers/get-task-to-has-dependency-warning-map";
 
-import { TitleColumn } from "../task-list/columns/title-column";
-import { DateStartColumn } from "../task-list/columns/date-start-column";
-import { DateEndColumn } from "../task-list/columns/date-end-column";
-import { useColumnResize } from "./use-column-resize";
 import { getChangeTaskMetadata } from "../../helpers/get-change-task-metadata";
-import { DeleteColumn } from "../task-list/columns/delete-column";
-import { EditColumn } from "../task-list/columns/edit-column";
-import { AddColumn } from "../task-list/columns/add-column";
 import { useCreateRelation } from "./use-create-relation";
 import { useTaskDrag } from "./use-task-drag";
 import { useTaskTooltip } from "../../helpers/use-task-tooltip";
@@ -75,13 +67,11 @@ import { useHorizontalScrollbars } from "./use-horizontal-scrollbars";
 
 import { getDateByOffset } from "../../helpers/get-date-by-offset";
 import { getDatesDiff } from "../../helpers/get-dates-diff";
-import { DependenciesColumn } from "../task-list/columns/dependencies-column";
 import { BarMoveAction } from "../../types/gantt-task-actions";
 import { getMinAndMaxChildsMap } from "../../helpers/get-min-and-max-childs-map";
 import { useGetTaskCurrentState } from "./use-get-task-current-state";
 import { useSelection } from "./use-selection";
 import { defaultCheckIsHoliday } from "./default-check-is-holiday";
-import { useTableResize } from "./use-table-resize";
 import { defaultRoundEndDate } from "./default-round-end-date";
 import { defaultRoundStartDate } from "./default-round-start-date";
 
@@ -99,6 +89,7 @@ import { deleteOption } from "../../context-menu-options/delete";
 import { useHolidays } from "./use-holidays";
 
 import styles from "./gantt.module.css";
+import { useTableListResize } from "./use-tablelist-resize";
 
 const defaultColors: ColorStyles = {
   arrowColor: "grey",
@@ -779,126 +770,16 @@ export const Gantt: React.FC<GanttProps> = ({
     });
   }, []);
 
-  const [columnsState, setColumns] = useState<readonly Column[]>(() => {
-    if (columnsProp) {
-      return columnsProp;
-    }
+  // Manage the column and list table resizing
+  const [
+    columns,
+    taskListWidth,
+    tableWidth,
+    onTableResizeStart,
+    onColumnResizeStart,
+  ] = useTableListResize(columnsProp, distances, onResizeColumn);
 
-    const {
-      titleCellWidth,
-      dateCellWidth,
-      dependenciesCellWidth,
-      actionColumnWidth,
-    } = distances;
-
-    return [
-      {
-        component: TitleColumn,
-        width: titleCellWidth,
-        title: "Name",
-      },
-
-      {
-        component: DateStartColumn,
-        width: dateCellWidth,
-        title: "From",
-      },
-
-      {
-        component: DateEndColumn,
-        width: dateCellWidth,
-        title: "To",
-      },
-
-      {
-        component: DependenciesColumn,
-        width: dependenciesCellWidth,
-        title: "Dependencies",
-      },
-
-      {
-        component: DeleteColumn,
-        width: actionColumnWidth,
-        canResize: false,
-      },
-
-      {
-        component: EditColumn,
-        width: actionColumnWidth,
-        canResize: false,
-      },
-
-      {
-        component: AddColumn,
-        width: actionColumnWidth,
-        canResize: false,
-      },
-    ];
-  });
-
-  const columns = columnsProp && onResizeColumn ? columnsProp : columnsState;
-
-  const taskListWidth = useMemo(
-    () => columns.reduce((res, { width }) => res + width, 0),
-    [columns]
-  );
-
-  const onResizeColumnWithDelta = useCallback(
-    (columnIndex: number, delta: number) => {
-      const { width } = columns[columnIndex];
-
-      const nextWidth = Math.max(10, width + delta);
-
-      const nextColumns = [...columns];
-      nextColumns[columnIndex] = {
-        ...columns[columnIndex],
-        width: nextWidth,
-      };
-
-      setColumns(nextColumns);
-
-      if (onResizeColumn) {
-        onResizeColumn(nextColumns, columnIndex, Math.max(10, width + delta));
-      }
-    },
-    [columns, onResizeColumn]
-  );
-
-  const [columnResizeEvent, onColumnResizeStart] = useColumnResize(
-    onResizeColumnWithDelta
-  );
-
-  const [tableWidthState, setTableWidth] = useState(
-    () => distances.tableWidth || taskListWidth
-  );
-
-  const onResizeTableWithDelta = useCallback(
-    (delta: number) => {
-      setTableWidth(prevValue =>
-        Math.min(Math.max(prevValue + delta, 50), taskListWidth)
-      );
-    },
-    [taskListWidth]
-  );
-
-  const [tableResizeEvent, onTableResizeStart] = useTableResize(
-    onResizeTableWithDelta
-  );
-
-  const tableWidth = useMemo(() => {
-    if (tableResizeEvent) {
-      return Math.min(
-        Math.max(
-          tableWidthState + tableResizeEvent.endX - tableResizeEvent.startX,
-          50
-        ),
-        taskListWidth
-      );
-    }
-
-    return tableWidthState;
-  }, [tableResizeEvent, tableWidthState, taskListWidth]);
-
+  console.log("tableWidth " + tableWidth + "   tableWidth " + tableWidth);
   const getMetadata = useCallback(
     (changeAction: ChangeAction) =>
       getChangeTaskMetadata({
@@ -1978,7 +1859,6 @@ export const Gantt: React.FC<GanttProps> = ({
     childTasksMap,
     closedTasks,
     colors: colorStyles,
-    columnResizeEvent,
     columns,
     cutIdsMirror,
     dateSetup,

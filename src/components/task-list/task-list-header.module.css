@@ -35,3 +35,12 @@
   cursor: ew-resize;
   user-select: none;
 }
+.ganttTable_HeaderItem:last-child .resizer {
+  width: 5px;
+  right: 5px;
+}
+
+.resizer:hover {
+  background-color: grey;
+}
+

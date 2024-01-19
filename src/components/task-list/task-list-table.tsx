@@ -1,10 +1,5 @@
-import React, {
-  memo,
-  useMemo,
-} from "react";
-import type {
-  ReactNode,
-} from 'react';
+import React, { memo, useMemo } from "react";
+import type { ReactNode } from "react";
 
 import { checkHasChildren } from "../../helpers/check-has-children";
 import { TaskListTableProps } from "../../types/public-types";
@@ -18,7 +13,6 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
   closedTasks,
   colors,
   columns,
-  columnResizeEvent,
   cutIdsMirror,
   dateSetup,
   dependencyMap,
@@ -47,8 +41,9 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
     /**
      * TO DO: maybe consider tasks on other levels?
      */
-    () => tasks.filter((task) => !task.comparisonLevel || task.comparisonLevel === 1),
-    [tasks],
+    () =>
+      tasks.filter(task => !task.comparisonLevel || task.comparisonLevel === 1),
+    [tasks]
   );
 
   const renderedListWithOffset = useMemo(() => {
@@ -67,30 +62,26 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
         break;
       }
 
-      const {
-        id,
-        comparisonLevel = 1,
-      } = task;
+      const { id, comparisonLevel = 1 } = task;
 
       const indexesOnLevel = mapTaskToNestedIndex.get(comparisonLevel);
 
       if (!indexesOnLevel) {
         throw new Error(`Indexes are not found for level ${comparisonLevel}`);
       }
-    
+
       const taskIndex = indexesOnLevel.get(id);
-    
+
       if (!taskIndex) {
         throw new Error(`Index is not found for task ${id}`);
       }
-    
+
       const [depth, indexStr] = taskIndex;
 
       renderedList.push(
         <TaskListTableRow
           canMoveTasks={canMoveTasks}
           colors={colors}
-          columnResizeEvent={columnResizeEvent}
           columns={columns}
           dateSetup={dateSetup}
           dependencyMap={dependencyMap}
@@ -117,7 +108,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           selectTaskOnMouseDown={selectTaskOnMouseDown}
           task={task}
           key={id}
-        />,
+        />
       );
     }
 
@@ -134,7 +125,6 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
     );
   }, [
     colors,
-    columnResizeEvent,
     columns,
     cutIdsMirror,
     fullRowHeight,

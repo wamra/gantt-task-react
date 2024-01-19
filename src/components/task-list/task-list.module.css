@@ -41,6 +41,10 @@
   user-select: none;
 }
 
+.taskListResizer:hover {
+  background-color: grey;
+}
+
 .taskListResizer::before {
   content: "";
   position: absolute;

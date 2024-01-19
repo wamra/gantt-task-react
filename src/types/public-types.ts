@@ -556,7 +556,6 @@ export interface TaskListTableProps {
   childTasksMap: ChildByLevelMap;
   closedTasks: Readonly<Record<string, true>>;
   colors: ColorStyles;
-  columnResizeEvent: ColumnResizeEvent | null;
   columns: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
   dateSetup: DateSetup;
@@ -592,7 +591,6 @@ export interface TaskListTableProps {
 export interface TaskListHeaderProps {
   headerHeight: number;
   columns: readonly Column[];
-  columnResizeEvent: ColumnResizeEvent | null;
   fontFamily: string;
   fontSize: string;
   canResizeColumns: boolean;
@@ -802,23 +800,11 @@ export type Column = {
   canResize?: boolean;
 };
 
-export type ColumnResizeEvent = {
-  columnIndex: number;
-  startX: number;
-  endX: number;
-};
-
-export type TableResizeEvent = {
-  startX: number;
-  endX: number;
-};
-
 export type OnResizeColumn = (
   nextColumns: readonly Column[],
   columnIndex: number,
   nextWidth: number
 ) => void;
-
 export type ChangeAction =
   | {
       type: "add-childs";

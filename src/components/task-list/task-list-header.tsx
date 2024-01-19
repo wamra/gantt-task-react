@@ -1,7 +1,4 @@
-import React, {
-  Fragment,
-  memo,
-} from "react";
+import React, { Fragment, memo } from "react";
 
 import { TaskListHeaderProps } from "../../types/public-types";
 
@@ -12,7 +9,6 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
   fontFamily,
   fontSize,
   columns,
-  columnResizeEvent,
   canResizeColumns,
   onColumnResizeStart,
 }) => {
@@ -30,15 +26,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
           height: headerHeight - 2,
         }}
       >
-        {columns.map(({
-          title,
-          width,
-          canResize,
-        }, index) => {
-          const columnWidth = columnResizeEvent && columnResizeEvent.columnIndex === index
-            ? Math.max(5, width + columnResizeEvent.endX - columnResizeEvent.startX)
-            : width;
-
+        {columns.map(({ title, width, canResize }, index) => {
           return (
             <Fragment key={index}>
               {index > 0 && (
@@ -54,19 +42,19 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
               <div
                 className={styles.ganttTable_HeaderItem}
                 style={{
-                  minWidth: columnWidth,
-                  maxWidth: columnWidth,
+                  minWidth: width,
+                  maxWidth: width,
                 }}
               >
                 {title}
 
-                {canResizeColumns && canResize !== false &&  (
+                {canResizeColumns && canResize !== false && (
                   <div
                     className={styles.resizer}
-                    onMouseDown={(event) => {
+                    onMouseDown={event => {
                       onColumnResizeStart(index, event.clientX);
                     }}
-                    onTouchStart={(event) => {
+                    onTouchStart={event => {
                       const firstTouch = event.touches[0];
 
                       if (firstTouch) {
