@@ -252,7 +252,7 @@ export const Gantt: React.FC<GanttProps> = ({
     scrollToRightStep,
   ] = useHorizontalScrollbars();
 
-  const scrollXRef = useLatest(scrollX);
+  // const scrollXRef = useLatest(scrollX);
 
   const roundEndDate = useCallback(
     (date: Date) => roundEndDateProp(date, viewMode),
@@ -1103,7 +1103,7 @@ export const Gantt: React.FC<GanttProps> = ({
     roundStartDate,
     scrollToLeftStep,
     scrollToRightStep,
-    scrollXRef,
+    scrollX,
     setScrollXProgrammatically,
     svgClientWidthRef,
     svgWidth,

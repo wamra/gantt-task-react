@@ -1,34 +1,17 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import useLatest from 'use-latest';
-
-import {
-  autoUpdate,
-  flip,
-  offset,
-  shift,
-} from '@floating-ui/dom';
+import { autoUpdate, flip, offset, shift } from "@floating-ui/dom";
 import {
   useFloating,
   useFocus,
   useDismiss,
   useRole,
   useInteractions,
-} from '@floating-ui/react';
+} from "@floating-ui/react";
 
-import type {
-  ChangeInProgress,
-  Task,
-} from '../types/public-types';
+import type { ChangeInProgress, Task } from "../types/public-types";
 
-export const useTaskTooltip = (
-  changeInProgress: ChangeInProgress | null,
-) => {
+export const useTaskTooltip = (changeInProgress: ChangeInProgress | null) => {
   const [hoverTooltipTask, setHoverTooltipTask] = useState<Task | null>(null);
   const [hoverTooltipEl, setHoverTooltipEl] = useState<Element | null>(null);
 
@@ -52,10 +35,7 @@ export const useTaskTooltip = (
     x,
     y,
     strategy,
-    refs: {
-      setFloating,
-      setReference,
-    },
+    refs: { setFloating, setReference },
     context,
   } = useFloating({
     open: Boolean(tooltipTask),
@@ -65,18 +45,13 @@ export const useTaskTooltip = (
 
   const focus = useFocus(context);
   const dismiss = useDismiss(context);
-  const role = useRole(context, { role: 'tooltip' });
+  const role = useRole(context, { role: "tooltip" });
 
-  const {
-    getReferenceProps,
-    getFloatingProps,
-  } = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     focus,
     dismiss,
     role,
   ]);
-
-  const setReferenceRef = useLatest(setReference);
 
   useEffect(() => {
     if (!tooltipTask) {
@@ -100,13 +75,16 @@ export const useTaskTooltip = (
     };
   }, [context, tooltipTask]);
 
-  const onChangeTooltipTask = useCallback((nextTask: Task | null, element: Element | null) => {
-    setHoverTooltipTask(nextTask);
-    setHoverTooltipEl(element);
-  }, [setReferenceRef]);
+  const onChangeTooltipTask = useCallback(
+    (nextTask: Task | null, element: Element | null) => {
+      setHoverTooltipTask(nextTask);
+      setHoverTooltipEl(element);
+    },
+    [setReference]
+  );
 
   useEffect(() => {
-    setReferenceRef.current(tooltipEl);
+    setReference(tooltipEl);
   }, [tooltipEl]);
 
   return {

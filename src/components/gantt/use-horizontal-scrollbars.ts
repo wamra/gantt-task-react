@@ -1,16 +1,7 @@
-import {
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
-import type {
-  RefObject,
-  SyntheticEvent,
-} from 'react';
+import { useCallback, useRef, useState } from "react";
+import type { RefObject, SyntheticEvent } from "react";
 
-import useLatest from 'use-latest';
-
-import { SCROLL_STEP } from '../../constants';
+import { SCROLL_STEP } from "../../constants";
 
 export const useHorizontalScrollbars = (): [
   RefObject<HTMLDivElement>,
@@ -18,10 +9,10 @@ export const useHorizontalScrollbars = (): [
   (nextScrollX: number) => void,
   (event: SyntheticEvent<HTMLDivElement>) => void,
   () => void,
-  () => void,
+  () => void
 ] => {
   const [scrollX, setScrollX] = useState(0);
-  const scrollXRef = useLatest(scrollX);
+  // const scrollXRef = useLatest(scrollX);
 
   const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
 
@@ -47,33 +38,30 @@ export const useHorizontalScrollbars = (): [
     }, 300);
   }, []);
 
-  const onVerticalScrollbarScrollX = useCallback((event: SyntheticEvent<HTMLDivElement>) => {
-    if (isLockedRef.current) {
-      return;
-    }
+  const onVerticalScrollbarScrollX = useCallback(
+    (event: SyntheticEvent<HTMLDivElement>) => {
+      if (isLockedRef.current) {
+        return;
+      }
 
-    const nextScrollX = event.currentTarget.scrollLeft;
+      const nextScrollX = event.currentTarget.scrollLeft;
 
-    if (verticalGanttContainerRef.current) {
-      verticalGanttContainerRef.current.scrollLeft = nextScrollX;
-    }
+      if (verticalGanttContainerRef.current) {
+        verticalGanttContainerRef.current.scrollLeft = nextScrollX;
+      }
 
-    setScrollX(nextScrollX);
-  }, []);
+      setScrollX(nextScrollX);
+    },
+    []
+  );
 
   const scrollToLeftStep = useCallback(() => {
-    setScrollXProgrammatically(scrollXRef.current - SCROLL_STEP);
-  }, [
-    setScrollXProgrammatically,
-    scrollXRef,
-  ]);
+    setScrollXProgrammatically(scrollX - SCROLL_STEP);
+  }, [setScrollXProgrammatically, scrollX]);
 
   const scrollToRightStep = useCallback(() => {
-    setScrollXProgrammatically(scrollXRef.current + SCROLL_STEP);
-  }, [
-    setScrollXProgrammatically,
-    scrollXRef,
-  ]);
+    setScrollXProgrammatically(scrollX + SCROLL_STEP);
+  }, [setScrollXProgrammatically, scrollX]);
 
   return [
     verticalGanttContainerRef,

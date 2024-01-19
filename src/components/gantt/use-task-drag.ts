@@ -199,7 +199,7 @@ type UseTaskDragParams = {
   rtl: boolean;
   scrollToLeftStep: () => void;
   scrollToRightStep: () => void;
-  scrollXRef: RefObject<number>;
+  scrollX: number;
   setScrollXProgrammatically: (nextScrollX: number) => void;
   svgClientWidthRef: RefObject<number | null>;
   svgWidth: number;
@@ -221,7 +221,7 @@ export const useTaskDrag = ({
   rtl,
   scrollToLeftStep,
   scrollToRightStep,
-  scrollXRef,
+  scrollX,
   setScrollXProgrammatically,
   svgClientWidthRef,
   svgWidth,
@@ -348,7 +348,7 @@ export const useTaskDrag = ({
     const intervalId = setInterval(() => {
       const currentChangeInProgress = changeInProgress;
 
-      const scrollX = scrollXRef.current;
+      // const scrollX = scrollX;
 
       if (!currentChangeInProgress || scrollX === null) {
         return;
@@ -513,7 +513,7 @@ export const useTaskDrag = ({
     recountOnMove,
     scrollToLeftStep,
     scrollToRightStep,
-    scrollXRef,
+    scrollX,
     svgClientWidthRef,
     svgWidth,
   ]);
@@ -523,12 +523,12 @@ export const useTaskDrag = ({
   useEffect(() => {
     if (additionalRightSpace) {
       setScrollXProgrammatically(
-        (scrollXRef.current || 0) + (svgClientWidthRef.current || 0)
+        (scrollX || 0) + (svgClientWidthRef.current || 0)
       );
     }
   }, [
     additionalRightSpace,
-    scrollXRef,
+    scrollX,
     setScrollXProgrammatically,
     svgClientWidthRef,
   ]);
