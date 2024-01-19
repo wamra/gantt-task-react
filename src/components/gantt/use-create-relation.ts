@@ -1,18 +1,16 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import type {
-  RefObject,
-} from "react";
-
-import useLatest from "use-latest";
+import { useCallback, useEffect, useState } from "react";
+import type { RefObject } from "react";
 
 import { checkIsDescendant } from "../../helpers/check-is-descendant";
 import { getRelationCircleByCoordinates } from "../../helpers/get-relation-circle-by-coordinates";
-import { getMapTaskToCoordinatesOnLevel, getTaskCoordinates } from "../../helpers/get-task-coordinates";
-import { GanttRelationEvent, RelationMoveTarget } from "../../types/gantt-task-actions";
+import {
+  getMapTaskToCoordinatesOnLevel,
+  getTaskCoordinates,
+} from "../../helpers/get-task-coordinates";
+import {
+  GanttRelationEvent,
+  RelationMoveTarget,
+} from "../../types/gantt-task-actions";
 import {
   Distances,
   MapTaskToCoordinates,
@@ -36,10 +34,7 @@ type UseCreateRelationParams = {
 };
 
 export const useCreateRelation = ({
-  distances: {
-    relationCircleOffset,
-    relationCircleRadius,
-  },
+  distances: { relationCircleOffset, relationCircleRadius },
 
   ganttSVGRef,
   mapTaskToCoordinates,
@@ -51,37 +46,34 @@ export const useCreateRelation = ({
   visibleTasks,
 }: UseCreateRelationParams): [
   GanttRelationEvent | null,
-  (target: RelationMoveTarget, task: Task) => void,
+  (target: RelationMoveTarget, task: Task) => void
 ] => {
-  const [ganttRelationEvent, setGanttRelationEvent] = useState<GanttRelationEvent | null>(null);
-
-  const mapTaskToCoordinatesRef = useLatest(mapTaskToCoordinates);
+  const [ganttRelationEvent, setGanttRelationEvent] =
+    useState<GanttRelationEvent | null>(null);
 
   /**
    * Method is Start point of start draw relation
    */
-  const handleBarRelationStart = useCallback((
-    target: RelationMoveTarget,
-    task: Task,
-  ) => {
-    const coordinates = getTaskCoordinates(task, mapTaskToCoordinatesRef.current);
+  const handleBarRelationStart = useCallback(
+    (target: RelationMoveTarget, task: Task) => {
+      const coordinates = getTaskCoordinates(task, mapTaskToCoordinates);
+      const startX =
+        (target === "startOfTask") !== rtl
+          ? coordinates.x1 - 10
+          : coordinates.x2 + 10;
+      const startY = coordinates.y + taskHalfHeight;
 
-    const startX = ((target === 'startOfTask') !== rtl) ? coordinates.x1 - 10 : coordinates.x2 + 10;
-    const startY = coordinates.y + taskHalfHeight;
-
-    setGanttRelationEvent({
-      target,
-      task,
-      startX,
-      startY,
-      endX: startX,
-      endY: startY,
-    });
-  }, [
-    taskHalfHeight,
-    mapTaskToCoordinatesRef,
-    rtl,
-  ]);
+      setGanttRelationEvent({
+        target,
+        task,
+        startX,
+        startY,
+        endX: startX,
+        endY: startY,
+      });
+    },
+    [taskHalfHeight, mapTaskToCoordinates, rtl]
+  );
 
   const startRelationTarget = ganttRelationEvent?.target;
   const startRelationTask = ganttRelationEvent?.task;
@@ -90,11 +82,7 @@ export const useCreateRelation = ({
    * Drag arrow
    */
   useEffect(() => {
-    if (
-      !onRelationChange
-      || !startRelationTarget
-      || !startRelationTask
-    ) {
+    if (!onRelationChange || !startRelationTarget || !startRelationTask) {
       return undefined;
     }
 
@@ -118,7 +106,7 @@ export const useCreateRelation = ({
 
       const svgP = point.matrixTransform(ctm.inverse());
 
-      setGanttRelationEvent((prevValue) => {
+      setGanttRelationEvent(prevValue => {
         if (!prevValue) {
           return null;
         }
@@ -132,10 +120,7 @@ export const useCreateRelation = ({
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      const {
-        clientX,
-        clientY,
-      } = event;
+      const { clientX, clientY } = event;
 
       handleMove(clientX, clientY);
     };
@@ -146,12 +131,9 @@ export const useCreateRelation = ({
       const firstTouch = event.touches[0];
 
       if (firstTouch) {
-        const {
-          clientX,
-          clientY,
-        } = firstTouch;
+        const { clientX, clientY } = firstTouch;
         lastTouch = firstTouch;
-  
+
         handleMove(clientX, clientY);
       }
     };
@@ -175,53 +157,49 @@ export const useCreateRelation = ({
         relationCircleOffset,
         relationCircleRadius,
         rtl,
-        getMapTaskToCoordinatesOnLevel(startRelationTask, mapTaskToCoordinates),
+        getMapTaskToCoordinatesOnLevel(startRelationTask, mapTaskToCoordinates)
       );
 
       if (endTargetRelationCircle) {
         const [endRelationTask, endRelationTarget] = endTargetRelationCircle;
 
-        const {
-          comparisonLevel: startComparisonLevel = 1,
-        } = startRelationTask;
+        const { comparisonLevel: startComparisonLevel = 1 } = startRelationTask;
 
-        const {
-          comparisonLevel: endComparisonLevel = 1,
-        } = endRelationTask;
+        const { comparisonLevel: endComparisonLevel = 1 } = endRelationTask;
 
         if (startComparisonLevel === endComparisonLevel) {
           const indexesOnLevel = mapTaskToGlobalIndex.get(startComparisonLevel);
 
           if (!indexesOnLevel) {
-            throw new Error(`Indexes are not found for level ${startComparisonLevel}`);
+            throw new Error(
+              `Indexes are not found for level ${startComparisonLevel}`
+            );
           }
 
           const startIndex = indexesOnLevel.get(startRelationTask.id);
 
           if (typeof startIndex !== "number") {
-            throw new Error(`Index is not found for task ${startRelationTask.id}`);
+            throw new Error(
+              `Index is not found for task ${startRelationTask.id}`
+            );
           }
 
           const endIndex = indexesOnLevel.get(endRelationTask.id);
 
           if (typeof endIndex !== "number") {
-            throw new Error(`Index is not found for task ${endRelationTask.id}`);
+            throw new Error(
+              `Index is not found for task ${endRelationTask.id}`
+            );
           }
 
-          const isOneDescendant = checkIsDescendant(
-            startRelationTask,
-            endRelationTask,
-            tasksMap,
-          ) || checkIsDescendant(
-            endRelationTask,
-            startRelationTask,
-            tasksMap,
-          );
+          const isOneDescendant =
+            checkIsDescendant(startRelationTask, endRelationTask, tasksMap) ||
+            checkIsDescendant(endRelationTask, startRelationTask, tasksMap);
 
           onRelationChange(
             [startRelationTask, startRelationTarget, startIndex],
             [endRelationTask, endRelationTarget, endIndex],
-            isOneDescendant,
+            isOneDescendant
           );
         }
       }
@@ -230,21 +208,15 @@ export const useCreateRelation = ({
     };
 
     const handleMouseUp = (event: MouseEvent) => {
-      const {
-        clientX,
-        clientY,
-      } = event;
+      const { clientX, clientY } = event;
 
       handleEnd(clientX, clientY);
     };
 
     const handleTouchEnd = () => {
       if (lastTouch) {
-        const {
-          clientX,
-          clientY,
-        } = lastTouch;
-  
+        const { clientX, clientY } = lastTouch;
+
         handleEnd(clientX, clientY);
       }
     };

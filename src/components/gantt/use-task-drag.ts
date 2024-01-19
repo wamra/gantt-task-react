@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { RefObject } from "react";
 
-import useLatest from "use-latest";
-
 import { SCROLL_STEP } from "../../constants";
 
 import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
@@ -243,12 +241,8 @@ export const useTaskDrag = ({
     useState<ChangeInProgress | null>(null);
 
   const changeInProgressTask = changeInProgress?.task;
-  const changeInProgressLatestRef = useLatest(changeInProgress);
 
   const isChangeInProgress = Boolean(changeInProgress);
-
-  const mapTaskToCoordinatesRef = useLatest(mapTaskToCoordinates);
-  const svgWidthRef = useLatest(svgWidth);
 
   /**
    * Method is Start point of task change
@@ -260,7 +254,7 @@ export const useTaskDrag = ({
       clientX: number,
       taskRootNode: Element
     ) => {
-      if (changeInProgressLatestRef.current) {
+      if (changeInProgress) {
         return;
       }
 
@@ -275,10 +269,7 @@ export const useTaskDrag = ({
       point.x = clientX;
       const cursor = point.matrixTransform(svgNode.getScreenCTM()?.inverse());
 
-      const coordinates = getTaskCoordinates(
-        task,
-        mapTaskToCoordinatesRef.current
-      );
+      const coordinates = getTaskCoordinates(task, mapTaskToCoordinates);
 
       setChangeInProgress({
         action,
@@ -288,7 +279,7 @@ export const useTaskDrag = ({
         coordinates: {
           ...coordinates,
           containerX: 0,
-          containerWidth: svgWidthRef.current,
+          containerWidth: svgWidth,
           innerX1: coordinates.x1,
           innerX2: coordinates.x2,
         },
@@ -301,17 +292,12 @@ export const useTaskDrag = ({
         tsDiff: 0,
       });
     },
-    [
-      changeInProgressLatestRef,
-      ganttSVGRef,
-      mapTaskToCoordinatesRef,
-      svgWidthRef,
-    ]
+    [changeInProgress, ganttSVGRef, mapTaskToCoordinates, svgWidth]
   );
 
   const recountOnMove = useCallback(
     (nextX: number) => {
-      const changeInProgressLatest = changeInProgressLatestRef.current;
+      const changeInProgressLatest = changeInProgress;
 
       if (!changeInProgressLatest) {
         return;
@@ -351,7 +337,7 @@ export const useTaskDrag = ({
         };
       });
     },
-    [changeInProgressLatestRef, rtl, svgWidthRef]
+    [changeInProgress, rtl, svgWidth]
   );
 
   useEffect(() => {
@@ -360,7 +346,7 @@ export const useTaskDrag = ({
     }
 
     const intervalId = setInterval(() => {
-      const currentChangeInProgress = changeInProgressLatestRef.current;
+      const currentChangeInProgress = changeInProgress;
 
       const scrollX = scrollXRef.current;
 
@@ -450,7 +436,7 @@ export const useTaskDrag = ({
         switch (action) {
           case "end":
           case "move":
-            if (svgWidthRef.current > scrollX + svgClientWidth) {
+            if (svgWidth > scrollX + svgClientWidth) {
               recountOnMove(lastClientX + SCROLL_STEP);
               scrollToRightStep();
             } else {
@@ -506,7 +492,7 @@ export const useTaskDrag = ({
             return;
 
           case "start":
-            if (svgWidthRef.current > scrollX + svgClientWidth) {
+            if (svgWidth > scrollX + svgClientWidth) {
               recountOnMove(lastClientX + SCROLL_STEP);
               scrollToRightStep();
             }
@@ -522,14 +508,14 @@ export const useTaskDrag = ({
       clearInterval(intervalId);
     };
   }, [
-    changeInProgressLatestRef,
+    changeInProgress,
     isChangeInProgress,
     recountOnMove,
     scrollToLeftStep,
     scrollToRightStep,
     scrollXRef,
     svgClientWidthRef,
-    svgWidthRef,
+    svgWidth,
   ]);
 
   const additionalRightSpace = changeInProgress?.additionalRightSpace;
@@ -581,7 +567,7 @@ export const useTaskDrag = ({
     };
 
     const handleUp = async (event: Event) => {
-      const changeInProgressLatest = changeInProgressLatestRef.current;
+      const changeInProgressLatest = changeInProgress;
 
       if (!changeInProgressLatest || !point) {
         return;
@@ -634,7 +620,7 @@ export const useTaskDrag = ({
       svgNode.removeEventListener("touchend", handleUp);
     };
   }, [
-    changeInProgressLatestRef,
+    changeInProgress,
     changeInProgressTask,
     childTasksMap,
     dependentMap,
