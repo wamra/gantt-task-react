@@ -540,6 +540,7 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
    */
   comparisonLevels?: number;
   contextMenuOptions?: ContextMenuOptionType[];
+  enableTableListContextMenu?: number;
   /**
    * Get new id for task after using copy-paste
    */

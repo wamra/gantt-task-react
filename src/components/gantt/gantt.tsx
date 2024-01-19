@@ -182,6 +182,7 @@ export const Gantt: React.FC<GanttProps> = ({
   dateFormats: dateFormatsProp = undefined,
   dateLocale = enDateLocale,
   distances: distancesProp = undefined,
+  enableTableListContextMenu = false,
   fixEndPosition: fixEndPositionProp = undefined,
   fixStartPosition: fixStartPositionProp = undefined,
   fontFamily = "Arial, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
@@ -779,7 +780,6 @@ export const Gantt: React.FC<GanttProps> = ({
     onColumnResizeStart,
   ] = useTableListResize(columnsProp, distances, onResizeColumn);
 
-  console.log("tableWidth " + tableWidth + "   tableWidth " + tableWidth);
   const getMetadata = useCallback(
     (changeAction: ChangeAction) =>
       getChangeTaskMetadata({
@@ -1940,17 +1940,18 @@ export const Gantt: React.FC<GanttProps> = ({
         rtl={rtl}
         verticalScrollbarRef={verticalScrollbarRef}
       />
-
-      <ContextMenu
-        checkHasCopyTasks={checkHasCopyTasks}
-        checkHasCutTasks={checkHasCutTasks}
-        colors={colorStyles}
-        contextMenu={contextMenu}
-        distances={distances}
-        handleAction={handleAction}
-        handleCloseContextMenu={handleCloseContextMenu}
-        options={contextMenuOptions}
-      />
+      {enableTableListContextMenu && (
+        <ContextMenu
+          checkHasCopyTasks={checkHasCopyTasks}
+          checkHasCutTasks={checkHasCutTasks}
+          colors={colorStyles}
+          contextMenu={contextMenu}
+          distances={distances}
+          handleAction={handleAction}
+          handleCloseContextMenu={handleCloseContextMenu}
+          options={contextMenuOptions}
+        />
+      )}
     </div>
   );
 };
