@@ -12,7 +12,6 @@ export const useHorizontalScrollbars = (): [
   () => void
 ] => {
   const [scrollX, setScrollX] = useState(0);
-  // const scrollXRef = useLatest(scrollX);
 
   const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
 

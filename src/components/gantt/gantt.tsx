@@ -6,8 +6,6 @@ import React, {
   useState,
 } from "react";
 
-import useLatest from "use-latest";
-
 import enDateLocale from "date-fns/locale/en-US";
 
 import {
@@ -252,8 +250,6 @@ export const Gantt: React.FC<GanttProps> = ({
     scrollToRightStep,
   ] = useHorizontalScrollbars();
 
-  // const scrollXRef = useLatest(scrollX);
-
   const roundEndDate = useCallback(
     (date: Date) => roundEndDateProp(date, viewMode),
     [roundEndDateProp, viewMode]
@@ -267,8 +263,6 @@ export const Gantt: React.FC<GanttProps> = ({
   const [closedTasks, setClosedTasks] = useState(() =>
     getInitialClosedTasks(tasks)
   );
-
-  const tasksRef = useLatest(tasks);
 
   const [currentViewDate, setCurrentViewDate] = useState<Date | undefined>(
     undefined
@@ -289,8 +283,6 @@ export const Gantt: React.FC<GanttProps> = ({
     [rootTasksMap, childTasksMap]
   );
 
-  const childTasksMapRef = useLatest(childTasksMap);
-
   const [visibleTasks, visibleTasksMirror] = useMemo(
     () => collectVisibleTasks(childTasksMap, rootTasksMap, closedTasks),
     [childTasksMap, rootTasksMap, closedTasks]
@@ -298,11 +290,9 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const tasksMap = useMemo(() => getTasksMap(tasks), [tasks]);
 
-  const tasksMapRef = useLatest(tasksMap);
-
   const checkTaskIdExists = useCallback<CheckTaskIdExistsAtLevel>(
     (newId, comparisonLevel = 1) => {
-      const tasksAtLevelMap = tasksMapRef.current.get(comparisonLevel);
+      const tasksAtLevelMap = tasksMap.get(comparisonLevel);
 
       if (!tasksAtLevelMap) {
         return false;
@@ -310,7 +300,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       return tasksAtLevelMap.has(newId);
     },
-    [tasksMapRef]
+    [tasksMap]
   );
 
   const makeCopies = useCallback(
@@ -324,14 +314,11 @@ export const Gantt: React.FC<GanttProps> = ({
     [tasks]
   );
 
-  const mapTaskToGlobalIndexRef = useLatest(mapTaskToGlobalIndex);
-
   const getTaskGlobalIndexByRef = useCallback(
     (task: Task) => {
       const { id, comparisonLevel = 1 } = task;
 
-      const indexesByLevel =
-        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesByLevel = mapTaskToGlobalIndex.get(comparisonLevel);
 
       if (!indexesByLevel) {
         return -1;
@@ -345,7 +332,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       return -1;
     },
-    [mapTaskToGlobalIndexRef]
+    [mapTaskToGlobalIndex]
   );
 
   const mapTaskToNestedIndex = useMemo(
@@ -505,9 +492,7 @@ export const Gantt: React.FC<GanttProps> = ({
     distances.columnWidth
   );
 
-  const svgClientWidthRef = useLatest(
-    renderedColumnIndexes && renderedColumnIndexes[4]
-  );
+  const svgClientWidth = renderedColumnIndexes && renderedColumnIndexes[4];
 
   const countTaskCoordinates = useCallback(
     (task: Task) =>
@@ -566,18 +551,13 @@ export const Gantt: React.FC<GanttProps> = ({
     ]
   );
 
-  const mapTaskToCoordinatesRef = useLatest(mapTaskToCoordinates);
-
   const scrollToTask = useCallback(
     (task: Task) => {
-      const { x1 } = getTaskCoordinatesDefault(
-        task,
-        mapTaskToCoordinatesRef.current
-      );
+      const { x1 } = getTaskCoordinatesDefault(task, mapTaskToCoordinates);
 
       setScrollXProgrammatically(x1 - 100);
     },
-    [mapTaskToCoordinatesRef, setScrollXProgrammatically]
+    [mapTaskToCoordinates, setScrollXProgrammatically]
   );
 
   const [dependencyMap, dependentMap, dependencyMarginsMap] = useMemo(
@@ -601,8 +581,6 @@ export const Gantt: React.FC<GanttProps> = ({
       isShowCriticalPath,
     ]
   );
-
-  const dependentMapRef = useLatest(dependentMap);
 
   const criticalPaths = useMemo(() => {
     if (isShowCriticalPath) {
@@ -785,21 +763,21 @@ export const Gantt: React.FC<GanttProps> = ({
       getChangeTaskMetadata({
         adjustTaskToWorkingDates,
         changeAction,
-        childTasksMap: childTasksMapRef.current,
-        dependentMap: dependentMapRef.current,
-        mapTaskToGlobalIndex: mapTaskToGlobalIndexRef.current,
+        childTasksMap: childTasksMap,
+        dependentMap,
+        mapTaskToGlobalIndex,
         isRecountParentsOnChange,
         isMoveChildsWithParent,
-        tasksMap: tasksMapRef.current,
+        tasksMap: tasksMap,
       }),
     [
       adjustTaskToWorkingDates,
-      childTasksMapRef,
-      dependentMapRef,
+      childTasksMap,
+      dependentMap,
       isMoveChildsWithParent,
       isRecountParentsOnChange,
-      mapTaskToGlobalIndexRef,
-      tasksMapRef,
+      mapTaskToGlobalIndex,
+      tasksMap,
     ]
   );
 
@@ -808,7 +786,7 @@ export const Gantt: React.FC<GanttProps> = ({
    */
   const prepareSuggestions = useCallback(
     (suggestions: readonly OnDateChangeSuggestionType[]): TaskOrEmpty[] => {
-      const prevTasks = [...tasksRef.current];
+      const prevTasks = [...tasks];
 
       const nextTasks = prevTasks;
 
@@ -822,7 +800,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       return nextTasks;
     },
-    [tasksRef]
+    [tasks]
   );
 
   const handleEditTask = useCallback(
@@ -833,8 +811,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       const { id, comparisonLevel = 1 } = task;
 
-      const indexesOnLevel =
-        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesOnLevel = mapTaskToGlobalIndex.get(comparisonLevel);
 
       if (!indexesOnLevel) {
         throw new Error(`Indexes are not found for level ${comparisonLevel}`);
@@ -879,7 +856,7 @@ export const Gantt: React.FC<GanttProps> = ({
       onEditTask,
       onEditTaskClick,
       getMetadata,
-      mapTaskToGlobalIndexRef,
+      mapTaskToGlobalIndex,
       prepareSuggestions,
     ]
   );
@@ -1080,14 +1057,14 @@ export const Gantt: React.FC<GanttProps> = ({
       }
 
       if (onChangeTasks) {
-        const nextTasks = [...tasksRef.current];
+        const nextTasks = [...tasks];
         nextTasks[taskIndex] = task;
         onChangeTasks(nextTasks, {
           type: "progress_change",
         });
       }
     },
-    [getMetadata, onChangeTasks, onProgressChangeProp, tasksRef]
+    [getMetadata, onChangeTasks, onProgressChangeProp, childTasksMap]
   );
 
   const [changeInProgress, handleTaskDragStart] = useTaskDrag({
@@ -1105,7 +1082,7 @@ export const Gantt: React.FC<GanttProps> = ({
     scrollToRightStep,
     scrollX,
     setScrollXProgrammatically,
-    svgClientWidthRef,
+    svgClientWidth,
     svgWidth,
     tasksMap,
     timeStep,
@@ -1213,8 +1190,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       const { id, comparisonLevel = 1 } = taskForMove;
 
-      const indexesOnLevel =
-        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesOnLevel = mapTaskToGlobalIndex.get(comparisonLevel);
 
       if (!indexesOnLevel) {
         throw new Error(`Indexes are not found for level ${comparisonLevel}`);
@@ -1262,7 +1238,7 @@ export const Gantt: React.FC<GanttProps> = ({
       getMetadata,
       onChangeTasks,
       onMoveTaskAfter,
-      mapTaskToGlobalIndexRef,
+      mapTaskToGlobalIndex,
       prepareSuggestions,
       onChangeTooltipTask,
     ]
@@ -1278,8 +1254,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       const { comparisonLevel = 1 } = parent;
 
-      const indexesAtLevel =
-        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesAtLevel = mapTaskToGlobalIndex.get(comparisonLevel);
 
       if (!indexesAtLevel) {
         throw new Error(`Indexes are not found at level ${comparisonLevel}`);
@@ -1363,7 +1338,7 @@ export const Gantt: React.FC<GanttProps> = ({
       getMetadata,
       onChangeTasks,
       onMoveTaskInside,
-      mapTaskToGlobalIndexRef,
+      mapTaskToGlobalIndex,
       prepareSuggestions,
       onChangeTooltipTask,
     ]
@@ -1376,7 +1351,7 @@ export const Gantt: React.FC<GanttProps> = ({
       }
 
       if (onChangeTasks) {
-        const nextTasks = [...tasksRef.current];
+        const nextTasks = [...tasks];
         nextTasks[index] = {
           ...task,
           start: date,
@@ -1387,7 +1362,7 @@ export const Gantt: React.FC<GanttProps> = ({
         });
       }
     },
-    [fixStartPositionProp, onChangeTasks, tasksRef]
+    [fixStartPositionProp, onChangeTasks, tasks]
   );
 
   const fixEndPosition = useCallback<FixPosition>(
@@ -1397,7 +1372,7 @@ export const Gantt: React.FC<GanttProps> = ({
       }
 
       if (onChangeTasks) {
-        const nextTasks = [...tasksRef.current];
+        const nextTasks = [...tasks];
         nextTasks[index] = {
           ...task,
           end: date,
@@ -1408,7 +1383,7 @@ export const Gantt: React.FC<GanttProps> = ({
         });
       }
     },
-    [fixEndPositionProp, onChangeTasks, tasksRef]
+    [fixEndPositionProp, onChangeTasks, tasks]
   );
 
   const onFixDependencyPosition = useCallback<OnDateChange>(
@@ -1424,7 +1399,7 @@ export const Gantt: React.FC<GanttProps> = ({
       }
 
       if (onChangeTasks) {
-        const nextTasks = [...tasksRef.current];
+        const nextTasks = [...tasks];
         nextTasks[taskIndex] = task;
 
         onChangeTasks(nextTasks, {
@@ -1432,7 +1407,7 @@ export const Gantt: React.FC<GanttProps> = ({
         });
       }
     },
-    [onFixDependencyPositionProp, onChangeTasks, tasksRef]
+    [onFixDependencyPositionProp, onChangeTasks, tasks]
   );
 
   const handleFixDependency = useCallback(
@@ -1477,7 +1452,7 @@ export const Gantt: React.FC<GanttProps> = ({
           return;
         }
 
-        const nextTasks = [...tasksRef.current];
+        const nextTasks = [...tasks];
 
         const [taskFrom, targetFrom, fromIndex] = from;
         const [taskTo, targetTo, toIndex] = to;
@@ -1514,7 +1489,7 @@ export const Gantt: React.FC<GanttProps> = ({
         });
       }
     },
-    [onRelationChangeProp, onChangeTasks, tasksRef]
+    [onRelationChangeProp, onChangeTasks, tasks]
   );
 
   const onArrowDoubleClick = useCallback(
@@ -1525,8 +1500,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
       const { comparisonLevel = 1 } = taskFrom;
 
-      const indexesOnLevel =
-        mapTaskToGlobalIndexRef.current.get(comparisonLevel);
+      const indexesOnLevel = mapTaskToGlobalIndex.get(comparisonLevel);
 
       if (!indexesOnLevel) {
         throw new Error(`Indexes are not found for level ${comparisonLevel}`);
@@ -1549,7 +1523,7 @@ export const Gantt: React.FC<GanttProps> = ({
       }
 
       if (onChangeTasks && isDeleteDependencyOnDoubleClick) {
-        const nextTasks = [...tasksRef.current];
+        const nextTasks = [...tasks];
         nextTasks[taskToIndex] = {
           ...taskTo,
           dependencies: taskTo.dependencies
@@ -1572,16 +1546,16 @@ export const Gantt: React.FC<GanttProps> = ({
     },
     [
       isDeleteDependencyOnDoubleClick,
-      mapTaskToGlobalIndexRef,
+      mapTaskToGlobalIndex,
       onArrowDoubleClickProp,
       onChangeTasks,
-      tasksRef,
+      tasks,
     ]
   );
 
   const handleAction = useHandleAction({
     checkTaskIdExists,
-    childTasksMapRef,
+    childTasksMap,
     copyIdsMirror,
     copySelectedTasks,
     copyTask,
@@ -1594,7 +1568,7 @@ export const Gantt: React.FC<GanttProps> = ({
     makeCopies,
     resetSelectedTasks,
     selectedIdsMirror,
-    tasksMapRef,
+    tasksMap,
   });
 
   const [ganttRelationEvent, handleBarRelationStart] = useCreateRelation({

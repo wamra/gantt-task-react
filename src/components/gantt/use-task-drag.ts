@@ -201,7 +201,7 @@ type UseTaskDragParams = {
   scrollToRightStep: () => void;
   scrollX: number;
   setScrollXProgrammatically: (nextScrollX: number) => void;
-  svgClientWidthRef: RefObject<number | null>;
+  svgClientWidth: number | null;
   svgWidth: number;
   tasksMap: TaskMapByLevel;
   timeStep: number;
@@ -223,7 +223,7 @@ export const useTaskDrag = ({
   scrollToRightStep,
   scrollX,
   setScrollXProgrammatically,
-  svgClientWidthRef,
+  svgClientWidth,
   svgWidth,
   tasksMap,
   timeStep,
@@ -426,8 +426,6 @@ export const useTaskDrag = ({
         }
       }
 
-      const svgClientWidth = svgClientWidthRef.current;
-
       if (svgClientWidth === null) {
         return;
       }
@@ -514,7 +512,7 @@ export const useTaskDrag = ({
     scrollToLeftStep,
     scrollToRightStep,
     scrollX,
-    svgClientWidthRef,
+    svgClientWidth,
     svgWidth,
   ]);
 
@@ -522,15 +520,13 @@ export const useTaskDrag = ({
 
   useEffect(() => {
     if (additionalRightSpace) {
-      setScrollXProgrammatically(
-        (scrollX || 0) + (svgClientWidthRef.current || 0)
-      );
+      setScrollXProgrammatically((scrollX || 0) + (svgClientWidth || 0));
     }
   }, [
     additionalRightSpace,
     scrollX,
     setScrollXProgrammatically,
-    svgClientWidthRef,
+    svgClientWidth,
   ]);
 
   useEffect(() => {

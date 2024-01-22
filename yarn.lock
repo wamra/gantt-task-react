@@ -8600,18 +8600,6 @@
   dependencies:
     "tslib" "^2.0.0"
 
-"use-isomorphic-layout-effect@^1.1.1":
-  "integrity" "sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA=="
-  "resolved" "https://registry.npmjs.org/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.2.tgz"
-  "version" "1.1.2"
-
-"use-latest@^1.2.1":
-  "integrity" "sha512-xA+AVm/Wlg3e2P/JiItTziwS7FK92LWrDB0p+hgXloIMuVCeJJ8v6f0eeHyPZaJrM+usM1FkFfbNCrJGs8A/zw=="
-  "resolved" "https://registry.npmjs.org/use-latest/-/use-latest-1.2.1.tgz"
-  "version" "1.2.1"
-  dependencies:
-    "use-isomorphic-layout-effect" "^1.1.1"
-
 "use-resize-observer@^9.1.0":
   "integrity" "sha512-R25VqO9Wb3asSD4eqtcxk8sJalvIOYBqS8MNZlpDSQ4l4xMQxC/J7Id9HoTqPq8FwULIn0PVW+OAqF2dyYbjow=="
   "resolved" "https://registry.npmjs.org/use-resize-observer/-/use-resize-observer-9.1.0.tgz"

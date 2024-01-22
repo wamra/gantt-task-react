@@ -1,24 +1,22 @@
-import {
-  useCallback,
-} from 'react';
-import type {
-  MutableRefObject,
-} from 'react';
+import { useCallback } from "react";
 
-import useLatest from 'use-latest';
-
-import { getParentTasks } from '../../selected-tasks/get-parent-tasks';
-import { getSelectedTasks } from '../../selected-tasks/get-selected-tasks';
+import { getParentTasks } from "../../selected-tasks/get-parent-tasks";
+import { getSelectedTasks } from "../../selected-tasks/get-selected-tasks";
 
 import type {
-  ActionMetaType, CheckTaskIdExistsAtLevel, ChildByLevelMap, Task, TaskMapByLevel, TaskOrEmpty,
-} from '../../types/public-types';
-import { getTasksWithDescendants } from '../../selected-tasks/get-tasks-with-descendants';
+  ActionMetaType,
+  CheckTaskIdExistsAtLevel,
+  ChildByLevelMap,
+  Task,
+  TaskMapByLevel,
+  TaskOrEmpty,
+} from "../../types/public-types";
+import { getTasksWithDescendants } from "../../selected-tasks/get-tasks-with-descendants";
 
 const createGetters = (
-  mirrorRef: MutableRefObject<Readonly<Record<string, true>>>,
-  tasksMapRef: MutableRefObject<TaskMapByLevel>,
-  childTasksMapRef: MutableRefObject<ChildByLevelMap>,
+  mirror: Readonly<Record<string, true>>,
+  tasksMap: TaskMapByLevel,
+  childTasksMap: ChildByLevelMap
 ) => {
   let selectedTasks: TaskOrEmpty[] | null = null;
   let parentTasks: TaskOrEmpty[] | null = null;
@@ -29,10 +27,7 @@ const createGetters = (
       return selectedTasks;
     }
 
-    selectedTasks = getSelectedTasks(
-      mirrorRef.current,
-      tasksMapRef.current,
-    );
+    selectedTasks = getSelectedTasks(mirror, tasksMap);
 
     return selectedTasks;
   };
@@ -44,10 +39,7 @@ const createGetters = (
 
     const selectedTasksRes = getSelectedTasksWithCache();
 
-    parentTasks = getParentTasks(
-      selectedTasksRes,
-      tasksMapRef.current,
-    );
+    parentTasks = getParentTasks(selectedTasksRes, tasksMap);
 
     return parentTasks;
   };
@@ -61,7 +53,7 @@ const createGetters = (
 
     tasksWithDescendants = getTasksWithDescendants(
       parentTasksRes,
-      childTasksMapRef.current,
+      childTasksMap
     );
 
     return tasksWithDescendants;
@@ -76,7 +68,7 @@ const createGetters = (
 
 type UseHandleActionParams = {
   checkTaskIdExists: CheckTaskIdExistsAtLevel;
-  childTasksMapRef: MutableRefObject<ChildByLevelMap>;
+  childTasksMap: ChildByLevelMap;
   copyIdsMirror: Readonly<Record<string, true>>;
   copySelectedTasks: () => void;
   copyTask: (task: TaskOrEmpty) => void;
@@ -89,12 +81,12 @@ type UseHandleActionParams = {
   makeCopies: (tasksForCopy: readonly TaskOrEmpty[]) => readonly TaskOrEmpty[];
   resetSelectedTasks: () => void;
   selectedIdsMirror: Readonly<Record<string, true>>;
-  tasksMapRef: MutableRefObject<TaskMapByLevel>;
+  tasksMap: TaskMapByLevel;
 };
 
 export const useHandleAction = ({
   checkTaskIdExists,
-  childTasksMapRef,
+  childTasksMap,
   copyIdsMirror,
   copySelectedTasks,
   copyTask,
@@ -107,83 +99,66 @@ export const useHandleAction = ({
   makeCopies,
   resetSelectedTasks,
   selectedIdsMirror,
-  tasksMapRef,
+  tasksMap,
 }: UseHandleActionParams) => {
-  const selectedIdsMirrorRef = useLatest(selectedIdsMirror);
-  const copyIdsMirrorRef = useLatest(copyIdsMirror);
-  const cutIdsMirrorRef = useLatest(cutIdsMirror);
-  const checkTaskIdExistsRef = useLatest(checkTaskIdExists);
+  const handleAction = useCallback(
+    (task: TaskOrEmpty, action: (meta: ActionMetaType) => void) => {
+      const {
+        getParentTasksWithCache,
+        getSelectedTasksWithCache,
+        getTasksWithDescendantsWithCache,
+      } = createGetters(selectedIdsMirror, tasksMap, childTasksMap);
 
-  const handleAction = useCallback((
-    task: TaskOrEmpty,
-    action: (meta: ActionMetaType) => void,
-  ) => {
-    const {
-      getParentTasksWithCache,
-      getSelectedTasksWithCache,
-      getTasksWithDescendantsWithCache,
-    } = createGetters(
-      selectedIdsMirrorRef,
-      tasksMapRef,
-      childTasksMapRef,
-    );
+      const {
+        getParentTasksWithCache: getCutParentTasksWithCache,
+        getSelectedTasksWithCache: getCutTasksWithCache,
+      } = createGetters(cutIdsMirror, tasksMap, childTasksMap);
 
-    const {
-      getParentTasksWithCache: getCutParentTasksWithCache,
-      getSelectedTasksWithCache: getCutTasksWithCache,
-    } = createGetters(
-      cutIdsMirrorRef,
-      tasksMapRef,
-      childTasksMapRef,
-    );
+      const {
+        getParentTasksWithCache: getCopyParentTasksWithCache,
+        getSelectedTasksWithCache: getCopyTasksWithCache,
+        getTasksWithDescendantsWithCache: getCopyTasksWithDescendantsWithCache,
+      } = createGetters(copyIdsMirror, tasksMap, childTasksMap);
 
-    const {
-      getParentTasksWithCache: getCopyParentTasksWithCache,
-      getSelectedTasksWithCache: getCopyTasksWithCache,
-      getTasksWithDescendantsWithCache: getCopyTasksWithDescendantsWithCache,
-    } = createGetters(
-      copyIdsMirrorRef,
-      tasksMapRef,
-      childTasksMapRef,
-    );
-
-    action({
-      checkTaskIdExists: checkTaskIdExistsRef.current,
+      action({
+        checkTaskIdExists,
+        copySelectedTasks,
+        copyTask,
+        cutSelectedTasks,
+        cutTask,
+        getCopyParentTasks: getCopyTasksWithCache,
+        getCopyTasks: getCopyParentTasksWithCache,
+        getCopyTasksWithDescendants: getCopyTasksWithDescendantsWithCache,
+        getCutParentTasks: getCutParentTasksWithCache,
+        getCutTasks: getCutTasksWithCache,
+        getParentTasks: getParentTasksWithCache,
+        getSelectedTasks: getSelectedTasksWithCache,
+        getTasksWithDescendants: getTasksWithDescendantsWithCache,
+        handleAddChilds,
+        handleDeteleTasks,
+        handleMoveTasksInside,
+        makeCopies,
+        resetSelectedTasks,
+        task,
+      });
+    },
+    [
+      checkTaskIdExists,
+      copyIdsMirror,
       copySelectedTasks,
       copyTask,
+      cutIdsMirror,
       cutSelectedTasks,
       cutTask,
-      getCopyParentTasks: getCopyTasksWithCache,
-      getCopyTasks: getCopyParentTasksWithCache,
-      getCopyTasksWithDescendants: getCopyTasksWithDescendantsWithCache,
-      getCutParentTasks: getCutParentTasksWithCache,
-      getCutTasks: getCutTasksWithCache,
-      getParentTasks: getParentTasksWithCache,
-      getSelectedTasks: getSelectedTasksWithCache,
-      getTasksWithDescendants: getTasksWithDescendantsWithCache,
       handleAddChilds,
       handleDeteleTasks,
       handleMoveTasksInside,
       makeCopies,
       resetSelectedTasks,
-      task,
-    });
-  }, [
-    checkTaskIdExistsRef,
-    copyIdsMirrorRef,
-    copySelectedTasks,
-    copyTask,
-    cutIdsMirrorRef,
-    cutSelectedTasks,
-    cutTask,
-    handleAddChilds,
-    handleDeteleTasks,
-    handleMoveTasksInside,
-    makeCopies,
-    resetSelectedTasks,
-    selectedIdsMirrorRef,
-    tasksMapRef,
-  ]);
+      selectedIdsMirror,
+      tasksMap,
+    ]
+  );
 
   return handleAction;
 };
