@@ -1,8 +1,6 @@
 import React, { memo, useEffect } from "react";
 import type { ComponentType, MouseEvent, RefObject } from "react";
 
-import cx from "classnames";
-
 import { useDrop } from "react-dnd";
 
 import {
@@ -245,16 +243,16 @@ const TaskListInner: React.FC<TaskListProps> = ({
           </div>
 
           <div
-            className={cx(styles.scrollToTop, {
-              [styles.hidden]: !renderedIndexes || renderedIndexes[2],
-            })}
+            className={`${styles.scrollToTop} ${
+              !renderedIndexes || renderedIndexes[2] ? styles.hidden : ""
+            }`}
             ref={scrollToTopRef}
           />
 
           <div
-            className={cx(styles.scrollToBottom, {
-              [styles.hidden]: !renderedIndexes || renderedIndexes[3],
-            })}
+            className={`${styles.scrollToBottom} ${
+              !renderedIndexes || renderedIndexes[3] ? styles.hidden : ""
+            }`}
             ref={scrollToBottomRef}
           />
         </div>

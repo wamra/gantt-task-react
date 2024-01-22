@@ -1,22 +1,17 @@
-import React, {
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { useDrag } from "react-dnd";
-
-import cx from "classnames";
 
 import { ROW_DRAG_TYPE } from "../../../constants";
 
 import { ColumnProps, Icons } from "../../../types/public-types";
 
-import styles from './title-column.module.css';
+import styles from "./title-column.module.css";
 
 const getExpanderSymbol = (
   hasChildren: boolean,
   isClosed: boolean,
-  icons: Partial<Icons> | undefined,
+  icons: Partial<Icons> | undefined
 ) => {
   if (!hasChildren) {
     return icons?.renderNoChildrenIcon ? icons.renderNoChildrenIcon() : "";
@@ -33,10 +28,7 @@ export const TitleColumn: React.FC<ColumnProps> = ({
   data: {
     canMoveTasks,
 
-    distances: {
-      expandIconWidth,
-      nestedTaskNameOffset,
-    },
+    distances: { expandIconWidth, nestedTaskNameOffset },
 
     icons,
     isShowTaskNumbers,
@@ -48,24 +40,23 @@ export const TitleColumn: React.FC<ColumnProps> = ({
     onExpanderClick,
   },
 }) => {
-  const {
-    id,
-    comparisonLevel = 1,
-    name,
-  } = task;
+  const { id, comparisonLevel = 1, name } = task;
 
-  const [collected, drag] = useDrag({
-    type: ROW_DRAG_TYPE,
-    item: task,
+  const [collected, drag] = useDrag(
+    {
+      type: ROW_DRAG_TYPE,
+      item: task,
 
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }, [id, comparisonLevel, task]);
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
+    },
+    [id, comparisonLevel, task]
+  );
 
   const expanderSymbol = useMemo(
     () => getExpanderSymbol(hasChildren, isClosed, icons),
-    [hasChildren, isClosed, icons],
+    [hasChildren, isClosed, icons]
   );
 
   const title = isShowTaskNumbers ? `${indexStr} ${name}` : name;
@@ -78,9 +69,9 @@ export const TitleColumn: React.FC<ColumnProps> = ({
 
   return (
     <div
-      className={cx(styles.taskListNameWrapper, {
-        [styles.dragging]: collected.isDragging,
-      })}
+      className={`${styles.taskListNameWrapper} ${
+        collected.isDragging ? styles.dragging : ""
+      }`}
       style={{
         paddingLeft: depth * nestedTaskNameOffset,
       }}
@@ -88,9 +79,9 @@ export const TitleColumn: React.FC<ColumnProps> = ({
       ref={canMoveTasks ? drag : undefined}
     >
       <div
-        className={cx(styles.taskListExpander, {
-          [styles.taskListEmptyExpander]: !hasChildren,
-        })}
+        className={`${styles.taskListExpander} ${
+          !hasChildren ? styles.taskListEmptyExpander : ""
+        }`}
         onClick={onClick}
         style={{
           width: expandIconWidth,
@@ -100,9 +91,7 @@ export const TitleColumn: React.FC<ColumnProps> = ({
       </div>
 
       <div className={styles.taskName}>
-        {isShowTaskNumbers && (
-          <b>{indexStr}{' '}</b>
-        )}
+        {isShowTaskNumbers && <b>{indexStr} </b>}
 
         {name}
       </div>

@@ -3,8 +3,6 @@ import type { CSSProperties, MouseEvent } from "react";
 
 import { useDrop } from "react-dnd";
 
-import cx from "classnames";
-
 import {
   ColorStyles,
   Column,
@@ -208,11 +206,11 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
 
   return (
     <div
-      className={cx(styles.taskListTableRow, {
-        [styles.lighten]:
-          dropInsideProps.isLighten && !dropAfterProps.isLighten,
-        [styles.cut]: isCut,
-      })}
+      className={`${styles.taskListTableRow} ${
+        dropInsideProps.isLighten && !dropAfterProps.isLighten
+          ? styles.lighten
+          : ""
+      } ${isCut ? styles.isCut : ""}`}
       onMouseDown={onRootMouseDown}
       style={{
         height: fullRowHeight,
@@ -243,9 +241,9 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
 
       {dropInsideProps.isLighten && (
         <div
-          className={cx(styles.dropAfter, {
-            [styles.dropAfterLighten]: dropAfterProps.isLighten,
-          })}
+          className={`${styles.dropAfter} ${
+            dropAfterProps.isLighten ? styles.dropAfterLighten : ""
+          }`}
           ref={dropAfter}
         />
       )}

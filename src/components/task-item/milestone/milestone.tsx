@@ -1,8 +1,4 @@
-import React, {
-  useMemo,
-} from "react";
-
-import cx from "classnames";
+import React, { useMemo } from "react";
 
 import { BarRelationHandle } from "../bar/bar-relation-handle";
 import stylesRelationHandle from "../bar/bar-relation-handle.module.css";
@@ -12,18 +8,16 @@ import type { BarMoveAction } from "../../../types/gantt-task-actions";
 
 import styles from "./milestone.module.css";
 
-export const Milestone: React.FC<TaskItemProps & {
-  onLeftRelationTriggerMouseDown: () => void;
-  onRightRelationTriggerMouseDown: () => void;
-  onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
-}> = ({
+export const Milestone: React.FC<
+  TaskItemProps & {
+    onLeftRelationTriggerMouseDown: () => void;
+    onRightRelationTriggerMouseDown: () => void;
+    onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
+  }
+> = ({
   taskYOffset,
 
-  distances: {
-    barCornerRadius,
-    relationCircleOffset,
-    relationCircleRadius,
-  },
+  distances: { barCornerRadius, relationCircleOffset, relationCircleRadius },
 
   taskHeight,
   taskHalfHeight,
@@ -62,7 +56,7 @@ export const Milestone: React.FC<TaskItemProps & {
   return (
     <g
       tabIndex={0}
-      className={cx(styles.milestoneWrapper, stylesRelationHandle.barRelationHandleWrapper)}
+      className={`${styles.milestoneWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
     >
       <rect
         fill={barColor}
@@ -74,10 +68,10 @@ export const Milestone: React.FC<TaskItemProps & {
         ry={barCornerRadius}
         transform={transform}
         className={styles.milestoneBackground}
-        onMouseDown={(e) => {
+        onMouseDown={e => {
           onTaskEventStart("move", e.clientX);
         }}
-        onTouchStart={(e) => {
+        onTouchStart={e => {
           const firstTouch = e.touches[0];
 
           if (firstTouch) {

@@ -1,8 +1,4 @@
-import React, {
-  useCallback,
-} from "react";
-
-import cx from "classnames";
+import React, { useCallback } from "react";
 
 import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
@@ -15,11 +11,13 @@ import type { BarMoveAction } from "../../../types/gantt-task-actions";
 import styles from "./bar.module.css";
 import stylesRelationHandle from "./bar-relation-handle.module.css";
 
-export const Bar: React.FC<TaskItemProps & {
-  onLeftRelationTriggerMouseDown: () => void;
-  onRightRelationTriggerMouseDown: () => void;
-  onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
-}> = ({
+export const Bar: React.FC<
+  TaskItemProps & {
+    onLeftRelationTriggerMouseDown: () => void;
+    onRightRelationTriggerMouseDown: () => void;
+    onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
+  }
+> = ({
   colorStyles,
 
   distances: {
@@ -51,32 +49,44 @@ export const Bar: React.FC<TaskItemProps & {
 }) => {
   const canChangeDates = isDateChangeable && !hasChildren;
 
-  const startMoveFullTask = useCallback((clientX: number) => {
-    onTaskEventStart("move", clientX);
-  }, [onTaskEventStart]);
+  const startMoveFullTask = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("move", clientX);
+    },
+    [onTaskEventStart]
+  );
 
-  const startMoveStartOfTask = useCallback((clientX: number) => {
-    onTaskEventStart("start", clientX);
-  }, [onTaskEventStart]);
+  const startMoveStartOfTask = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("start", clientX);
+    },
+    [onTaskEventStart]
+  );
 
-  const startMoveEndOfTask = useCallback((clientX: number) => {
-    onTaskEventStart("end", clientX);
-  }, [onTaskEventStart]);
+  const startMoveEndOfTask = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("end", clientX);
+    },
+    [onTaskEventStart]
+  );
 
-  const startMoveProgress = useCallback((clientX: number) => {
-    onTaskEventStart("progress", clientX);
-  }, [onTaskEventStart]);
+  const startMoveProgress = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("progress", clientX);
+    },
+    [onTaskEventStart]
+  );
 
   const progressPoint = getProgressPoint(
     +!rtl * progressWidth + progressX,
     taskYOffset,
-    taskHeight,
+    taskHeight
   );
   const handleHeight = taskHeight - 2;
 
   return (
     <g
-      className={cx(styles.barWrapper, stylesRelationHandle.barRelationHandleWrapper)}
+      className={`${styles.barWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
       tabIndex={0}
     >
       <BarDisplay
