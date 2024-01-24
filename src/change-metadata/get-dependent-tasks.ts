@@ -8,12 +8,9 @@ import type {
 export const fillDependentTasksForTask = (
   resSet: Set<Task>,
   task: TaskOrEmpty,
-  dependentMap: DependentMap,
+  dependentMap: DependentMap
 ) => {
-  const {
-    id: taskId,
-    comparisonLevel = 1,
-  } = task;
+  const { id: taskId, comparisonLevel = 1 } = task;
 
   const dependentMapAtLevel = dependentMap.get(comparisonLevel);
 
@@ -34,7 +31,7 @@ export const fillDependentTasksForTask = (
 
 export const getDependentTasks = (
   changeAction: ChangeAction,
-  dependentMap: DependentMap,
+  dependentMap: DependentMap
 ) => {
   const resSet = new Set<Task>();
 
@@ -49,9 +46,13 @@ export const getDependentTasks = (
       break;
 
     case "delete":
-      changeAction.tasks.forEach((task) => {
+      changeAction.tasks.forEach(task => {
         fillDependentTasksForTask(resSet, task, dependentMap);
       });
+      break;
+
+    case "move-before":
+      fillDependentTasksForTask(resSet, changeAction.target, dependentMap);
       break;
 
     case "move-after":
@@ -63,7 +64,9 @@ export const getDependentTasks = (
       break;
 
     default:
-      throw new Error(`Unknown change action: ${(changeAction as ChangeAction).type}`);
+      throw new Error(
+        `Unknown change action: ${(changeAction as ChangeAction).type}`
+      );
   }
 
   return [...resSet];

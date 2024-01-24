@@ -10,16 +10,12 @@ import {
 const getChildTasksByLevelMap = (
   childTasksMap: ChildByLevelMap,
   changeAction: ChangeAction,
-  task: Task,
+  task: Task
 ) => {
-  const {
-    id,
-    comparisonLevel = 1,
-  } = task;
+  const { id, comparisonLevel = 1 } = task;
 
   switch (changeAction.type) {
-    case "add-childs":
-    {
+    case "add-childs": {
       const addedIdsAtLevelSet = changeAction.addedIdsMap.get(comparisonLevel);
 
       if (!addedIdsAtLevelSet) {
@@ -49,17 +45,14 @@ const getMinAndMaxDatesInDescendants = (
   /**
    * Avoid the circle of dependencies
    */
-  checkedTasks: Set<string>,
+  checkedTasks: Set<string>
 ): [Date, Date] | null => {
   const cachedRes = computedCacheMap.get(task);
   if (cachedRes) {
     return cachedRes;
   }
 
-  const {
-    id,
-    comparisonLevel = 1,
-  } = task;
+  const { id, comparisonLevel = 1 } = task;
 
   if (checkedTasks.has(id)) {
     const res: [Date, Date] = [task.start, task.end];
@@ -78,15 +71,18 @@ const getMinAndMaxDatesInDescendants = (
           return null;
         }
 
-        const res: [Date, Date] = [changeAction.task.start, changeAction.task.end];
+        const res: [Date, Date] = [
+          changeAction.task.start,
+          changeAction.task.end,
+        ];
         computedCacheMap.set(task, res);
         return res;
       }
       break;
 
-    case "delete":
-    {
-      const deletedTaskIdsAtLevel = changeAction.deletedIdsMap.get(comparisonLevel);
+    case "delete": {
+      const deletedTaskIdsAtLevel =
+        changeAction.deletedIdsMap.get(comparisonLevel);
 
       if (deletedTaskIdsAtLevel && deletedTaskIdsAtLevel.has(id)) {
         computedCacheMap.set(task, null);
@@ -100,7 +96,11 @@ const getMinAndMaxDatesInDescendants = (
       break;
   }
 
-  const taskMapByLevel = getChildTasksByLevelMap(childTasksMap, changeAction, task);
+  const taskMapByLevel = getChildTasksByLevelMap(
+    childTasksMap,
+    changeAction,
+    task
+  );
 
   if (!taskMapByLevel) {
     const res: [Date, Date] = [task.start, task.end];
@@ -121,10 +121,11 @@ const getMinAndMaxDatesInDescendants = (
 
     case "add-childs":
       if (task.id === changeAction.parent.id) {
-        const rootsAtLevel = changeAction.addedRootsByLevelMap.get(comparisonLevel) || [];
+        const rootsAtLevel =
+          changeAction.addedRootsByLevelMap.get(comparisonLevel) || [];
 
         if (childTasks) {
-          allChildTasks = [...childTasks, ...rootsAtLevel]
+          allChildTasks = [...childTasks, ...rootsAtLevel];
         } else {
           allChildTasks = rootsAtLevel;
         }
@@ -133,36 +134,59 @@ const getMinAndMaxDatesInDescendants = (
       }
       break;
 
-    case "move-inside":
-    {
+    case "move-inside": {
       const movedTasksAtLevel = changeAction.movedIdsMap.get(comparisonLevel);
 
       const tasksWithoutMoved = childTasks
         ? childTasks.filter(
-          ({ id }) => !movedTasksAtLevel || !movedTasksAtLevel.has(id),
-        )
+            ({ id }) => !movedTasksAtLevel || !movedTasksAtLevel.has(id)
+          )
         : [];
 
       if (task.id === changeAction.parent.id) {
-        allChildTasks = [
-          ...tasksWithoutMoved,
-          ...changeAction.childs,
-        ];
+        allChildTasks = [...tasksWithoutMoved, ...changeAction.childs];
       } else {
         allChildTasks = tasksWithoutMoved;
       }
       break;
     }
 
-    case "move-after":
-    {
+    case "move-after": {
       if (childTasks) {
         const targetId = changeAction.target.id;
         const taskForMoveId = changeAction.taskForMove.id;
 
-        const tasksWithoutMoved = childTasks.filter(({ id }) => id !== taskForMoveId);
+        const tasksWithoutMoved = childTasks.filter(
+          ({ id }) => id !== taskForMoveId
+        );
 
-        const hasTargetChild = tasksWithoutMoved.some(({ id }) => id === targetId);
+        const hasTargetChild = tasksWithoutMoved.some(
+          ({ id }) => id === targetId
+        );
+
+        if (hasTargetChild) {
+          allChildTasks = [...tasksWithoutMoved, changeAction.taskForMove];
+        } else {
+          allChildTasks = tasksWithoutMoved;
+        }
+      } else {
+        allChildTasks = childTasks;
+      }
+      break;
+    }
+
+    case "move-before": {
+      if (childTasks) {
+        const targetId = changeAction.target.id;
+        const taskForMoveId = changeAction.taskForMove.id;
+
+        const tasksWithoutMoved = childTasks.filter(
+          ({ id }) => id !== taskForMoveId
+        );
+
+        const hasTargetChild = tasksWithoutMoved.some(
+          ({ id }) => id === targetId
+        );
 
         if (hasTargetChild) {
           allChildTasks = [...tasksWithoutMoved, changeAction.taskForMove];
@@ -188,7 +212,7 @@ const getMinAndMaxDatesInDescendants = (
   let start: Date | null = null;
   let end: Date | null = null;
 
-  allChildTasks.forEach((childTask) => {
+  allChildTasks.forEach(childTask => {
     if (childTask.type === "empty") {
       return;
     }
@@ -198,7 +222,7 @@ const getMinAndMaxDatesInDescendants = (
       childTask,
       changeAction,
       childTasksMap,
-      checkedTasks,
+      checkedTasks
     );
 
     if (!descendantsResult) {
@@ -233,12 +257,9 @@ export const getSuggestedStartEndChanges = (
   task: Task,
   changeAction: ChangeAction,
   childTasksMap: ChildByLevelMap,
-  mapTaskToGlobalIndex: TaskToGlobalIndexMap,
+  mapTaskToGlobalIndex: TaskToGlobalIndexMap
 ): OnDateChangeSuggestionType => {
-  const {
-    id,
-    comparisonLevel = 1,
-  } = task;
+  const { id, comparisonLevel = 1 } = task;
 
   /**
    * Avoid the circle of dependencies
@@ -248,14 +269,14 @@ export const getSuggestedStartEndChanges = (
   const indexesByLevel = mapTaskToGlobalIndex.get(comparisonLevel);
   const index = indexesByLevel ? indexesByLevel.get(id) : -1;
 
-  const resIndex = typeof index === 'number' ? index : -1;
+  const resIndex = typeof index === "number" ? index : -1;
 
   const descendantsResult = getMinAndMaxDatesInDescendants(
     computedCacheMap,
     task,
     changeAction,
     childTasksMap,
-    checkedTasks,
+    checkedTasks
   );
 
   if (!descendantsResult) {

@@ -45,6 +45,7 @@ export type TaskListProps = {
   handleAddTask: (task: Task) => void;
   handleDeteleTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
+  handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
   handleOpenContextMenu: (
@@ -92,6 +93,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   handleAddTask,
   handleDeteleTasks,
   handleEditTask,
+  handleMoveTaskBefore,
   handleMoveTaskAfter,
   handleMoveTasksInside,
   handleOpenContextMenu,
@@ -225,6 +227,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
                 handleAddTask={handleAddTask}
                 handleDeteleTasks={handleDeteleTasks}
                 handleEditTask={handleEditTask}
+                handleMoveTaskBefore={handleMoveTaskBefore}
                 handleMoveTaskAfter={handleMoveTaskAfter}
                 handleMoveTasksInside={handleMoveTasksInside}
                 handleOpenContextMenu={handleOpenContextMenu}

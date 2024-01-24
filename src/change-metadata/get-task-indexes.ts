@@ -6,12 +6,9 @@ import type {
 
 export const getTaskIndex = (
   task: TaskOrEmpty,
-  mapTaskToGlobalIndex: TaskToGlobalIndexMap,
+  mapTaskToGlobalIndex: TaskToGlobalIndexMap
 ) => {
-  const {
-    id: taskId,
-    comparisonLevel = 1,
-  } = task;
+  const { id: taskId, comparisonLevel = 1 } = task;
 
   const taskIndexMapAtLevel = mapTaskToGlobalIndex.get(comparisonLevel);
 
@@ -23,19 +20,19 @@ export const getTaskIndex = (
     ? taskIndexMapAtLevel.get(taskId)
     : undefined;
 
-  if (typeof taskIndex !== 'number') {
+  if (typeof taskIndex !== "number") {
     console.error(`Warning: index for task ${taskId} is not found`);
   }
 
   return {
     task,
-    index: typeof taskIndex === 'number' ? taskIndex : -1,
+    index: typeof taskIndex === "number" ? taskIndex : -1,
   };
 };
 
 export const getTaskIndexes = (
   changeAction: ChangeAction,
-  mapTaskToGlobalIndex: TaskToGlobalIndexMap,
+  mapTaskToGlobalIndex: TaskToGlobalIndexMap
 ) => {
   switch (changeAction.type) {
     case "add-childs":
@@ -46,7 +43,12 @@ export const getTaskIndexes = (
       return [getTaskIndex(changeAction.task, mapTaskToGlobalIndex)];
 
     case "delete":
-      return changeAction.tasks.map((task) => getTaskIndex(task, mapTaskToGlobalIndex));
+      return changeAction.tasks.map(task =>
+        getTaskIndex(task, mapTaskToGlobalIndex)
+      );
+
+    case "move-before":
+      return [getTaskIndex(changeAction.target, mapTaskToGlobalIndex)];
 
     case "move-after":
       return [getTaskIndex(changeAction.target, mapTaskToGlobalIndex)];
@@ -55,6 +57,8 @@ export const getTaskIndexes = (
       return [getTaskIndex(changeAction.parent, mapTaskToGlobalIndex)];
 
     default:
-      throw new Error(`Unknown change action: ${(changeAction as ChangeAction).type}`);
+      throw new Error(
+        `Unknown change action: ${(changeAction as ChangeAction).type}`
+      );
   }
 };

@@ -24,6 +24,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
   handleAddTask,
   handleDeteleTasks,
   handleEditTask,
+  handleMoveTaskBefore,
   handleMoveTaskAfter,
   handleMoveTasksInside,
   handleOpenContextMenu,
@@ -92,6 +93,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           handleAddTask={handleAddTask}
           handleDeteleTasks={handleDeteleTasks}
           handleEditTask={handleEditTask}
+          handleMoveTaskBefore={handleMoveTaskBefore}
           handleMoveTaskAfter={handleMoveTaskAfter}
           handleMoveTasksInside={handleMoveTasksInside}
           handleOpenContextMenu={handleOpenContextMenu}
@@ -108,6 +110,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           selectTaskOnMouseDown={selectTaskOnMouseDown}
           task={task}
           key={id}
+          tasks={tasks}
         />
       );
     }

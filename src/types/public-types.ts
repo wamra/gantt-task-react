@@ -248,7 +248,7 @@ export type OnEditTask = (
   getMetadata: GetMetadata
 ) => void;
 
-export type OnMoveTaskAfter = (
+export type OnMoveTaskBeforeAfter = (
   task: TaskOrEmpty,
   taskForMove: TaskOrEmpty,
   dependentTasks: readonly Task[],
@@ -313,6 +313,9 @@ export type OnChangeTasksAction =
     }
   | {
       type: "fix_start_position";
+    }
+  | {
+      type: "move_task_before";
     }
   | {
       type: "move_task_after";
@@ -405,7 +408,11 @@ export interface EventOption {
   /**
    * Invokes on move task after other task
    */
-  onMoveTaskAfter?: OnMoveTaskAfter;
+  onMoveTaskBefore?: OnMoveTaskBeforeAfter;
+  /**
+   * Invokes on move task after other task
+   */
+  onMoveTaskAfter?: OnMoveTaskBeforeAfter;
   /**
    * Invokes on move task inside other task
    */
@@ -570,6 +577,7 @@ export interface TaskListTableProps {
   handleAddTask: (task: Task) => void;
   handleDeteleTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
+  handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
   handleOpenContextMenu: (
@@ -831,6 +839,11 @@ export type ChangeAction =
       tasks: readonly TaskOrEmpty[];
       // comparison level -> task id
       deletedIdsMap: Map<number, Set<string>>;
+    }
+  | {
+      type: "move-before";
+      target: TaskOrEmpty;
+      taskForMove: TaskOrEmpty;
     }
   | {
       type: "move-after";

@@ -207,6 +207,7 @@ export const Gantt: React.FC<GanttProps> = ({
   onEditTask = undefined,
   onEditTaskClick = undefined,
   onFixDependencyPosition: onFixDependencyPositionProp = undefined,
+  onMoveTaskBefore = undefined,
   onMoveTaskAfter = undefined,
   onMoveTaskInside = undefined,
   onProgressChange: onProgressChangeProp = undefined,
@@ -1244,6 +1245,78 @@ export const Gantt: React.FC<GanttProps> = ({
     ]
   );
 
+  const handleMoveTaskBefore = useCallback(
+    (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => {
+      if (!onMoveTaskBefore && !onChangeTasks) {
+        return;
+      }
+
+      onChangeTooltipTask(null, null);
+
+      const [dependentTasks, taskIndexes, parents, suggestions] = getMetadata({
+        type: "move-before",
+        target,
+        taskForMove,
+      });
+
+      const taskIndex = taskIndexes[0].index;
+
+      const { id, comparisonLevel = 1 } = taskForMove;
+
+      const indexesOnLevel = mapTaskToGlobalIndex.get(comparisonLevel);
+
+      if (!indexesOnLevel) {
+        throw new Error(`Indexes are not found for level ${comparisonLevel}`);
+      }
+
+      const taskForMoveIndex = indexesOnLevel.get(id);
+
+      if (typeof taskForMoveIndex !== "number") {
+        throw new Error(`Index is not found for task ${id}`);
+      }
+
+      if (onMoveTaskBefore) {
+        onMoveTaskBefore(
+          target,
+          taskForMove,
+          dependentTasks,
+          taskIndex,
+          taskForMoveIndex,
+          parents,
+          suggestions
+        );
+      }
+
+      if (onChangeTasks) {
+        const withSuggestions = prepareSuggestions(suggestions);
+
+        const isMovedTaskBefore = taskForMoveIndex < taskIndex;
+
+        withSuggestions.splice(taskForMoveIndex, 1);
+        withSuggestions.splice(
+          isMovedTaskBefore ? taskIndex - 1 : taskIndex,
+          0,
+          {
+            ...taskForMove,
+            parent: target.parent,
+          }
+        );
+
+        onChangeTasks(withSuggestions, {
+          type: "move_task_before",
+        });
+      }
+    },
+    [
+      getMetadata,
+      onChangeTasks,
+      onMoveTaskBefore,
+      mapTaskToGlobalIndex,
+      prepareSuggestions,
+      onChangeTooltipTask,
+    ]
+  );
+
   const handleMoveTasksInside = useCallback(
     (parent: Task, childs: readonly TaskOrEmpty[]) => {
       if (!onMoveTaskInside && !onChangeTasks) {
@@ -1847,6 +1920,7 @@ export const Gantt: React.FC<GanttProps> = ({
     handleAddTask,
     handleDeteleTasks,
     handleEditTask,
+    handleMoveTaskBefore,
     handleMoveTaskAfter,
     handleMoveTasksInside,
     handleOpenContextMenu,
