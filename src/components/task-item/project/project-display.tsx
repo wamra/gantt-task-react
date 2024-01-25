@@ -1,18 +1,28 @@
-import React, {
-  useMemo,
-} from "react";
+import React, { useMemo } from "react";
 
-import type { BarMoveAction } from "../../../types/gantt-task-actions";
-
-import { TaskItemProps } from "../task-item";
 import styles from "./project.module.css";
+import { ColorStyles } from "../../../types/public-types";
 
-export const Project: React.FC<TaskItemProps & {
-  onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
-}> = ({
-  distances: {
-    barCornerRadius,
-  },
+type ProjectDisplayProps = {
+  barCornerRadius: number;
+  isCritical: boolean;
+  isSelected: boolean;
+  hasChildren: boolean;
+  taskHeight: number;
+  taskHalfHeight: number;
+  taskYOffset: number;
+  progressWidth: number;
+  /* progress start point */
+  progressX: number;
+  startMoveFullTask: (clientX: number) => void;
+  colorStyles: ColorStyles;
+  width: number;
+  x1: number;
+  x2: number;
+};
+
+export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
+  barCornerRadius,
 
   taskHalfHeight,
   taskHeight,
@@ -25,6 +35,7 @@ export const Project: React.FC<TaskItemProps & {
   width,
   x1,
   x2,
+  startMoveFullTask,
 }) => {
   const barColor = useMemo(() => {
     if (isCritical) {
@@ -76,7 +87,20 @@ export const Project: React.FC<TaskItemProps & {
   ].join(",");
 
   return (
-    <g tabIndex={0} className={styles.projectWrapper}>
+    <g
+      onMouseDown={e => {
+        startMoveFullTask(e.clientX);
+      }}
+      onTouchStart={e => {
+        const firstTouch = e.touches[0];
+
+        if (firstTouch) {
+          startMoveFullTask(firstTouch.clientX);
+        }
+      }}
+      tabIndex={0}
+      className={styles.projectWrapper}
+    >
       <rect
         fill={barColor}
         x={x1}

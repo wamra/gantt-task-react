@@ -24,7 +24,6 @@ import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
 import { Milestone } from "./milestone/milestone";
 import { TaskWarning } from "./task-warning";
-import { Project } from "./project/project";
 import style from "./task-list.module.css";
 import { BarFixWidth, fixWidthContainerClass } from "../other/bar-fix-width";
 
@@ -206,48 +205,34 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   const [isTextInside, setIsTextInside] = useState(true);
 
   const taskItem = useMemo(() => {
-    switch (task.type) {
-      case "milestone":
-        return (
-          <Milestone
-            {...props}
-            colorStyles={styles}
-            onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
-            onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
-            onTaskEventStart={onTaskEventStart}
-          />
-        );
-
-      case "project":
-        return (
-          <Project
-            {...props}
-            colorStyles={styles}
-            onTaskEventStart={onTaskEventStart}
-          />
-        );
-
-      default:
-        if (width < handleWidth * 2) {
-          return (
-            <BarSmall
-              {...props}
-              colorStyles={styles}
-              onTaskEventStart={onTaskEventStart}
-            />
-          );
-        }
-
-        return (
-          <Bar
-            {...props}
-            onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
-            onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
-            onTaskEventStart={onTaskEventStart}
-            colorStyles={styles}
-          />
-        );
-    }
+    if (task.type === "milestone") {
+      return (
+        <Milestone
+          {...props}
+          colorStyles={styles}
+          onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
+          onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
+          onTaskEventStart={onTaskEventStart}
+        />
+      );
+    } else if (width < handleWidth * 2) {
+      return (
+        <BarSmall
+          {...props}
+          colorStyles={styles}
+          onTaskEventStart={onTaskEventStart}
+        />
+      );
+    } else
+      return (
+        <Bar
+          {...props}
+          onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
+          onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
+          onTaskEventStart={onTaskEventStart}
+          colorStyles={styles}
+        />
+      );
   }, [
     handleWidth,
     isRelationDrawMode,

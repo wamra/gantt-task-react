@@ -89,6 +89,7 @@ export function initTasks() {
       ],
       type: "project",
       parent: "ProjectSample",
+      isDisabled: true,
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),

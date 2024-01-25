@@ -10,6 +10,7 @@ import type { BarMoveAction } from "../../../types/gantt-task-actions";
 
 import styles from "./bar.module.css";
 import stylesRelationHandle from "./bar-relation-handle.module.css";
+import { ProjectDisplay } from "../project/project-display";
 
 export const Bar: React.FC<
   TaskItemProps & {
@@ -26,7 +27,6 @@ export const Bar: React.FC<
     relationCircleOffset,
     relationCircleRadius,
   },
-
   hasChildren,
   isCritical,
   isDateChangeable,
@@ -40,6 +40,7 @@ export const Bar: React.FC<
   progressWidth,
   progressX,
   rtl,
+  task,
   taskHalfHeight,
   taskHeight,
   taskYOffset,
@@ -47,8 +48,6 @@ export const Bar: React.FC<
   x1,
   x2,
 }) => {
-  const canChangeDates = isDateChangeable && !hasChildren;
-
   const startMoveFullTask = useCallback(
     (clientX: number) => {
       onTaskEventStart("move", clientX);
@@ -84,11 +83,28 @@ export const Bar: React.FC<
   );
   const handleHeight = taskHeight - 2;
 
-  return (
-    <g
-      className={`${styles.barWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
-      tabIndex={0}
-    >
+  let barDisplay = null;
+  if (task.type === "project") {
+    barDisplay = (
+      <ProjectDisplay
+        x1={x1}
+        x2={x2}
+        taskYOffset={taskYOffset}
+        width={width}
+        taskHeight={taskHeight}
+        taskHalfHeight={taskHalfHeight}
+        progressX={progressX}
+        progressWidth={progressWidth}
+        barCornerRadius={barCornerRadius}
+        colorStyles={colorStyles}
+        isSelected={isSelected}
+        isCritical={isCritical}
+        hasChildren={hasChildren}
+        startMoveFullTask={startMoveFullTask}
+      />
+    );
+  } else {
+    barDisplay = (
       <BarDisplay
         x={x1}
         y={taskYOffset}
@@ -103,9 +119,18 @@ export const Bar: React.FC<
         hasChildren={hasChildren}
         startMoveFullTask={startMoveFullTask}
       />
+    );
+  }
+
+  return (
+    <g
+      className={`${styles.barWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
+      tabIndex={0}
+    >
+      {barDisplay}
 
       {/* left */}
-      {canChangeDates && (
+      {isDateChangeable && (
         <BarDateHandle
           barCornerRadius={barCornerRadius}
           height={handleHeight}
@@ -117,7 +142,7 @@ export const Bar: React.FC<
       )}
 
       {/* right */}
-      {canChangeDates && (
+      {isDateChangeable && (
         <BarDateHandle
           barCornerRadius={barCornerRadius}
           height={handleHeight}
