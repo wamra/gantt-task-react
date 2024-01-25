@@ -162,6 +162,7 @@ export interface Task {
    * From 0 to 100
    */
   progress: number;
+  assignees?: string[];
   styles?: Partial<ColorStyles>;
   isDisabled?: boolean;
   /**

@@ -133,6 +133,7 @@ npm start
 | start\*        | Date     | Task start date.                                                                                      |
 | end\*          | Date     | Task end date.                                                                                        |
 | progress\*     | number   | Task progress. Sets in percent from 0 to 100.                                                         |
+| assignees\*    | string[] | List of people assigned to the task                                                                   |
 | dependencies   | string[] | Specifies the parent dependencies ids.                                                                |
 | styles         | object   | Specifies the taskbar styling settings locally. Object is passed with the following attributes:       |
 |                |          | - **backgroundColor**: String. Specifies the taskbar background fill color locally.                   |

@@ -107,6 +107,7 @@ export function initTasks() {
       type: "task",
       progress: 40,
       parent: "code",
+      assignees: ["Bob", "Peter"],
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
@@ -116,6 +117,7 @@ export function initTasks() {
       type: "task",
       progress: 40,
       parent: "code",
+      assignees: ["Marc"],
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
