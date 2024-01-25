@@ -575,7 +575,7 @@ export interface TaskListTableProps {
   ganttFullHeight: number;
   getTaskCurrentState: (task: Task) => Task;
   handleAddTask: (task: Task) => void;
-  handleDeteleTasks: (task: TaskOrEmpty[]) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
   handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
@@ -787,7 +787,7 @@ export type ColumnData = {
   dependencies: Task[];
   distances: Distances;
   handleAddTask: (task: Task) => void;
-  handleDeteleTasks: (task: TaskOrEmpty[]) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
   hasChildren: boolean;
   icons?: Partial<Icons>;
@@ -951,7 +951,7 @@ export type ActionMetaType = {
    * Delete tasks
    * @param tasksForDelete list of tasks for delete
    */
-  handleDeteleTasks: (tasksForDelete: readonly TaskOrEmpty[]) => void;
+  handleDeleteTasks: (tasksForDelete: readonly TaskOrEmpty[]) => void;
   /**
    * Move tasks to the container task
    * @param parent the container task

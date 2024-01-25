@@ -1100,7 +1100,7 @@ export const Gantt: React.FC<GanttProps> = ({
     onChangeTooltipTask,
   } = useTaskTooltip(changeInProgress);
 
-  const handleDeteleTasks = useCallback(
+  const handleDeleteTasks = useCallback(
     (tasksForDelete: readonly TaskOrEmpty[]) => {
       if (!onDelete && !onChangeTasks) {
         return;
@@ -1636,7 +1636,7 @@ export const Gantt: React.FC<GanttProps> = ({
     cutSelectedTasks,
     cutTask,
     handleAddChilds,
-    handleDeteleTasks,
+    handleDeleteTasks,
     handleMoveTasksInside,
     makeCopies,
     resetSelectedTasks,
@@ -1821,7 +1821,7 @@ export const Gantt: React.FC<GanttProps> = ({
       getTaskCoordinates,
       getTaskGlobalIndexByRef,
       handleBarRelationStart,
-      handleDeteleTasks,
+      handleDeleteTasks,
       handleFixDependency,
       handleTaskDragStart,
       isShowDependencyWarnings,
@@ -1870,7 +1870,7 @@ export const Gantt: React.FC<GanttProps> = ({
       getTaskCoordinates,
       getTaskGlobalIndexByRef,
       handleBarRelationStart,
-      handleDeteleTasks,
+      handleDeleteTasks,
       handleTaskDragStart,
       isShowDependencyWarnings,
       mapGlobalRowIndexToTask,
@@ -1918,7 +1918,7 @@ export const Gantt: React.FC<GanttProps> = ({
     ganttHeight,
     getTaskCurrentState,
     handleAddTask,
-    handleDeteleTasks,
+    handleDeleteTasks,
     handleEditTask,
     handleMoveTaskBefore,
     handleMoveTaskAfter,

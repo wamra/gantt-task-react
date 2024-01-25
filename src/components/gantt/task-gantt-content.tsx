@@ -52,7 +52,7 @@ export type TaskGanttContentProps = {
   getTaskCoordinates: (task: Task) => TaskCoordinates;
   getTaskGlobalIndexByRef: (task: Task) => number;
   handleBarRelationStart: (target: RelationMoveTarget, task: Task) => void;
-  handleDeteleTasks: (task: TaskOrEmpty[]) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleFixDependency: (task: Task, delta: number) => void;
   handleTaskDragStart: (
     action: BarMoveAction,
@@ -102,7 +102,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   getTaskCoordinates,
   getTaskGlobalIndexByRef,
   handleBarRelationStart,
-  handleDeteleTasks,
+  handleDeleteTasks,
   handleFixDependency,
   handleTaskDragStart,
   isShowDependencyWarnings,
@@ -281,7 +281,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             rtl={rtl}
             fixStartPosition={fixStartPosition}
             fixEndPosition={fixEndPosition}
-            handleDeteleTasks={handleDeteleTasks}
+            handleDeleteTasks={handleDeleteTasks}
             colorStyles={colorStyles}
           />
         </svg>

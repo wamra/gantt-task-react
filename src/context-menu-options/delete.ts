@@ -1,20 +1,20 @@
-import type {
-  ContextMenuOptionType,
-} from "../types/public-types";
+import type { ContextMenuOptionType } from "../types/public-types";
 
 export const deleteOption: ContextMenuOptionType = {
   action: ({
     getTasksWithDescendants,
-    handleDeteleTasks,
+    handleDeleteTasks,
     resetSelectedTasks: resetSelectedTasksAction,
     task,
   }) => {
     const tasksWithDescendants = getTasksWithDescendants();
 
-    handleDeteleTasks(tasksWithDescendants.length === 0 ? [task] : tasksWithDescendants);
+    handleDeleteTasks(
+      tasksWithDescendants.length === 0 ? [task] : tasksWithDescendants
+    );
 
     resetSelectedTasksAction();
   },
-  icon: '×',
-  label: 'Delete',
+  icon: "×",
+  label: "Delete",
 };

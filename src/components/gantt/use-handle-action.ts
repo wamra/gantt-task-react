@@ -76,7 +76,7 @@ type UseHandleActionParams = {
   cutSelectedTasks: () => void;
   cutTask: (task: TaskOrEmpty) => void;
   handleAddChilds: (parent: Task, descendants: readonly TaskOrEmpty[]) => void;
-  handleDeteleTasks: (tasksForDelete: readonly TaskOrEmpty[]) => void;
+  handleDeleteTasks: (tasksForDelete: readonly TaskOrEmpty[]) => void;
   handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
   makeCopies: (tasksForCopy: readonly TaskOrEmpty[]) => readonly TaskOrEmpty[];
   resetSelectedTasks: () => void;
@@ -94,7 +94,7 @@ export const useHandleAction = ({
   cutSelectedTasks,
   cutTask,
   handleAddChilds,
-  handleDeteleTasks,
+  handleDeleteTasks,
   handleMoveTasksInside,
   makeCopies,
   resetSelectedTasks,
@@ -135,7 +135,7 @@ export const useHandleAction = ({
         getSelectedTasks: getSelectedTasksWithCache,
         getTasksWithDescendants: getTasksWithDescendantsWithCache,
         handleAddChilds,
-        handleDeteleTasks,
+        handleDeleteTasks,
         handleMoveTasksInside,
         makeCopies,
         resetSelectedTasks,
@@ -151,7 +151,7 @@ export const useHandleAction = ({
       cutSelectedTasks,
       cutTask,
       handleAddChilds,
-      handleDeteleTasks,
+      handleDeleteTasks,
       handleMoveTasksInside,
       makeCopies,
       resetSelectedTasks,

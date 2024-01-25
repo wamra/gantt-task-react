@@ -29,7 +29,7 @@ type TaskListTableRowProps = {
   fullRowHeight: number;
   getTaskCurrentState: (task: Task) => Task;
   handleAddTask: (task: Task) => void;
-  handleDeteleTasks: (task: TaskOrEmpty[]) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
   handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
@@ -66,7 +66,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
   fullRowHeight,
   getTaskCurrentState,
   handleAddTask,
-  handleDeteleTasks,
+  handleDeleteTasks,
   handleEditTask,
   handleMoveTaskBefore,
   handleMoveTaskAfter,
@@ -237,7 +237,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       dependencies,
       depth,
       distances,
-      handleDeteleTasks,
+      handleDeleteTasks,
       handleAddTask,
       handleEditTask,
       hasChildren,
@@ -255,7 +255,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       depth,
       distances,
       getTaskCurrentState,
-      handleDeteleTasks,
+      handleDeleteTasks,
       handleAddTask,
       handleEditTask,
       hasChildren,

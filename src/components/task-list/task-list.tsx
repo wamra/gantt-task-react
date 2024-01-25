@@ -43,7 +43,7 @@ export type TaskListProps = {
   ganttHeight: number;
   getTaskCurrentState: (task: Task) => Task;
   handleAddTask: (task: Task) => void;
-  handleDeteleTasks: (task: TaskOrEmpty[]) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
   handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
   handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
@@ -91,7 +91,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   ganttHeight,
   getTaskCurrentState,
   handleAddTask,
-  handleDeteleTasks,
+  handleDeleteTasks,
   handleEditTask,
   handleMoveTaskBefore,
   handleMoveTaskAfter,
@@ -225,7 +225,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
                 ganttFullHeight={ganttFullHeight}
                 getTaskCurrentState={getTaskCurrentState}
                 handleAddTask={handleAddTask}
-                handleDeteleTasks={handleDeteleTasks}
+                handleDeleteTasks={handleDeleteTasks}
                 handleEditTask={handleEditTask}
                 handleMoveTaskBefore={handleMoveTaskBefore}
                 handleMoveTaskAfter={handleMoveTaskAfter}

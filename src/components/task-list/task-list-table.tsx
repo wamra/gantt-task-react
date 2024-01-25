@@ -22,7 +22,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
   fullRowHeight,
   getTaskCurrentState,
   handleAddTask,
-  handleDeteleTasks,
+  handleDeleteTasks,
   handleEditTask,
   handleMoveTaskBefore,
   handleMoveTaskAfter,
@@ -91,7 +91,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           fullRowHeight={fullRowHeight}
           getTaskCurrentState={getTaskCurrentState}
           handleAddTask={handleAddTask}
-          handleDeteleTasks={handleDeteleTasks}
+          handleDeleteTasks={handleDeleteTasks}
           handleEditTask={handleEditTask}
           handleMoveTaskBefore={handleMoveTaskBefore}
           handleMoveTaskAfter={handleMoveTaskAfter}
