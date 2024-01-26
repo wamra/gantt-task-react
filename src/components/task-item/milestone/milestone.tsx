@@ -15,10 +15,9 @@ export const Milestone: React.FC<
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
 > = ({
+  task,
   taskYOffset,
-
   distances: { barCornerRadius, relationCircleOffset, relationCircleRadius },
-
   taskHeight,
   taskHalfHeight,
   isRelationChangeable,
@@ -59,6 +58,7 @@ export const Milestone: React.FC<
       className={`${styles.milestoneWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
     >
       <rect
+        data-testid={`Task-Milestone-${task.id}`}
         fill={barColor}
         x={x1}
         width={rotatedHeight}
@@ -85,6 +85,7 @@ export const Milestone: React.FC<
           <g>
             {/* left */}
             <BarRelationHandle
+              dataTestid={`Task-Relation-Handle-Left-${task.id}`}
               isRelationDrawMode={isRelationDrawMode}
               x={x1 - relationCircleOffset}
               y={taskYOffset + taskHalfHeight}
@@ -93,6 +94,7 @@ export const Milestone: React.FC<
             />
             {/* right */}
             <BarRelationHandle
+              dataTestid={`Task-Relation-Handle-Right-${task.id}`}
               isRelationDrawMode={isRelationDrawMode}
               x={x2 + relationCircleOffset}
               y={taskYOffset + taskHalfHeight}

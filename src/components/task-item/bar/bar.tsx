@@ -87,6 +87,7 @@ export const Bar: React.FC<
   if (task.type === "project") {
     barDisplay = (
       <ProjectDisplay
+        taskId={task.id}
         x1={x1}
         x2={x2}
         taskYOffset={taskYOffset}
@@ -106,6 +107,7 @@ export const Bar: React.FC<
   } else {
     barDisplay = (
       <BarDisplay
+        taskId={task.id}
         x={x1}
         y={taskYOffset}
         width={width}
@@ -132,6 +134,7 @@ export const Bar: React.FC<
       {/* left */}
       {isDateChangeable && (
         <BarDateHandle
+          dataTestid={`Task-Date-Handle-Left-${task.id}`}
           barCornerRadius={barCornerRadius}
           height={handleHeight}
           startMove={startMoveStartOfTask}
@@ -144,6 +147,7 @@ export const Bar: React.FC<
       {/* right */}
       {isDateChangeable && (
         <BarDateHandle
+          dataTestid={`Task-Date-Handle-Right-${task.id}`}
           barCornerRadius={barCornerRadius}
           height={handleHeight}
           startMove={startMoveEndOfTask}
@@ -156,6 +160,7 @@ export const Bar: React.FC<
       {/* left */}
       {isRelationChangeable && (
         <BarRelationHandle
+          dataTestid={`Task-Relation-Handle-Left-${task.id}`}
           isRelationDrawMode={isRelationDrawMode}
           radius={relationCircleRadius}
           startDrawRelation={onLeftRelationTriggerMouseDown}
@@ -167,6 +172,7 @@ export const Bar: React.FC<
       {/* right */}
       {isRelationChangeable && (
         <BarRelationHandle
+          dataTestid={`Task-Relation-Handle-Right-${task.id}`}
           isRelationDrawMode={isRelationDrawMode}
           radius={relationCircleRadius}
           startDrawRelation={onRightRelationTriggerMouseDown}
@@ -177,6 +183,7 @@ export const Bar: React.FC<
 
       {isProgressChangeable && (
         <BarProgressHandle
+          taskId={task.id}
           progressPoint={progressPoint}
           startMoveProgress={startMoveProgress}
         />

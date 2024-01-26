@@ -1,7 +1,4 @@
-import React, {
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
@@ -11,13 +8,12 @@ import type { BarMoveAction } from "../../../types/gantt-task-actions";
 
 import styles from "./bar.module.css";
 
-export const BarSmall: React.FC<TaskItemProps & {
-  onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
-}> = ({
-  distances: {
-    barCornerRadius,
-    handleWidth,
-  },
+export const BarSmall: React.FC<
+  TaskItemProps & {
+    onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
+  }
+> = ({
+  distances: { barCornerRadius, handleWidth },
 
   hasChildren,
 
@@ -31,29 +27,31 @@ export const BarSmall: React.FC<TaskItemProps & {
   isCritical,
   colorStyles,
   x1,
+  task,
 }) => {
-  const progressPoint = useMemo(() => getProgressPoint(
-    progressWidth + x1,
-    taskYOffset,
-    taskHeight,
-  ), [
-    progressWidth,
-    taskHeight,
-    taskYOffset,
-    x1,
-  ]);
+  const progressPoint = useMemo(
+    () => getProgressPoint(progressWidth + x1, taskYOffset, taskHeight),
+    [progressWidth, taskHeight, taskYOffset, x1]
+  );
 
-  const startMoveFullTask = useCallback((clientX: number) => {
-    onTaskEventStart("move", clientX);
-  }, [onTaskEventStart]);
+  const startMoveFullTask = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("move", clientX);
+    },
+    [onTaskEventStart]
+  );
 
-  const startMoveProgress = useCallback((clientX: number) => {
-    onTaskEventStart("progress", clientX);
-  }, [onTaskEventStart]);
+  const startMoveProgress = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("progress", clientX);
+    },
+    [onTaskEventStart]
+  );
 
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
+        taskId={task.id}
         barCornerRadius={barCornerRadius}
         hasChildren={hasChildren}
         height={taskHeight}
@@ -71,6 +69,7 @@ export const BarSmall: React.FC<TaskItemProps & {
       <g className="handleGroup">
         {isProgressChangeable && (
           <BarProgressHandle
+            taskId={task.id}
             progressPoint={progressPoint}
             startMoveProgress={startMoveProgress}
           />

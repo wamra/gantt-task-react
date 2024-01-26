@@ -1,6 +1,4 @@
-import React, {
-  useMemo,
-} from "react";
+import React, { useMemo } from "react";
 
 import { ColorStyles } from "../../../types/public-types";
 
@@ -17,12 +15,14 @@ type BarDisplayProps = {
   progressX: number;
   startMoveFullTask: (clientX: number) => void;
   styles: ColorStyles;
+  taskId: string;
   width: number;
   x: number;
   y: number;
 };
 
 export const BarDisplay: React.FC<BarDisplayProps> = ({
+  taskId,
   barCornerRadius,
   isCritical,
   isSelected,
@@ -102,10 +102,11 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
 
   return (
     <g
-      onMouseDown={(e) => {
+      data-testid={`Task-Bar-${taskId}`}
+      onMouseDown={e => {
         startMoveFullTask(e.clientX);
       }}
-      onTouchStart={(e) => {
+      onTouchStart={e => {
         const firstTouch = e.touches[0];
 
         if (firstTouch) {

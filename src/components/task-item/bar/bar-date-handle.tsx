@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./bar.module.css";
 
 type BarDateHandleProps = {
+  dataTestid: string;
   barCornerRadius: number;
   height: number;
   startMove: (clientX: number) => void;
@@ -11,6 +12,7 @@ type BarDateHandleProps = {
 };
 
 export const BarDateHandle: React.FC<BarDateHandleProps> = ({
+  dataTestid,
   barCornerRadius,
   height,
   startMove,
@@ -20,6 +22,7 @@ export const BarDateHandle: React.FC<BarDateHandleProps> = ({
 }) => {
   return (
     <rect
+      data-testid={dataTestid}
       x={x}
       y={y}
       width={width}
@@ -27,10 +30,10 @@ export const BarDateHandle: React.FC<BarDateHandleProps> = ({
       className={styles.barHandle}
       ry={barCornerRadius}
       rx={barCornerRadius}
-      onMouseDown={(e) => {
+      onMouseDown={e => {
         startMove(e.clientX);
       }}
-      onTouchStart={(e) => {
+      onTouchStart={e => {
         const firstTouch = e.touches[0];
 
         if (firstTouch) {
