@@ -198,13 +198,19 @@ const TaskListInner: React.FC<TaskListProps> = ({
             ref={taskListContainerRef}
             className={styles.horizontalContainer}
             style={{
-              height: ganttHeight,
+              height: Math.max(
+                ganttHeight,
+                distances.minimumRowDisplayed * distances.rowHeight
+              ),
               width: taskListWidth,
             }}
           >
             <div
               style={{
-                height: ganttFullHeight,
+                height: Math.max(
+                  ganttFullHeight,
+                  distances.minimumRowDisplayed * distances.rowHeight
+                ),
                 backgroundSize: `100% ${fullRowHeight * 2}px`,
                 backgroundImage: `linear-gradient(to bottom, transparent ${fullRowHeight}px, #f5f5f5 ${fullRowHeight}px)`,
               }}

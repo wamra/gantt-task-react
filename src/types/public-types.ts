@@ -141,6 +141,7 @@ export interface Distances {
   handleWidth: number;
   headerHeight: number;
   ganttHeight: number;
+  minimumRowDisplayed: number;
   nestedTaskNameOffset: number;
   relationCircleOffset: number;
   relationCircleRadius: number;

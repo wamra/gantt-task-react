@@ -11,7 +11,7 @@ const dateFormat = "dd/MM/yyyy HH:mm";
 
 export function initTasks() {
   const currentDate = new Date();
-  const tasks: Task[] = [
+  const tasks: TaskOrEmpty[] = [
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
@@ -34,6 +34,12 @@ export function initTasks() {
       id: "Idea",
       progress: 45,
       type: "task",
+      parent: "ProjectSample",
+    },
+    {
+      id: "taskWithoutDateId",
+      type: "empty",
+      name: "TaskWithoutDate",
       parent: "ProjectSample",
     },
     {
@@ -156,12 +162,18 @@ export function initTasks() {
     },
   ];
 
-  return tasks.map(task => ({
-    ...task,
-    end: endOfDay(task.end),
-    start: startOfDay(task.start),
-  }));
-  return [];
+  return tasks.map(taskOrEmpty => {
+    const task = taskOrEmpty as Task;
+    if (task) {
+      return {
+        ...task,
+        end: endOfDay(task.end),
+        start: startOfDay(task.start),
+      };
+    } else {
+      return taskOrEmpty;
+    }
+  });
 }
 
 export const getTaskFields = (initialValues: {

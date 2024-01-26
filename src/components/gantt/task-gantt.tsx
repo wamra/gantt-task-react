@@ -36,7 +36,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
   ganttSVGRef,
   gridProps,
   gridProps: {
-    distances: { columnWidth },
+    distances: { columnWidth, rowHeight, minimumRowDisplayed },
   },
   horizontalContainerRef,
   onVerticalScrollbarScrollX,
@@ -44,7 +44,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
 }) => {
   const containerStyle = useMemo<CSSProperties>(
     () => ({
-      height: ganttHeight,
+      height: Math.max(ganttHeight, minimumRowDisplayed * rowHeight),
       width: fullSvgWidth,
     }),
     [fullSvgWidth, ganttHeight, ganttFullHeight]
@@ -52,7 +52,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
 
   const gridStyle = useMemo<CSSProperties>(
     () => ({
-      height: ganttFullHeight,
+      height: Math.max(ganttFullHeight, minimumRowDisplayed * rowHeight),
       width: fullSvgWidth,
       backgroundSize: `${columnWidth}px ${fullRowHeight * 2}px`,
       backgroundPositionX: additionalLeftSpace || undefined,

@@ -157,6 +157,7 @@ const defaultDistances: Distances = {
   handleWidth: 8,
   headerHeight: 50,
   ganttHeight: 600,
+  minimumRowDisplayed: 4,
   nestedTaskNameOffset: 20,
   relationCircleOffset: 10,
   relationCircleRadius: 5,
