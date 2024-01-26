@@ -161,6 +161,7 @@ export function initTasks() {
     end: endOfDay(task.end),
     start: startOfDay(task.start),
   }));
+  return [];
 }
 
 export const getTaskFields = (initialValues: {

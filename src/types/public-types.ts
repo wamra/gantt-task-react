@@ -430,6 +430,8 @@ export interface EventOption {
    * Invokes on click on fix element on the end of task
    */
   fixEndPosition?: FixPosition;
+
+  onWheel?: (wheelEvent: WheelEvent) => void;
 }
 
 export interface DisplayOption {

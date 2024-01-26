@@ -213,6 +213,7 @@ export const Gantt: React.FC<GanttProps> = ({
   onProgressChange: onProgressChangeProp = undefined,
   onRelationChange: onRelationChangeProp = undefined,
   onResizeColumn = undefined,
+  onWheel,
   preStepsCount = 1,
   renderBottomHeader = undefined,
   renderTopHeader = undefined,
@@ -644,18 +645,22 @@ export const Gantt: React.FC<GanttProps> = ({
   // scroll events
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
-      if (ganttHeight) {
-        const prevScrollY = horizontalContainerRef.current?.scrollTop || 0;
+      if (onWheel) {
+        onWheel(event);
+      } else {
+        if (ganttHeight) {
+          const prevScrollY = horizontalContainerRef.current?.scrollTop || 0;
 
-        let newScrollY = prevScrollY + event.deltaY;
-        if (newScrollY < 0) {
-          newScrollY = 0;
-        } else if (newScrollY > ganttFullHeight - ganttHeight) {
-          newScrollY = ganttFullHeight - ganttHeight;
-        }
-        if (newScrollY !== prevScrollY) {
-          setScrollYProgrammatically(newScrollY);
-          event.preventDefault();
+          let newScrollY = prevScrollY + event.deltaY;
+          if (newScrollY < 0) {
+            newScrollY = 0;
+          } else if (newScrollY > ganttFullHeight - ganttHeight) {
+            newScrollY = ganttFullHeight - ganttHeight;
+          }
+          if (newScrollY !== prevScrollY) {
+            setScrollYProgrammatically(newScrollY);
+            event.preventDefault();
+          }
         }
       }
     };
@@ -683,6 +688,7 @@ export const Gantt: React.FC<GanttProps> = ({
     svgWidth,
     rtl,
     wrapperRef,
+    onWheel,
   ]);
 
   /**

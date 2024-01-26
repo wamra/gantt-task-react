@@ -32,6 +32,7 @@ type AppProps = {
 
 export const CustomPalette: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
+  const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
 
   const onChangeTasks = useCallback<OnChangeTasks>(
     (newTaskOrEmptys, action) => {
@@ -116,6 +117,24 @@ export const CustomPalette: React.FC<AppProps> = props => {
     return conf;
   };
 
+  const handleWheel = (wheelEvent: WheelEvent) => {
+    const deltaY = wheelEvent.deltaY;
+
+    if (deltaY < 0 && viewMode !== ViewMode.Hour) {
+      const currentIndex = Object.values(ViewMode).indexOf(viewMode);
+      const newZoomLevel = Object.values(ViewMode)[currentIndex - 1];
+      if (newZoomLevel) {
+        setView(newZoomLevel);
+      }
+    } else if (deltaY > 0 && viewMode !== ViewMode.Month) {
+      const currentIndex = Object.values(ViewMode).indexOf(viewMode);
+      const newZoomLevel = Object.values(ViewMode)[currentIndex + 1];
+      if (newZoomLevel) {
+        setView(newZoomLevel);
+      }
+    }
+  };
+
   const ContextualPalette: React.FC<TaskContextualPaletteProps> = ({
     selectedTask,
     onClose,
@@ -154,10 +173,11 @@ export const CustomPalette: React.FC<AppProps> = props => {
         onEditTask={onEditTask}
         onClick={handleClick}
         tasks={tasks}
-        viewMode={ViewMode.Day}
+        viewMode={viewMode}
         roundEndDate={(date: Date) => date}
         roundStartDate={(date: Date) => date}
         ContextualPalette={ContextualPalette}
+        onWheel={handleWheel}
       />
     </DndProvider>
   );
