@@ -162,6 +162,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
       </div>
     );
   };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Gantt
