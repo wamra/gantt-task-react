@@ -270,23 +270,26 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
   const dropPreviewOffset =
     distances.nestedTaskNameOffset * depth + distances.expandIconWidth;
 
+  let backgroundColor = isSelected
+    ? colors.selectedTaskBackgroundColor
+    : isEven && !dropInsideProps.isLighten
+    ? colors.evenTaskBackgroundColor
+    : undefined;
+  if (
+    dropInsideProps.isLighten &&
+    !dropAfterProps.isLighten &&
+    !dropBeforeProps.isLighten
+  ) {
+    backgroundColor = colors.taskDragColor;
+  }
+
   return (
     <div
-      className={`${styles.taskListTableRow} ${
-        dropInsideProps.isLighten &&
-        !dropAfterProps.isLighten &&
-        !dropBeforeProps.isLighten
-          ? styles.lighten
-          : ""
-      } ${isCut ? styles.isCut : ""}`}
+      className={`${styles.taskListTableRow} ${isCut ? styles.isCut : ""}`}
       onMouseDown={onRootMouseDown}
       style={{
         height: fullRowHeight,
-        backgroundColor: isSelected
-          ? colors.selectedTaskBackgroundColor
-          : isEven && !dropInsideProps.isLighten
-          ? colors.evenTaskBackgroundColor
-          : undefined,
+        backgroundColor: backgroundColor,
         ...style,
       }}
       onContextMenu={onContextMenu}
@@ -311,14 +314,26 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
         className={`${styles.dropBefore} ${
           dropBeforeProps.isLighten ? styles.dropBeforeLighten : ""
         }`}
-        style={{ left: dropPreviewOffset }}
+        style={{
+          left: dropPreviewOffset,
+          backgroundColor: dropBeforeProps.isLighten
+            ? colors.taskDragColor
+            : undefined,
+          color: dropBeforeProps.isLighten ? colors.taskDragColor : undefined,
+        }}
         ref={dropBefore}
       />
       <div
         className={`${styles.dropAfter} ${
-          dropAfterProps.isLighten ? styles.dropAfterLighten : ""
+          dropAfterProps.isLighten ? styles.dropBeforeLighten : ""
         }`}
-        style={{ left: dropPreviewOffset }}
+        style={{
+          left: dropPreviewOffset,
+          backgroundColor: dropAfterProps.isLighten
+            ? colors.taskDragColor
+            : undefined,
+          color: dropAfterProps.isLighten ? colors.taskDragColor : undefined,
+        }}
         ref={dropAfter}
       />
     </div>
