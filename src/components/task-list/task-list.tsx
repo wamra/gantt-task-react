@@ -12,6 +12,7 @@ import {
   Distances,
   Icons,
   MapTaskToNestedIndex,
+  OnResizeColumn,
   Task,
   TaskListHeaderProps,
   TaskListTableProps,
@@ -22,6 +23,7 @@ import { ROW_DRAG_TYPE } from "../../constants";
 import { useOptimizedList } from "../../helpers/use-optimized-list";
 
 import styles from "./task-list.module.css";
+import { useTableListResize } from "../gantt/use-tablelist-resize";
 
 const SCROLL_DELAY = 25;
 
@@ -31,7 +33,7 @@ export type TaskListProps = {
   childTasksMap: ChildByLevelMap;
   closedTasks: Readonly<Record<string, true>>;
   colors: ColorStyles;
-  columns: readonly Column[];
+  columnsProp: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
   dateSetup: DateSetup;
   dependencyMap: DependencyMap;
@@ -56,21 +58,18 @@ export type TaskListProps = {
   icons?: Partial<Icons>;
   isShowTaskNumbers: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
-  onColumnResizeStart: (columnIndex: number, clientX: number) => void;
   onExpanderClick: (task: Task) => void;
-  onTableResizeStart: (clientX: number) => void;
   scrollToBottomStep: () => void;
   scrollToTask: (task: Task) => void;
   scrollToTopStep: () => void;
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   selectedIdsMirror: Readonly<Record<string, true>>;
-  tableWidth: number;
   taskListContainerRef: RefObject<HTMLDivElement>;
   taskListRef: RefObject<HTMLDivElement>;
-  taskListWidth: number;
   tasks: readonly TaskOrEmpty[];
   TaskListHeader: ComponentType<TaskListHeaderProps>;
   TaskListTable: ComponentType<TaskListTableProps>;
+  onResizeColumn?: OnResizeColumn;
 };
 
 const TaskListInner: React.FC<TaskListProps> = ({
@@ -79,7 +78,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   childTasksMap,
   closedTasks,
   colors,
-  columns,
+  columnsProp,
   cutIdsMirror,
   dateSetup,
   dependencyMap,
@@ -100,22 +99,28 @@ const TaskListInner: React.FC<TaskListProps> = ({
   icons = undefined,
   isShowTaskNumbers,
   mapTaskToNestedIndex,
-  onColumnResizeStart,
   onExpanderClick,
-  onTableResizeStart,
   scrollToBottomStep,
   scrollToTask,
   scrollToTopStep,
   selectTaskOnMouseDown,
   selectedIdsMirror,
-  tableWidth,
   taskListContainerRef,
   taskListRef,
-  taskListWidth,
   tasks,
   TaskListHeader,
   TaskListTable,
+  onResizeColumn,
 }) => {
+  // Manage the column and list table resizing
+  const [
+    columns,
+    taskListWidth,
+    tableWidth,
+    onTableResizeStart,
+    onColumnResizeStart,
+  ] = useTableListResize(columnsProp, distances, onResizeColumn);
+
   const renderedIndexes = useOptimizedList(
     taskListContainerRef,
     "scrollTop",

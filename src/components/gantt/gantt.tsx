@@ -87,7 +87,6 @@ import { deleteOption } from "../../context-menu-options/delete";
 import { useHolidays } from "./use-holidays";
 
 import styles from "./gantt.module.css";
-import { useTableListResize } from "./use-tablelist-resize";
 
 const defaultColors: ColorStyles = {
   arrowColor: "grey",
@@ -124,6 +123,7 @@ const defaultColors: ColorStyles = {
   evenTaskBackgroundColor: "#f5f5f5",
   holidayBackgroundColor: "rgba(233, 233, 233, 0.3)",
   selectedTaskBackgroundColor: "rgba(252, 248, 227, 0.5)",
+  taskDragColor: "#7474ff",
   todayColor: "rgba(252, 248, 227, 0.5)",
   contextMenuBoxShadow: "rgb(0 0 0 / 25%) 1px 1px 5px 1px",
   contextMenuBgColor: "#fff",
@@ -756,15 +756,6 @@ export const Gantt: React.FC<GanttProps> = ({
       return nextClosedTasks;
     });
   }, []);
-
-  // Manage the column and list table resizing
-  const [
-    columns,
-    taskListWidth,
-    tableWidth,
-    onTableResizeStart,
-    onColumnResizeStart,
-  ] = useTableListResize(columnsProp, distances, onResizeColumn);
 
   const getMetadata = useCallback(
     (changeAction: ChangeAction) =>
@@ -1913,7 +1904,7 @@ export const Gantt: React.FC<GanttProps> = ({
     childTasksMap,
     closedTasks,
     colors: colorStyles,
-    columns,
+    columnsProp,
     cutIdsMirror,
     dateSetup,
     dependencyMap,
@@ -1934,19 +1925,16 @@ export const Gantt: React.FC<GanttProps> = ({
     icons,
     isShowTaskNumbers,
     mapTaskToNestedIndex,
-    onColumnResizeStart,
     onExpanderClick: handleExpanderClick,
-    onTableResizeStart,
     scrollToBottomStep,
     scrollToTopStep,
     selectTaskOnMouseDown,
     selectedIdsMirror,
     scrollToTask,
-    tableWidth,
     taskListContainerRef,
     taskListRef,
-    taskListWidth,
     tasks: visibleTasks,
+    onResizeColumn,
   };
 
   return (
@@ -1956,7 +1944,8 @@ export const Gantt: React.FC<GanttProps> = ({
       tabIndex={0}
       ref={wrapperRef}
     >
-      {columns.length > 0 && <TaskList {...tableProps} />}
+      {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
+      {(!columnsProp || columnsProp.length > 0) && <TaskList {...tableProps} />}
 
       <TaskGantt
         barProps={barProps}

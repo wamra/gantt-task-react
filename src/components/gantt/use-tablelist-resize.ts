@@ -34,7 +34,7 @@ export const useTableListResize = (
 ] => {
   const [columnsState, setColumns] = useState<readonly Column[]>(() => {
     if (columnsProp) {
-      return columnsProp;
+      return [...columnsProp];
     }
 
     const {
@@ -88,6 +88,13 @@ export const useTableListResize = (
       },
     ];
   });
+
+  useEffect(() => {
+    if (columnsProp) {
+      setColumns([...columnsProp]);
+      setTableWidth(columnsProp.reduce((res, { width }) => res + width, 0));
+    }
+  }, [columnsProp]);
 
   const [tableResizeEvent, setTableResizeEvent] =
     useState<TableResizeEvent | null>(null);

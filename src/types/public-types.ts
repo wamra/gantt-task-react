@@ -100,6 +100,7 @@ export interface ColorStyles {
   milestoneBackgroundSelectedCriticalColor: string;
   evenTaskBackgroundColor: string;
   holidayBackgroundColor: string;
+  taskDragColor: string;
   selectedTaskBackgroundColor: string;
   todayColor: string;
   contextMenuBoxShadow: string;
@@ -807,6 +808,7 @@ export type ColumnProps = {
 };
 
 export type Column = {
+  id?: string;
   component: ComponentType<ColumnProps>;
   width: number;
   title?: ReactNode;
