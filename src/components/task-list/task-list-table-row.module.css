@@ -4,10 +4,6 @@
   text-overflow: ellipsis;
 }
 
-.lighten {
-  background-color: #7474ff;
-}
-
 .cut {
   opacity: 0.3;
 }
@@ -35,8 +31,6 @@
 }
 
 .dropAfterLighten {
-  color: #7474ff;;
-  background-color:#7474ff;
   border-radius: 6px;
 }
 
@@ -60,8 +54,6 @@
 }
 
 .dropBeforeLighten {
-  color: #7474ff;
-  background-color: #7474ff;
   border-radius: 6px;
 }
 
