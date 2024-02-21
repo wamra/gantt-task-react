@@ -51,7 +51,7 @@ export const BarSmall: React.FC<
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
-        taskId={task.id}
+        taskName={task.name}
         barCornerRadius={barCornerRadius}
         hasChildren={hasChildren}
         height={taskHeight}
@@ -69,7 +69,7 @@ export const BarSmall: React.FC<
       <g className="handleGroup">
         {isProgressChangeable && (
           <BarProgressHandle
-            taskId={task.id}
+            taskName={task.name}
             progressPoint={progressPoint}
             startMoveProgress={startMoveProgress}
           />

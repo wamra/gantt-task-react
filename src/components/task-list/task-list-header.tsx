@@ -40,6 +40,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
               )}
 
               <div
+                data-testid={`table-column-header-${title}`}
                 className={styles.ganttTable_HeaderItem}
                 style={{
                   minWidth: width,
@@ -50,6 +51,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
 
                 {canResizeColumns && canResize !== false && (
                   <div
+                    data-testid={`table-column-header-resize-handle-${title}`}
                     className={styles.resizer}
                     onMouseDown={event => {
                       onColumnResizeStart(index, event.clientX);

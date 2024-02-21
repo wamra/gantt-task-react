@@ -15,7 +15,7 @@ type ProjectDisplayProps = {
   /* progress start point */
   progressX: number;
   startMoveFullTask: (clientX: number) => void;
-  taskId: string;
+  taskName: string;
   colorStyles: ColorStyles;
   width: number;
   x1: number;
@@ -24,7 +24,7 @@ type ProjectDisplayProps = {
 
 export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   barCornerRadius,
-  taskId,
+  taskName,
   taskHalfHeight,
   taskHeight,
   isSelected,
@@ -89,7 +89,7 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
 
   return (
     <g
-      data-testid={`Task-Project-${taskId}`}
+      data-testid={`task-project-${taskName}`}
       onMouseDown={e => {
         startMoveFullTask(e.clientX);
       }}

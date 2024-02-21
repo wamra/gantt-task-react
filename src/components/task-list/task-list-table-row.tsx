@@ -311,6 +311,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       })}
 
       <div
+        data-testid={`table-row-drop-before-${task.name}`}
         className={`${styles.dropBefore} ${
           dropBeforeProps.isLighten ? styles.dropBeforeLighten : ""
         }`}
@@ -324,6 +325,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
         ref={dropBefore}
       />
       <div
+        data-testid={`table-row-drop-after-${task.name}`}
         className={`${styles.dropAfter} ${
           dropAfterProps.isLighten ? styles.dropBeforeLighten : ""
         }`}

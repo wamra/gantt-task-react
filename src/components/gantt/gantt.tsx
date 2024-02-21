@@ -1943,6 +1943,7 @@ export const Gantt: React.FC<GanttProps> = ({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       ref={wrapperRef}
+      data-testid={`gantt-main`}
     >
       {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
       {(!columnsProp || columnsProp.length > 0) && <TaskList {...tableProps} />}

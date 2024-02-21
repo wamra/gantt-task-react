@@ -15,14 +15,14 @@ type BarDisplayProps = {
   progressX: number;
   startMoveFullTask: (clientX: number) => void;
   styles: ColorStyles;
-  taskId: string;
+  taskName: string;
   width: number;
   x: number;
   y: number;
 };
 
 export const BarDisplay: React.FC<BarDisplayProps> = ({
-  taskId,
+  taskName,
   barCornerRadius,
   isCritical,
   isSelected,
@@ -102,7 +102,7 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
 
   return (
     <g
-      data-testid={`Task-Bar-${taskId}`}
+      data-testid={`task-bar-${taskName}`}
       onMouseDown={e => {
         startMoveFullTask(e.clientX);
       }}

@@ -69,7 +69,7 @@ export const TitleColumn: React.FC<ColumnProps> = ({
 
   return (
     <div
-      data-testid={`Title-Table-Cell-${task.id}`}
+      data-testid={`title-table-cell-${task.name}`}
       className={`${styles.taskListNameWrapper} ${
         collected.isDragging ? styles.dragging : ""
       }`}
