@@ -358,7 +358,7 @@ export interface EventOption {
   /**
    * Recount parents of tasks in callback `onChangeTasks`
    */
-  isRecountParentsOnChange?: boolean;
+  isUpdateDisabledParentsOnChange?: boolean;
   /**
    * Invokes on every change of the list of tasks
    */

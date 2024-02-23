@@ -7,13 +7,14 @@ import type {
   ChangeMetadata,
   ChildByLevelMap,
   DependentMap,
+  OnDateChangeSuggestionType,
   Task,
   TaskMapByLevel,
+  TaskOrEmpty,
   TaskToGlobalIndexMap,
 } from "../types/public-types";
 import { collectParents } from "./collect-parents";
 import { getAllDescendants } from "./get-all-descendants";
-import { getSuggestedStartEndChanges } from "./get-suggested-start-end-changes";
 
 const collectSuggestedParents = (
   changeAction: ChangeAction,
@@ -85,7 +86,7 @@ type GetChangeTaskMetadataParams = {
   childTasksMap: ChildByLevelMap;
   dependentMap: DependentMap;
   isMoveChildsWithParent: boolean;
-  isRecountParentsOnChange: boolean;
+  isUpdateDisabledParentsOnChange: boolean;
   mapTaskToGlobalIndex: TaskToGlobalIndexMap;
   tasksMap: TaskMapByLevel;
 };
@@ -96,22 +97,19 @@ export const getChangeTaskMetadata = ({
   childTasksMap,
   dependentMap,
   isMoveChildsWithParent,
-  isRecountParentsOnChange,
+  isUpdateDisabledParentsOnChange,
   mapTaskToGlobalIndex,
   tasksMap,
 }: GetChangeTaskMetadataParams): ChangeMetadata => {
-  const parentSuggestedTasks = isRecountParentsOnChange
+  const parentSuggestedTasks = isUpdateDisabledParentsOnChange
     ? collectSuggestedParents(changeAction, tasksMap)
     : [];
 
-  const computedCacheMap = new Map<Task, [Date, Date] | null>();
-
   const parentSuggestions = parentSuggestedTasks.map(parentTask =>
-    getSuggestedStartEndChanges(
-      computedCacheMap,
+    getSuggestedStartEndChangesFromDirectChildren(
       parentTask,
       changeAction,
-      childTasksMap,
+      tasksMap,
       mapTaskToGlobalIndex
     )
   );
@@ -139,4 +137,68 @@ export const getChangeTaskMetadata = ({
   const dependentTasks = getDependentTasks(changeAction, dependentMap);
 
   return [dependentTasks, taskIndexes, suggestedTasks, suggestions];
+};
+
+const getSuggestedStartEndChangesFromDirectChildren = (
+  parentTask: Task,
+  changeAction: ChangeAction,
+  tasksMap: TaskMapByLevel,
+  mapTaskToGlobalIndex: TaskToGlobalIndexMap
+): OnDateChangeSuggestionType => {
+  debugger;
+  const { id, comparisonLevel = 1 } = parentTask;
+  let start = parentTask.start;
+  let end = parentTask.end;
+
+  const indexesByLevel = mapTaskToGlobalIndex.get(comparisonLevel);
+  const index = indexesByLevel ? indexesByLevel.get(id) : -1;
+
+  const resIndex = typeof index === "number" ? index : -1;
+
+  const id2Task: Map<string, TaskOrEmpty> = tasksMap.get(comparisonLevel);
+  const tasks = Array.from(id2Task.values()).filter(
+    ({ type }) => type !== "empty"
+  ) as Task[];
+  const directChildren = tasks
+    .filter(task => {
+      // as the task is deleted, it must be ignored in the parent start end
+      if (
+        changeAction.type == "delete" &&
+        changeAction.tasks.map(t => t.id).includes(task.id)
+      )
+        return false;
+      return task.parent && parentTask.id == task.parent;
+    })
+    .map(child => {
+      const type = changeAction.type;
+      // replace the current child by its changes version
+      if (type == "change" || type == "change_start_and_end") {
+        if (child.id === changeAction.task.id) {
+          if (changeAction.task.type !== "empty") {
+            return changeAction.task;
+          }
+        }
+      }
+      return child;
+    });
+
+  if (directChildren.length > 0) {
+    start = directChildren[0].start;
+    end = directChildren[0].end;
+  }
+  directChildren.forEach(task => {
+    if (task.parent && parentTask.id == task.parent) {
+      const type = changeAction.type;
+      if (type != "delete") {
+        if (task.start.getTime() < start.getTime()) {
+          start = task.start;
+        }
+        if (task.end.getTime() > end.getTime()) {
+          end = task.end;
+        }
+      }
+    }
+  });
+
+  return [start, end, parentTask, resIndex];
 };

@@ -2,7 +2,7 @@ import { Task, TaskMapByLevel, TaskOrEmpty } from "../types/public-types";
 
 export const collectParents = (
   task: TaskOrEmpty,
-  tasksMap: TaskMapByLevel,
+  tasksMap: TaskMapByLevel
 ): Task[] => {
   /**
    * Avoid the circle of dependencies
@@ -12,15 +12,11 @@ export const collectParents = (
   const res: Task[] = [];
 
   let cur = task;
-  while (true) {
-    const {
-      comparisonLevel = 1,
-      id,
-      parent,
-    } = cur;
+  while (true && task.parent != cur.id) {
+    const { comparisonLevel = 1, id, parent } = cur;
 
     if (checkedTasks.has(id)) {
-      console.error('Warning: circle of dependencies');
+      console.error("Warning: circle of dependencies");
       return res;
     }
 
@@ -38,11 +34,12 @@ export const collectParents = (
 
     const parentTask = tasksByLevel.get(parent);
 
-    if (!parentTask || parentTask.type === "empty") {
+    if (!parentTask || parentTask.type === "empty" || !parentTask.isDisabled) {
       return res;
     }
 
     res.push(parentTask);
     cur = parentTask;
   }
+  return res;
 };
