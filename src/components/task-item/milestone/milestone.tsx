@@ -85,7 +85,7 @@ export const Milestone: React.FC<
           <g>
             {/* left */}
             <BarRelationHandle
-              dataTestid={`Task-Relation-Handle-Left-${task.id}`}
+              dataTestid={`task-relation-handle-left-${task.name}`}
               isRelationDrawMode={isRelationDrawMode}
               x={x1 - relationCircleOffset}
               y={taskYOffset + taskHalfHeight}
@@ -94,7 +94,7 @@ export const Milestone: React.FC<
             />
             {/* right */}
             <BarRelationHandle
-              dataTestid={`Task-Relation-Handle-Right-${task.id}`}
+              dataTestid={`task-relation-handle-right-${task.name}`}
               isRelationDrawMode={isRelationDrawMode}
               x={x2 + relationCircleOffset}
               y={taskYOffset + taskHalfHeight}
