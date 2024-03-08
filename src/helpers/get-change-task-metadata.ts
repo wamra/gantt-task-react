@@ -145,7 +145,6 @@ const getSuggestedStartEndChangesFromDirectChildren = (
   tasksMap: TaskMapByLevel,
   mapTaskToGlobalIndex: TaskToGlobalIndexMap
 ): OnDateChangeSuggestionType => {
-  debugger;
   const { id, comparisonLevel = 1 } = parentTask;
   let start = parentTask.start;
   let end = parentTask.end;

@@ -1,7 +1,5 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import type { ComponentType, MouseEvent, RefObject } from "react";
-
-import { useDrop } from "react-dnd";
 
 import {
   ChildByLevelMap,
@@ -19,13 +17,12 @@ import {
   TaskOrEmpty,
 } from "../../types/public-types";
 
-import { ROW_DRAG_TYPE } from "../../constants";
 import { useOptimizedList } from "../../helpers/use-optimized-list";
 
 import styles from "./task-list.module.css";
 import { useTableListResize } from "../gantt/use-tablelist-resize";
 
-const SCROLL_DELAY = 25;
+// const SCROLL_DELAY = 25;
 
 export type TaskListProps = {
   canMoveTasks: boolean;
@@ -100,9 +97,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   isShowTaskNumbers,
   mapTaskToNestedIndex,
   onExpanderClick,
-  scrollToBottomStep,
   scrollToTask,
-  scrollToTopStep,
   selectTaskOnMouseDown,
   selectedIdsMirror,
   taskListContainerRef,
@@ -127,59 +122,60 @@ const TaskListInner: React.FC<TaskListProps> = ({
     fullRowHeight
   );
 
-  const [{ isScrollingToTop }, scrollToTopRef] = useDrop(
-    {
-      accept: ROW_DRAG_TYPE,
+  // const [{ isScrollingToTop }, scrollToTopRef] = useDrop(
+  //   {
+  //     accept: ROW_DRAG_TYPE,
 
-      collect: monitor => ({
-        isScrollingToTop: monitor.isOver(),
-      }),
+  //     collect: monitor => ({
+  //       isScrollingToTop: monitor.isOver(),
+  //     }),
 
-      canDrop: () => false,
-    },
-    []
-  );
+  //     canDrop: () => false,
+  //   },
+  //   []
+  // );
 
-  const [{ isScrollingToBottom }, scrollToBottomRef] = useDrop(
-    {
-      accept: ROW_DRAG_TYPE,
+  // const [{ isScrollingToBottom }, scrollToBottomRef] = useDrop(
+  //   {
+  //     accept: ROW_DRAG_TYPE,
 
-      collect: monitor => ({
-        isScrollingToBottom: monitor.isOver(),
-      }),
+  //     collect: monitor => ({
+  //       isScrollingToBottom: monitor.isOver(),
+  //     }),
 
-      canDrop: () => false,
-    },
-    [scrollToBottomStep]
-  );
+  //     canDrop: () => false,
+  //   },
+  //   [scrollToBottomStep]
+  // );
+  // const isScrollingToTop = false;
+  // const isScrollingToBottom = false;
+  // useEffect(() => {
+  //   if (!isScrollingToTop) {
+  //     return undefined;
+  //   }
 
-  useEffect(() => {
-    if (!isScrollingToTop) {
-      return undefined;
-    }
+  //   const intervalId = setInterval(() => {
+  //     scrollToTopStep();
+  //   }, SCROLL_DELAY);
 
-    const intervalId = setInterval(() => {
-      scrollToTopStep();
-    }, SCROLL_DELAY);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [isScrollingToTop, scrollToTopStep]);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isScrollingToTop, scrollToTopStep]);
+  // useEffect(() => {
+  //   if (!isScrollingToBottom) {
+  //     return undefined;
+  //   }
 
-  useEffect(() => {
-    if (!isScrollingToBottom) {
-      return undefined;
-    }
+  //   const intervalId = setInterval(() => {
+  //     scrollToBottomStep();
+  //   }, SCROLL_DELAY);
 
-    const intervalId = setInterval(() => {
-      scrollToBottomStep();
-    }, SCROLL_DELAY);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [isScrollingToBottom, scrollToBottomStep]);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [isScrollingToBottom, scrollToBottomStep]);
 
   return (
     <div className={styles.taskListRoot} ref={taskListRef}>
@@ -260,14 +256,12 @@ const TaskListInner: React.FC<TaskListProps> = ({
             className={`${styles.scrollToTop} ${
               !renderedIndexes || renderedIndexes[2] ? styles.hidden : ""
             }`}
-            ref={scrollToTopRef}
           />
 
           <div
             className={`${styles.scrollToBottom} ${
               !renderedIndexes || renderedIndexes[3] ? styles.hidden : ""
             }`}
-            ref={scrollToBottomRef}
           />
         </div>
       </div>

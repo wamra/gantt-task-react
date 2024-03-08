@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { checkHasChildren } from "../../helpers/check-has-children";
@@ -46,6 +46,8 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
       tasks.filter(task => !task.comparisonLevel || task.comparisonLevel === 1),
     [tasks]
   );
+
+  const [draggedTask, setDraggedTask] = useState(null);
 
   const renderedListWithOffset = useMemo(() => {
     if (!renderedIndexes) {
@@ -111,6 +113,8 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           task={task}
           key={id}
           tasks={tasks}
+          draggedTask={draggedTask}
+          setDraggedTask={setDraggedTask}
         />
       );
     }
@@ -136,6 +140,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
     renderedTasks,
     selectTaskOnMouseDown,
     selectedIdsMirror,
+    draggedTask,
   ]);
 
   return (

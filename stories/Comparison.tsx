@@ -1,8 +1,5 @@
 import React, { useCallback, useState } from "react";
 
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-
 import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
@@ -58,17 +55,15 @@ export const Comparison: React.FC<AppProps> = props => {
   }, []);
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Gantt
-        comparisonLevels={2}
-        {...props}
-        onAddTask={onAddTask}
-        onChangeTasks={onChangeTasks}
-        onDoubleClick={handleDblClick}
-        onEditTask={onEditTask}
-        onClick={handleClick}
-        tasks={tasks}
-      />
-    </DndProvider>
+    <Gantt
+      comparisonLevels={2}
+      {...props}
+      onAddTask={onAddTask}
+      onChangeTasks={onChangeTasks}
+      onDoubleClick={handleDblClick}
+      onEditTask={onEditTask}
+      onClick={handleClick}
+      tasks={tasks}
+    />
   );
 };

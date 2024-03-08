@@ -1,8 +1,5 @@
 import React, { useCallback, useState } from "react";
 
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-
 import {
   Column,
   ColumnProps,
@@ -164,22 +161,20 @@ export const CustomPalette: React.FC<AppProps> = props => {
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Gantt
-        {...props}
-        columns={columns}
-        onAddTask={onAddTask}
-        onChangeTasks={onChangeTasks}
-        onDoubleClick={handleDblClick}
-        onEditTask={onEditTask}
-        onClick={handleClick}
-        tasks={tasks}
-        viewMode={viewMode}
-        roundEndDate={(date: Date) => date}
-        roundStartDate={(date: Date) => date}
-        ContextualPalette={ContextualPalette}
-        onWheel={handleWheel}
-      />
-    </DndProvider>
+    <Gantt
+      {...props}
+      columns={columns}
+      onAddTask={onAddTask}
+      onChangeTasks={onChangeTasks}
+      onDoubleClick={handleDblClick}
+      onEditTask={onEditTask}
+      onClick={handleClick}
+      tasks={tasks}
+      viewMode={viewMode}
+      roundEndDate={(date: Date) => date}
+      roundStartDate={(date: Date) => date}
+      ContextualPalette={ContextualPalette}
+      onWheel={handleWheel}
+    />
   );
 };

@@ -1,8 +1,5 @@
 import React, { useCallback, useState } from "react";
 
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-
 import {
   Distances,
   Gantt,
@@ -69,18 +66,16 @@ export const CustomIcons: React.FC<AppProps> = props => {
   }, []);
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Gantt
-        {...props}
-        distances={distances}
-        icons={icons}
-        onAddTask={onAddTask}
-        onChangeTasks={onChangeTasks}
-        onDoubleClick={handleDblClick}
-        onEditTask={onEditTask}
-        onClick={handleClick}
-        tasks={tasks}
-      />
-    </DndProvider>
+    <Gantt
+      {...props}
+      distances={distances}
+      icons={icons}
+      onAddTask={onAddTask}
+      onChangeTasks={onChangeTasks}
+      onDoubleClick={handleDblClick}
+      onEditTask={onEditTask}
+      onClick={handleClick}
+      tasks={tasks}
+    />
   );
 };

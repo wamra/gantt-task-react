@@ -1,9 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 
-import { useDrag } from "react-dnd";
-
-import { ROW_DRAG_TYPE } from "../../../constants";
-
 import { ColumnProps, Icons } from "../../../types/public-types";
 
 import styles from "./title-column.module.css";
@@ -26,10 +22,7 @@ const getExpanderSymbol = (
 
 export const TitleColumn: React.FC<ColumnProps> = ({
   data: {
-    canMoveTasks,
-
     distances: { expandIconWidth, nestedTaskNameOffset },
-
     icons,
     isShowTaskNumbers,
     hasChildren,
@@ -40,19 +33,7 @@ export const TitleColumn: React.FC<ColumnProps> = ({
     onExpanderClick,
   },
 }) => {
-  const { id, comparisonLevel = 1, name } = task;
-
-  const [collected, drag] = useDrag(
-    {
-      type: ROW_DRAG_TYPE,
-      item: task,
-
-      collect: monitor => ({
-        isDragging: monitor.isDragging(),
-      }),
-    },
-    [id, comparisonLevel, task]
-  );
+  const { name } = task;
 
   const expanderSymbol = useMemo(
     () => getExpanderSymbol(hasChildren, isClosed, icons),
@@ -69,15 +50,12 @@ export const TitleColumn: React.FC<ColumnProps> = ({
 
   return (
     <div
-      data-testid={`title-table-cell-${task.name}`}
-      className={`${styles.taskListNameWrapper} ${
-        collected.isDragging ? styles.dragging : ""
-      }`}
+      data-testid={`title-table-cell-${name}`}
+      className={`${styles.taskListNameWrapper}`}
       style={{
         paddingLeft: depth * nestedTaskNameOffset,
       }}
       title={title}
-      ref={canMoveTasks ? drag : undefined}
     >
       <div
         className={`${styles.taskListExpander} ${

@@ -2,9 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import addDays from "date-fns/addDays";
 
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-
 import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
 
 import { onAddTask, onEditTask } from "./helper";
@@ -167,15 +164,13 @@ export const StressTest: React.FC<AppProps> = ({
   }, []);
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Gantt
-        onAddTask={onAddTask}
-        onChangeTasks={onChangeTasks}
-        onDoubleClick={handleDblClick}
-        onEditTask={onEditTask}
-        onClick={handleClick}
-        tasks={tasks}
-      />
-    </DndProvider>
+    <Gantt
+      onAddTask={onAddTask}
+      onChangeTasks={onChangeTasks}
+      onDoubleClick={handleDblClick}
+      onEditTask={onEditTask}
+      onClick={handleClick}
+      tasks={tasks}
+    />
   );
 };

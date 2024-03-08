@@ -1,8 +1,5 @@
 import React, { useCallback, useState } from "react";
 
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-
 import {
   Column,
   ColumnProps,
@@ -192,18 +189,16 @@ export const CustomColumns: React.FC<AppProps> = props => {
           ))}
         </Select>
       </FormControl>
-      <DndProvider backend={HTML5Backend}>
-        <Gantt
-          {...props}
-          columns={displayedColumns}
-          onAddTask={onAddTask}
-          onChangeTasks={onChangeTasks}
-          onDoubleClick={handleDblClick}
-          onEditTask={onEditTask}
-          onClick={handleClick}
-          tasks={tasks}
-        />
-      </DndProvider>
+      <Gantt
+        {...props}
+        columns={displayedColumns}
+        onAddTask={onAddTask}
+        onChangeTasks={onChangeTasks}
+        onDoubleClick={handleDblClick}
+        onEditTask={onEditTask}
+        onClick={handleClick}
+        tasks={tasks}
+      />
     </>
   );
 };

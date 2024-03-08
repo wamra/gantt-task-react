@@ -1,7 +1,5 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import type { CSSProperties, MouseEvent } from "react";
-
-import { useDrop } from "react-dnd";
 
 import {
   ColorStyles,
@@ -16,7 +14,6 @@ import {
 } from "../../types/public-types";
 
 import styles from "./task-list-table-row.module.css";
-import { ROW_DRAG_TYPE } from "../../constants";
 
 type TaskListTableRowProps = {
   canMoveTasks: boolean;
@@ -53,6 +50,8 @@ type TaskListTableRowProps = {
   style?: CSSProperties;
   task: TaskOrEmpty;
   tasks: readonly TaskOrEmpty[];
+  draggedTask: TaskOrEmpty;
+  setDraggedTask: React.Dispatch<any>;
 };
 
 const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
@@ -86,6 +85,8 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
   style = undefined,
   task,
   tasks,
+  draggedTask,
+  setDraggedTask,
 }) => {
   const { id, comparisonLevel = 1 } = task;
 
@@ -124,95 +125,6 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
     }
     return parentsId.includes(draggedItem.id);
   };
-
-  const [dropInsideProps, dropInside] = useDrop(
-    {
-      accept: ROW_DRAG_TYPE,
-
-      drop: (item: TaskOrEmpty, monitor) => {
-        if (
-          monitor.didDrop() ||
-          task.type === "empty" ||
-          task.type === "milestone"
-        ) {
-          return;
-        }
-
-        handleMoveTasksInside(task, [item]);
-      },
-
-      canDrop: (draggedTask: TaskOrEmpty) => {
-        if (!isDraggedTaskAncestorOfDropTarget(draggedTask)) {
-          return (
-            draggedTask.id !== id ||
-            (draggedTask.comparisonLevel || 1) !== comparisonLevel
-          );
-        }
-        return false;
-      },
-
-      collect: monitor => ({
-        isLighten: monitor.canDrop() && monitor.isOver(),
-      }),
-    },
-    [id, comparisonLevel, handleMoveTasksInside, task]
-  );
-
-  const [dropAfterProps, dropAfter] = useDrop(
-    {
-      accept: ROW_DRAG_TYPE,
-
-      drop: (item: TaskOrEmpty) => {
-        handleMoveTaskAfter(task, item);
-      },
-      canDrop: (draggedTask: TaskOrEmpty, monitor) => {
-        const hoveringOnBrother =
-          draggedTask.parent === task.parent &&
-          tasks.findIndex(t => t.id === draggedTask.id) ===
-            tasks.findIndex(t => t.id === task.id) + 1;
-        if (
-          monitor.isOver() &&
-          !hoveringOnBrother &&
-          draggedTask.id !== task.id
-        ) {
-          return !isDraggedTaskAncestorOfDropTarget(draggedTask);
-        }
-        return false;
-      },
-      collect: monitor => ({
-        isLighten: monitor.canDrop(),
-      }),
-    },
-    [id, comparisonLevel, handleMoveTaskAfter, task]
-  );
-
-  const [dropBeforeProps, dropBefore] = useDrop(
-    {
-      accept: ROW_DRAG_TYPE,
-      canDrop(draggedTask, monitor) {
-        const hoveringOnBrother =
-          draggedTask.parent === task.parent &&
-          tasks.findIndex(t => t.id === draggedTask.id) ===
-            tasks.findIndex(t => t.id === task.id) - 1;
-        if (
-          monitor.isOver() &&
-          !hoveringOnBrother &&
-          draggedTask.id !== task.id
-        ) {
-          return !isDraggedTaskAncestorOfDropTarget(draggedTask);
-        }
-        return false;
-      },
-      drop: (draggedItem: TaskOrEmpty) => {
-        handleMoveTaskBefore(task, draggedItem);
-      },
-
-      collect: monitor => ({
-        isLighten: monitor.canDrop(),
-      }),
-    },
-    [id, comparisonLevel, handleMoveTaskBefore, task]
-  );
 
   const dependencies = useMemo<Task[]>(() => {
     const dependenciesAtLevel = dependencyMap.get(comparisonLevel);
@@ -270,18 +182,116 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
   const dropPreviewOffset =
     distances.nestedTaskNameOffset * depth + distances.expandIconWidth;
 
+  const [hoveringState, setHoveringState] = useState({
+    hoveringBefore: false,
+    hoveringInside: false,
+    hoveringAfter: false,
+  });
+
   let backgroundColor = isSelected
     ? colors.selectedTaskBackgroundColor
-    : isEven && !dropInsideProps.isLighten
+    : isEven && !hoveringState.hoveringInside
     ? colors.evenTaskBackgroundColor
     : undefined;
   if (
-    dropInsideProps.isLighten &&
-    !dropAfterProps.isLighten &&
-    !dropBeforeProps.isLighten
+    hoveringState.hoveringInside &&
+    !hoveringState.hoveringAfter &&
+    !hoveringState.hoveringBefore
   ) {
     backgroundColor = colors.taskDragColor;
   }
+
+  const handleDragStart: React.DragEventHandler<HTMLDivElement> = (
+    event: React.DragEvent<HTMLDivElement>
+  ) => {
+    setDraggedTask(task);
+    event.dataTransfer.setData("draggedTask", task?.id);
+  };
+
+  const handleDragOver: React.DragEventHandler<HTMLDivElement> = event => {
+    event.preventDefault();
+  };
+
+  const handleDragEnd: React.DragEventHandler<HTMLDivElement> = () => {
+    setDraggedTask(null);
+  };
+
+  const canDropBefore = (): boolean => {
+    let canDropBefore = false;
+
+    if (draggedTask) {
+      const hoveringOnBrother =
+        draggedTask.parent === task.parent &&
+        tasks.findIndex(t => t.id === draggedTask.id) ===
+          tasks.findIndex(t => t.id === task.id) - 1;
+      if (!hoveringOnBrother && draggedTask.id !== task.id) {
+        canDropBefore = !isDraggedTaskAncestorOfDropTarget(draggedTask);
+      }
+    }
+    return canDropBefore;
+  };
+
+  const dropBefore = () => {
+    if (canDropBefore()) {
+      handleMoveTaskBefore(task, draggedTask);
+    }
+    setHoveringState({
+      hoveringBefore: false,
+      hoveringInside: false,
+      hoveringAfter: false,
+    });
+  };
+
+  const canDropAfter = (): boolean => {
+    let canDropAfter = false;
+
+    if (draggedTask) {
+      const hoveringOnBrother =
+        draggedTask.parent === task.parent &&
+        tasks.findIndex(t => t.id === draggedTask.id) ===
+          tasks.findIndex(t => t.id === task.id) + 1;
+      if (!hoveringOnBrother && draggedTask.id !== task.id) {
+        canDropAfter = !isDraggedTaskAncestorOfDropTarget(draggedTask);
+      }
+    }
+    return canDropAfter;
+  };
+
+  const dropAfter = () => {
+    if (canDropAfter()) {
+      handleMoveTaskAfter(task, draggedTask);
+    }
+    setHoveringState({
+      hoveringBefore: false,
+      hoveringInside: false,
+      hoveringAfter: false,
+    });
+  };
+
+  const canDropInside = (): boolean => {
+    let canDropInside = false;
+    if (task.type !== "empty" && task.type !== "milestone") {
+      if (draggedTask) {
+        if (!isDraggedTaskAncestorOfDropTarget(draggedTask)) {
+          canDropInside =
+            draggedTask.id !== id ||
+            (draggedTask.comparisonLevel || 1) !== comparisonLevel;
+        }
+      }
+    }
+    return canDropInside;
+  };
+
+  const dropInside: React.DragEventHandler<HTMLDivElement> = () => {
+    if (canDropInside() && task.type !== "empty") {
+      handleMoveTasksInside(task, [draggedTask]);
+    }
+    setHoveringState({
+      hoveringBefore: false,
+      hoveringInside: false,
+      hoveringAfter: false,
+    });
+  };
 
   return (
     <div
@@ -293,7 +303,10 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
         ...style,
       }}
       onContextMenu={onContextMenu}
-      ref={dropInside}
+      draggable
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
     >
       {columns.map(({ component: Component, width }, index) => {
         return (
@@ -305,7 +318,39 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
             }}
             key={index}
           >
-            <Component data={columnData} />
+            <div
+              className={styles.taskListCellInner}
+              onDragEnter={() => {
+                setHoveringState({
+                  hoveringBefore: false,
+                  hoveringInside: canDropInside(),
+                  hoveringAfter: false,
+                });
+              }}
+              onDragLeave={() => {
+                setHoveringState(prevState => {
+                  return { ...prevState, hoveringInside: false };
+                });
+              }}
+              onDragOver={event => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = canDropInside()
+                  ? "move"
+                  : "none";
+              }}
+              onDrop={dropInside}
+              style={{
+                height: Math.max(0, fullRowHeight - 2 * 8),
+              }}
+            >
+              <div
+                style={{
+                  pointerEvents: hoveringState.hoveringInside ? "none" : "auto",
+                }}
+              >
+                <Component data={columnData} />
+              </div>
+            </div>
           </div>
         );
       })}
@@ -313,30 +358,65 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       <div
         data-testid={`table-row-drop-before-${task.name}`}
         className={`${styles.dropBefore} ${
-          dropBeforeProps.isLighten ? styles.dropBeforeLighten : ""
+          hoveringState.hoveringBefore ? styles.dropBeforeLighten : ""
         }`}
         style={{
           left: dropPreviewOffset,
-          backgroundColor: dropBeforeProps.isLighten
+          backgroundColor: hoveringState.hoveringBefore
             ? colors.taskDragColor
             : undefined,
-          color: dropBeforeProps.isLighten ? colors.taskDragColor : undefined,
+          color: hoveringState.hoveringBefore
+            ? colors.taskDragColor
+            : undefined,
         }}
-        ref={dropBefore}
+        onDragEnter={event => {
+          event.preventDefault();
+          setHoveringState({
+            hoveringBefore: canDropBefore(),
+            hoveringInside: false,
+            hoveringAfter: false,
+          });
+        }}
+        onDragLeave={() => {
+          setHoveringState(prevState => {
+            return { ...prevState, hoveringBefore: false };
+          });
+        }}
+        onDragOver={event => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = canDropBefore() ? "move" : "none";
+        }}
+        onDrop={dropBefore}
       />
       <div
         data-testid={`table-row-drop-after-${task.name}`}
         className={`${styles.dropAfter} ${
-          dropAfterProps.isLighten ? styles.dropBeforeLighten : ""
+          hoveringState.hoveringAfter ? styles.dropBeforeLighten : ""
         }`}
         style={{
           left: dropPreviewOffset,
-          backgroundColor: dropAfterProps.isLighten
+          backgroundColor: hoveringState.hoveringAfter
             ? colors.taskDragColor
             : undefined,
-          color: dropAfterProps.isLighten ? colors.taskDragColor : undefined,
+          color: hoveringState.hoveringAfter ? colors.taskDragColor : undefined,
         }}
-        ref={dropAfter}
+        onDragEnter={() =>
+          setHoveringState({
+            hoveringBefore: false,
+            hoveringInside: false,
+            hoveringAfter: canDropAfter(),
+          })
+        }
+        onDragLeave={() =>
+          setHoveringState(prevState => {
+            return { ...prevState, hoveringAfter: false };
+          })
+        }
+        onDragOver={event => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = canDropAfter() ? "move" : "none";
+        }}
+        onDrop={dropAfter}
       />
     </div>
   );
