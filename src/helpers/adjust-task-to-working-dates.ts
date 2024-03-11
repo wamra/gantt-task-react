@@ -1,10 +1,6 @@
 import { BarMoveAction } from "../types/gantt-task-actions";
-import {
-  Task, ViewMode,
-} from "../types/public-types";
+import { Task, ViewMode } from "../types/public-types";
 import { countHolidays } from "./count-holidays";
-import { getDateByOffset } from "./get-date-by-offset";
-import { getDatesDiff } from "./get-dates-diff";
 
 type AdjustTaskToWorkingDatesParams = {
   action: BarMoveAction;
@@ -26,7 +22,7 @@ export const adjustTaskToWorkingDates = ({
   viewMode,
 }: AdjustTaskToWorkingDatesParams) => {
   switch (changedTask.type) {
-    case 'milestone':
+    case "milestone":
       if (checkIsHoliday(changedTask.start)) {
         const nextWorkingDate = getNextWorkingDate(changedTask.start);
 
@@ -41,8 +37,7 @@ export const adjustTaskToWorkingDates = ({
 
     default:
       switch (action) {
-        case 'end':
-        {
+        case "end": {
           if (checkIsHoliday(changedTask.end)) {
             return {
               ...changedTask,
@@ -53,8 +48,7 @@ export const adjustTaskToWorkingDates = ({
           return changedTask;
         }
 
-        case 'start':
-        {
+        case "start": {
           if (checkIsHoliday(changedTask.start)) {
             return {
               ...changedTask,
@@ -65,43 +59,58 @@ export const adjustTaskToWorkingDates = ({
           return changedTask;
         }
 
-        case 'move':
-        {
-          const fullLength = getDatesDiff(
-            originalTask.end,
-            originalTask.start,
-            viewMode,
-          );
+        case "move": {
+          let newStart = changedTask.start;
+          let newEnd = changedTask.end;
+          const movingToTheRight =
+            changedTask.start.getTime() - originalTask.start.getTime() > 0;
 
-          const holidaysLength = countHolidays(
+          const originalHolidaysLength = countHolidays(
             originalTask.start,
             originalTask.end,
             checkIsHoliday,
-            viewMode,
+            viewMode
           );
+          const durationWithoutHolidays =
+            originalTask.end.getTime() -
+            originalTask.start.getTime() -
+            originalHolidaysLength * 24 * 3600 * 1000;
+          if (movingToTheRight) {
+            if (checkIsHoliday(changedTask.start)) {
+              newStart = getNextWorkingDate(changedTask.start);
+            }
 
-          const resStartDate = checkIsHoliday(changedTask.start)
-            ? getPreviousWorkingDate(changedTask.start)
-            : changedTask.start;
+            newEnd = new Date(newStart.getTime() + durationWithoutHolidays);
+            const newHolidaysLength = countHolidays(
+              newStart,
+              newEnd,
+              checkIsHoliday,
+              viewMode
+            );
+            if (checkIsHoliday(newEnd) || newHolidaysLength > 0) {
+              newEnd = new Date(newEnd.getTime() + 2 * 24 * 3600 * 1000);
+            }
+          } else {
+            if (checkIsHoliday(changedTask.end)) {
+              newEnd = getPreviousWorkingDate(changedTask.end);
+            }
+            newStart = new Date(newEnd.getTime() - durationWithoutHolidays);
 
-          const defaultChangedDiff = getDatesDiff(
-            changedTask.end,
-            resStartDate,
-            viewMode,
-          );
-
-          let resEndDate = getDateByOffset(changedTask.end, -defaultChangedDiff, viewMode);
-
-          const interationsLength = fullLength - holidaysLength;
-
-          for (let i = 0; i < interationsLength; ++i) {
-            resEndDate = getNextWorkingDate(resEndDate);
+            const newHolidaysLength = countHolidays(
+              newStart,
+              newEnd,
+              checkIsHoliday,
+              viewMode
+            );
+            if (checkIsHoliday(newStart) || newHolidaysLength > 0) {
+              newStart = new Date(newStart.getTime() - 2 * 24 * 3600 * 1000);
+            }
           }
 
           return {
             ...changedTask,
-            end: resEndDate,
-            start: resStartDate,
+            start: newStart,
+            end: newEnd,
           };
         }
 
