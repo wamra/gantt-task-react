@@ -159,7 +159,7 @@ export const StressTest: React.FC<AppProps> = ({
     alert("On Double Click event Id:" + task.id);
   }, []);
 
-  const handleClick = useCallback((task: Task) => {
+  const handleClick = useCallback((task: TaskOrEmpty) => {
     console.log("On Click event Id:" + task.id);
   }, []);
 

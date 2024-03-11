@@ -115,7 +115,7 @@ export const CriticalPath: React.FC<AppProps> = props => {
     alert("On Double Click event Id:" + task.id);
   }, []);
 
-  const handleClick = useCallback((task: Task) => {
+  const handleClick = useCallback((task: TaskOrEmpty) => {
     console.log("On Click event Id:" + task.id);
   }, []);
 

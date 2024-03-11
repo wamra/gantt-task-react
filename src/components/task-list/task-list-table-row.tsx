@@ -44,6 +44,7 @@ type TaskListTableRowProps = {
   isEven: boolean;
   isSelected: boolean;
   isShowTaskNumbers: boolean;
+  onClick: (task: TaskOrEmpty) => void;
   onExpanderClick: (task: Task) => void;
   scrollToTask: (task: Task) => void;
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
@@ -79,6 +80,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
   isEven,
   isSelected,
   isShowTaskNumbers,
+  onClick,
   onExpanderClick,
   scrollToTask,
   selectTaskOnMouseDown,
@@ -96,12 +98,12 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
         return;
       }
 
-      if (task.type === "empty") {
-        return;
+      if (task.type !== "empty") {
+        scrollToTask(task);
       }
 
-      scrollToTask(task);
       selectTaskOnMouseDown(task.id, event);
+      onClick(task);
     },
     [scrollToTask, selectTaskOnMouseDown, task]
   );

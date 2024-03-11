@@ -350,7 +350,7 @@ export interface EventOption {
   /**
    * Invokes on bar click.
    */
-  onClick?: (task: Task) => void;
+  onClick?: (task: TaskOrEmpty) => void;
   /**
    * Recount descedents of a group task when moving
    */
@@ -593,6 +593,7 @@ export interface TaskListTableProps {
   icons?: Partial<Icons>;
   isShowTaskNumbers: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
+  onClick: (task: TaskOrEmpty) => void;
   onExpanderClick: (task: Task) => void;
   renderedIndexes: OptimizedListParams | null;
   scrollToTask: (task: Task) => void;

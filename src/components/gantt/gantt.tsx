@@ -1791,8 +1791,10 @@ export const Gantt: React.FC<GanttProps> = ({
     ]
   );
 
-  const onClickTask = (task: Task) => {
-    onClick(task);
+  const onClickTask = (task: TaskOrEmpty) => {
+    if (onClick) {
+      onClick(task);
+    }
   };
 
   const barProps: TaskGanttContentProps = useMemo(
@@ -1925,6 +1927,7 @@ export const Gantt: React.FC<GanttProps> = ({
     icons,
     isShowTaskNumbers,
     mapTaskToNestedIndex,
+    onClick: onClickTask,
     onExpanderClick: handleExpanderClick,
     scrollToBottomStep,
     scrollToTopStep,

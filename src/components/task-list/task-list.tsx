@@ -55,6 +55,7 @@ export type TaskListProps = {
   icons?: Partial<Icons>;
   isShowTaskNumbers: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
+  onClick?: (task: TaskOrEmpty) => void;
   onExpanderClick: (task: Task) => void;
   scrollToBottomStep: () => void;
   scrollToTask: (task: Task) => void;
@@ -97,6 +98,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   isShowTaskNumbers,
   mapTaskToNestedIndex,
   onExpanderClick,
+  onClick,
   scrollToTask,
   selectTaskOnMouseDown,
   selectedIdsMirror,
@@ -241,6 +243,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
                 icons={icons}
                 isShowTaskNumbers={isShowTaskNumbers}
                 mapTaskToNestedIndex={mapTaskToNestedIndex}
+                onClick={onClick}
                 onExpanderClick={onExpanderClick}
                 renderedIndexes={renderedIndexes}
                 scrollToTask={scrollToTask}
