@@ -11,6 +11,7 @@ import {
   Distances,
   FixPosition,
   GlobalRowIndexToTaskMap,
+  RelationKind,
   Task,
   TaskContextualPaletteProps,
   TaskCoordinates,
@@ -30,6 +31,7 @@ import { checkTaskHasDependencyWarning } from "../../helpers/check-task-has-depe
 import type { OptimizedListParams } from "../../helpers/use-optimized-list";
 
 export type TaskGanttContentProps = {
+  authorizedRelations: RelationKind[];
   additionalLeftSpace: number;
   additionalRightSpace: number;
   checkIsHoliday: (date: Date) => boolean;
@@ -80,6 +82,7 @@ export type TaskGanttContentProps = {
 };
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
+  authorizedRelations,
   additionalLeftSpace,
   additionalRightSpace,
   checkIsHoliday,
@@ -122,8 +125,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   taskHalfHeight,
   visibleTasksMirror,
 }) => {
-  const isRelationDrawMode = Boolean(ganttRelationEvent);
-
   const renderedHolidays = useMemo(() => {
     const { holidayBackgroundColor } = colorStyles;
     const { columnWidth } = distances;
@@ -266,10 +267,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             distances={distances}
             taskHeight={taskHeight}
             taskHalfHeight={taskHalfHeight}
-            isRelationDrawMode={isRelationDrawMode}
             isProgressChangeable={!task.isDisabled}
             isDateChangeable={!task.isDisabled}
             isRelationChangeable={!task.isDisabled}
+            authorizedRelations={authorizedRelations}
+            ganttRelationEvent={ganttRelationEvent}
             isDelete={!task.isDisabled}
             onDoubleClick={onDoubleClick}
             onClick={onClick}
@@ -468,6 +470,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     dependencyMap,
     dependentMap,
     fullRowHeight,
+    ganttRelationEvent,
     getTaskCoordinates,
     mapGlobalRowIndexToTask,
     renderedRowIndexes,

@@ -333,6 +333,12 @@ export type OnChangeTasksAction =
       type: "relation_change";
     };
 
+export type RelationKind =
+  | "startToStart"
+  | "startToEnd"
+  | "endToStart"
+  | "endToEnd";
+
 export type OnChangeTasks = (
   nextTasks: readonly TaskOrEmpty[],
   action: OnChangeTasksAction
@@ -367,6 +373,7 @@ export interface EventOption {
    * Invokes on end and start time change. Chart undoes operation if method return false or error.
    */
   onDateChange?: OnDateChange;
+  authorizedRelations?: RelationKind[];
   /**
    * Invokes on click on fix element next to relation arrow
    */

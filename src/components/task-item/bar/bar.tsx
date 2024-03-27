@@ -3,7 +3,6 @@ import React, { useCallback } from "react";
 import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
 import { BarDateHandle } from "./bar-date-handle";
-import { BarRelationHandle } from "./bar-relation-handle";
 import { BarProgressHandle } from "./bar-progress-handle";
 import type { TaskItemProps } from "../task-item";
 import type { BarMoveAction } from "../../../types/gantt-task-actions";
@@ -19,23 +18,15 @@ export const Bar: React.FC<
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
 > = ({
+  children: relationhandles,
   colorStyles,
 
-  distances: {
-    barCornerRadius,
-    handleWidth,
-    relationCircleOffset,
-    relationCircleRadius,
-  },
+  distances: { barCornerRadius, handleWidth },
   hasChildren,
   isCritical,
   isDateChangeable,
   isProgressChangeable,
-  isRelationChangeable,
-  isRelationDrawMode,
   isSelected,
-  onLeftRelationTriggerMouseDown,
-  onRightRelationTriggerMouseDown,
   onTaskEventStart,
   progressWidth,
   progressX,
@@ -157,29 +148,7 @@ export const Bar: React.FC<
         />
       )}
 
-      {/* left */}
-      {isRelationChangeable && (
-        <BarRelationHandle
-          dataTestid={`task-relation-handle-left-${task.name}`}
-          isRelationDrawMode={isRelationDrawMode}
-          radius={relationCircleRadius}
-          startDrawRelation={onLeftRelationTriggerMouseDown}
-          x={x1 - relationCircleOffset}
-          y={taskYOffset + taskHalfHeight}
-        />
-      )}
-
-      {/* right */}
-      {isRelationChangeable && (
-        <BarRelationHandle
-          dataTestid={`task-relation-handle-right-${task.name}`}
-          isRelationDrawMode={isRelationDrawMode}
-          radius={relationCircleRadius}
-          startDrawRelation={onRightRelationTriggerMouseDown}
-          x={x2 + relationCircleOffset}
-          y={taskYOffset + taskHalfHeight}
-        />
-      )}
+      {relationhandles}
 
       {isProgressChangeable && (
         <BarProgressHandle

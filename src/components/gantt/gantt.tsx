@@ -171,6 +171,12 @@ export const Gantt: React.FC<GanttProps> = ({
   TaskListTable = TaskListTableDefault,
   TooltipContent = StandardTooltipContent,
   ContextualPalette,
+  authorizedRelations = [
+    "startToStart",
+    "startToEnd",
+    "endToStart",
+    "endToEnd",
+  ],
   canMoveTasks = true,
   canResizeColumns = true,
   checkIsHoliday: checkIsHolidayProp = defaultCheckIsHoliday,
@@ -1799,6 +1805,7 @@ export const Gantt: React.FC<GanttProps> = ({
 
   const barProps: TaskGanttContentProps = useMemo(
     () => ({
+      authorizedRelations,
       additionalLeftSpace,
       additionalRightSpace,
       checkIsHoliday,

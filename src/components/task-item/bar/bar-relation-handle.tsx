@@ -30,7 +30,6 @@ const BarRelationHandleInner: React.FC<BarRelationHandleProps> = ({
       }`}
       onMouseDown={startDrawRelation}
       onTouchStart={startDrawRelation}
-      data-draw-mode={isRelationDrawMode}
     />
   );
 };

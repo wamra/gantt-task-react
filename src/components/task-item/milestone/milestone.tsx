@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 
-import { BarRelationHandle } from "../bar/bar-relation-handle";
 import stylesRelationHandle from "../bar/bar-relation-handle.module.css";
 
 import type { TaskItemProps } from "../task-item";
@@ -15,21 +14,16 @@ export const Milestone: React.FC<
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
 > = ({
+  children: relationhandles,
   task,
   taskYOffset,
-  distances: { barCornerRadius, relationCircleOffset, relationCircleRadius },
+  distances: { barCornerRadius },
   taskHeight,
-  taskHalfHeight,
-  isRelationChangeable,
-  isRelationDrawMode,
-  onLeftRelationTriggerMouseDown,
-  onRightRelationTriggerMouseDown,
   onTaskEventStart,
   isSelected,
   isCritical,
   colorStyles,
   x1,
-  x2,
 }) => {
   const rotatedHeight = taskHeight / 1.414;
 
@@ -80,30 +74,7 @@ export const Milestone: React.FC<
         }}
       />
 
-      <g className="handleGroup">
-        {isRelationChangeable && (
-          <g>
-            {/* left */}
-            <BarRelationHandle
-              dataTestid={`task-relation-handle-left-${task.name}`}
-              isRelationDrawMode={isRelationDrawMode}
-              x={x1 - relationCircleOffset}
-              y={taskYOffset + taskHalfHeight}
-              radius={relationCircleRadius}
-              startDrawRelation={onLeftRelationTriggerMouseDown}
-            />
-            {/* right */}
-            <BarRelationHandle
-              dataTestid={`task-relation-handle-right-${task.name}`}
-              isRelationDrawMode={isRelationDrawMode}
-              x={x2 + relationCircleOffset}
-              y={taskYOffset + taskHalfHeight}
-              radius={relationCircleRadius}
-              startDrawRelation={onRightRelationTriggerMouseDown}
-            />
-          </g>
-        )}
-      </g>
+      {relationhandles}
     </g>
   );
 };

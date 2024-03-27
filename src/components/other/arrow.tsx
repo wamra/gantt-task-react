@@ -177,6 +177,7 @@ const ArrowInner: React.FC<ArrowProps> = ({
   return (
     <g className={fixPositionContainerClass} fill={color} stroke={color}>
       <g
+        data-testid={`task-arrow-${targetFrom}-${taskFrom.name}-${targetTo}-${taskTo.name}`}
         className={`"arrow" ${styles.arrow_clickable}`}
         onDoubleClick={onDoubleClick}
       >

@@ -10,6 +10,7 @@ import type { MouseEvent, MouseEventHandler } from "react";
 
 import {
   BarMoveAction,
+  GanttRelationEvent,
   RelationMoveTarget,
 } from "../../types/gantt-task-actions";
 import {
@@ -19,6 +20,7 @@ import {
   ColorStyles,
   TaskOrEmpty,
   Distances,
+  RelationKind,
 } from "../../types/public-types";
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
@@ -26,6 +28,7 @@ import { Milestone } from "./milestone/milestone";
 import { TaskWarning } from "./task-warning";
 import style from "./task-list.module.css";
 import { BarFixWidth, fixWidthContainerClass } from "../other/bar-fix-width";
+import { BarRelationHandle } from "./bar/bar-relation-handle";
 
 export type TaskItemProps = {
   getTaskGlobalIndexByRef: (task: Task) => number;
@@ -45,11 +48,12 @@ export type TaskItemProps = {
   taskHalfHeight: number;
   isProgressChangeable: boolean;
   isDateChangeable: boolean;
+  authorizedRelations: RelationKind[];
   isRelationChangeable: boolean;
+  ganttRelationEvent: GanttRelationEvent;
   isDelete: boolean;
   isSelected: boolean;
   isCritical: boolean;
-  isRelationDrawMode: boolean;
   rtl: boolean;
   onDoubleClick?: (task: Task) => void;
   onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
@@ -72,8 +76,13 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     childOutOfParentWarnings,
     colorStyles: stylesProp,
 
-    distances: { arrowIndent, handleWidth, taskWarningOffset },
-
+    distances: {
+      arrowIndent,
+      handleWidth,
+      taskWarningOffset,
+      relationCircleOffset,
+      relationCircleRadius,
+    },
     fixEndPosition = undefined,
     fixStartPosition = undefined,
     getTaskGlobalIndexByRef,
@@ -81,12 +90,14 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     hasDependencyWarning,
     isDateChangeable,
     isDelete,
-    isRelationDrawMode,
     isSelected,
     onClick = undefined,
     onDoubleClick = undefined,
     onEventStart,
     onRelationStart,
+    authorizedRelations,
+    isRelationChangeable,
+    ganttRelationEvent,
     rtl,
     selectTaskOnMouseDown,
     setTooltipTask,
@@ -205,6 +216,70 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   const [isTextInside, setIsTextInside] = useState(true);
 
   const taskItem = useMemo(() => {
+    const isFromStartRelationAuthorized =
+      authorizedRelations.includes("startToStart") ||
+      authorizedRelations.includes("startToEnd");
+    const isFromEndRelationAuthorized =
+      authorizedRelations.includes("endToEnd") ||
+      authorizedRelations.includes("endToStart");
+    const isToStartRelationAuthorized =
+      (ganttRelationEvent?.target === "startOfTask" &&
+        authorizedRelations.includes("startToStart")) ||
+      (ganttRelationEvent?.target === "endOfTask" &&
+        authorizedRelations.includes("endToStart"));
+    const isToEndRelationAuthorized =
+      (ganttRelationEvent?.target === "startOfTask" &&
+        authorizedRelations.includes("startToEnd")) ||
+      (ganttRelationEvent?.target === "endOfTask" &&
+        authorizedRelations.includes("endToEnd"));
+
+    let displayLeftRelationHandle: boolean = false;
+    if (ganttRelationEvent && task !== ganttRelationEvent.task) {
+      displayLeftRelationHandle = rtl
+        ? isToEndRelationAuthorized
+        : isToStartRelationAuthorized;
+    } else {
+      displayLeftRelationHandle = rtl
+        ? isFromEndRelationAuthorized
+        : isFromStartRelationAuthorized;
+    }
+    let displayRightRelationHandle: boolean = false;
+    if (ganttRelationEvent && task !== ganttRelationEvent.task) {
+      displayRightRelationHandle = rtl
+        ? isToStartRelationAuthorized
+        : isToEndRelationAuthorized;
+    } else {
+      displayRightRelationHandle = rtl
+        ? isFromStartRelationAuthorized
+        : isFromEndRelationAuthorized;
+    }
+    const relationhandles = (
+      <>
+        {/* left */}
+        {isRelationChangeable && displayLeftRelationHandle && (
+          <BarRelationHandle
+            dataTestid={`task-relation-handle-left-${task.name}`}
+            isRelationDrawMode={!!ganttRelationEvent}
+            x={x1 - relationCircleOffset}
+            y={taskYOffset + taskHalfHeight}
+            radius={relationCircleRadius}
+            startDrawRelation={onLeftRelationTriggerMouseDown}
+          />
+        )}
+        {/* right */}
+        {isRelationChangeable && displayRightRelationHandle && (
+          <BarRelationHandle
+            dataTestid={`task-relation-handle-right-${task.name}`}
+            isRelationDrawMode={!!ganttRelationEvent}
+            x={x2 + relationCircleOffset}
+            y={taskYOffset + taskHalfHeight}
+            radius={relationCircleRadius}
+            startDrawRelation={onRightRelationTriggerMouseDown}
+          />
+        )}
+      </>
+    );
+
     if (task.type === "milestone") {
       return (
         <Milestone
@@ -213,7 +288,9 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
-        />
+        >
+          {relationhandles}
+        </Milestone>
       );
     } else if (width < handleWidth * 2) {
       return (
@@ -231,11 +308,12 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
           colorStyles={styles}
-        />
+        >
+          {relationhandles}
+        </Bar>
       );
   }, [
     handleWidth,
-    isRelationDrawMode,
     isSelected,
     outOfParentWarnings,
     props,

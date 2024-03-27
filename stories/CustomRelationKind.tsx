@@ -1,6 +1,14 @@
 import React, { useCallback, useState } from "react";
 
-import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
+import {
+  Gantt,
+  OnChangeTasks,
+  OnRelationChange,
+  RelationKind,
+  RelationMoveTarget,
+  Task,
+  TaskOrEmpty,
+} from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
@@ -10,7 +18,7 @@ type AppProps = {
   ganttHeight?: number;
 };
 
-export const Simple: React.FC<AppProps> = props => {
+export const CustomRelationKind: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
@@ -45,15 +53,28 @@ export const Simple: React.FC<AppProps> = props => {
     console.log("On Click event Id:" + task.id);
   }, []);
 
+  const authorizedRelations: RelationKind[] = ["endToStart"];
+
+  const handleRelationChange: OnRelationChange = (
+    from: [Task, RelationMoveTarget, number],
+    to: [Task, RelationMoveTarget, number]
+  ) => {
+    if (from[0].id !== to[0].id) {
+      alert(`Relation between ${from[0].id} and ${to[0].id}`);
+    }
+  };
+
   return (
     <Gantt
       {...props}
+      authorizedRelations={authorizedRelations}
       onAddTask={onAddTask}
       onChangeTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
       onEditTask={onEditTask}
       onClick={handleClick}
       tasks={tasks}
+      onRelationChange={handleRelationChange}
     />
   );
 };
