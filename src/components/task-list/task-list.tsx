@@ -28,7 +28,6 @@ export type TaskListProps = {
   canMoveTasks: boolean;
   canResizeColumns: boolean;
   childTasksMap: ChildByLevelMap;
-  closedTasks: Readonly<Record<string, true>>;
   colors: ColorStyles;
   columnsProp: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
@@ -74,7 +73,6 @@ const TaskListInner: React.FC<TaskListProps> = ({
   canMoveTasks,
   canResizeColumns,
   childTasksMap,
-  closedTasks,
   colors,
   columnsProp,
   cutIdsMirror,
@@ -221,7 +219,6 @@ const TaskListInner: React.FC<TaskListProps> = ({
               <TaskListTable
                 canMoveTasks={canMoveTasks}
                 childTasksMap={childTasksMap}
-                closedTasks={closedTasks}
                 colors={colors}
                 columns={columns}
                 cutIdsMirror={cutIdsMirror}

@@ -96,6 +96,7 @@ export function initTasks() {
       type: "project",
       parent: "ProjectSample",
       isDisabled: true,
+      hideChildren: true,
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),

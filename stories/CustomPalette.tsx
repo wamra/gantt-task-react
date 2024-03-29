@@ -160,6 +160,17 @@ export const CustomPalette: React.FC<AppProps> = props => {
     );
   };
 
+  const onChangeExpandState = (changedTask: Task) => {
+    setTasks(prev => {
+      return prev.map(task => {
+        if (changedTask.id === task.id) {
+          return { ...changedTask };
+        }
+        return task;
+      });
+    });
+  };
+
   return (
     <Gantt
       {...props}
@@ -175,6 +186,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
       roundStartDate={(date: Date) => date}
       ContextualPalette={ContextualPalette}
       onWheel={handleWheel}
+      onChangeExpandState={onChangeExpandState}
     />
   );
 };

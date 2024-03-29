@@ -2,7 +2,7 @@ import React, { memo, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { checkHasChildren } from "../../helpers/check-has-children";
-import { TaskListTableProps } from "../../types/public-types";
+import { Task, TaskListTableProps } from "../../types/public-types";
 import { TaskListTableRow } from "./task-list-table-row";
 
 import styles from "./task-list-table.module.css";
@@ -10,7 +10,6 @@ import styles from "./task-list-table.module.css";
 const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
   canMoveTasks,
   childTasksMap,
-  closedTasks,
   colors,
   columns,
   cutIdsMirror,
@@ -103,7 +102,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           hasChildren={checkHasChildren(task, childTasksMap)}
           icons={icons}
           indexStr={indexStr}
-          isClosed={Boolean(closedTasks[id])}
+          isClosed={Boolean((task as Task)?.hideChildren)}
           isCut={cutIdsMirror[id]}
           isEven={index % 2 === 1}
           isSelected={selectedIdsMirror[id]}

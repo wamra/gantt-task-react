@@ -50,7 +50,6 @@ import {
 } from "../../helpers/get-map-task-to-coordinates";
 import { getCriticalPath } from "../../helpers/get-critical-path";
 import { getMapTaskToNestedIndex } from "../../helpers/get-map-task-to-nested-index";
-import { getInitialClosedTasks } from "../../helpers/get-initial-closed-tasks";
 import { collectVisibleTasks } from "../../helpers/collect-visible-tasks";
 import { getTaskToHasDependencyWarningMap } from "../../helpers/get-task-to-has-dependency-warning-map";
 
@@ -206,6 +205,7 @@ export const Gantt: React.FC<GanttProps> = ({
   onAddTask = undefined,
   onAddTaskClick = undefined,
   onArrowDoubleClick: onArrowDoubleClickProp = undefined,
+  onChangeExpandState = undefined,
   onChangeTasks = undefined,
   onClick = undefined,
   onDateChange: onDateChangeProp = undefined,
@@ -269,18 +269,17 @@ export const Gantt: React.FC<GanttProps> = ({
     [roundStartDateProp, viewMode]
   );
 
-  const [closedTasks, setClosedTasks] = useState(() =>
-    getInitialClosedTasks(tasks)
-  );
-
   const [currentViewDate, setCurrentViewDate] = useState<Date | undefined>(
     undefined
   );
 
-  const sortedTasks = useMemo<readonly TaskOrEmpty[]>(
-    () => [...tasks].sort(sortTasks),
-    [tasks]
+  const [sortedTasks, setSortedTasks] = useState(() =>
+    [...tasks].sort(sortTasks)
   );
+
+  useEffect(() => {
+    setSortedTasks([...tasks].sort(sortTasks));
+  }, [tasks]);
 
   const [childTasksMap, rootTasksMap] = useMemo(
     () => getChildsAndRoots(sortedTasks, null),
@@ -293,8 +292,8 @@ export const Gantt: React.FC<GanttProps> = ({
   );
 
   const [visibleTasks, visibleTasksMirror] = useMemo(
-    () => collectVisibleTasks(childTasksMap, rootTasksMap, closedTasks),
-    [childTasksMap, rootTasksMap, closedTasks]
+    () => collectVisibleTasks(childTasksMap, rootTasksMap),
+    [childTasksMap, rootTasksMap]
   );
 
   const tasksMap = useMemo(() => getTasksMap(tasks), [tasks]);
@@ -745,23 +744,28 @@ export const Gantt: React.FC<GanttProps> = ({
     }
   };
 
-  const handleExpanderClick = useCallback((task: Task) => {
-    setClosedTasks(prevClosedTasks => {
-      const nextClosedTasks = {
-        ...prevClosedTasks,
-      };
-
-      const prevValue = prevClosedTasks[task.id];
-
-      if (prevValue) {
-        delete nextClosedTasks[task.id];
+  const handleExpanderClick = useCallback(
+    (clickedTask: Task) => {
+      // delegate the behavior
+      if (onChangeExpandState) {
+        onChangeExpandState({
+          ...clickedTask,
+          hideChildren: !clickedTask.hideChildren,
+        });
       } else {
-        nextClosedTasks[task.id] = true;
+        //otherwise change the internal state
+        setSortedTasks(prev => {
+          return prev.map(task => {
+            if (clickedTask.id === task.id) {
+              return { ...task, hideChildren: !clickedTask.hideChildren };
+            }
+            return task;
+          });
+        });
       }
-
-      return nextClosedTasks;
-    });
-  }, []);
+    },
+    [onChangeExpandState]
+  );
 
   const getMetadata = useCallback(
     (changeAction: ChangeAction) =>
@@ -1911,7 +1915,6 @@ export const Gantt: React.FC<GanttProps> = ({
     canMoveTasks,
     canResizeColumns,
     childTasksMap,
-    closedTasks,
     colors: colorStyles,
     columnsProp,
     cutIdsMirror,

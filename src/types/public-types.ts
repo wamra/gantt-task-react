@@ -331,6 +331,12 @@ export type OnChangeTasksAction =
     }
   | {
       type: "relation_change";
+    }
+  | {
+      type: "expandState_change";
+      payload: {
+        changedTask: Task;
+      };
     };
 
 export type RelationKind =
@@ -365,6 +371,10 @@ export interface EventOption {
    * Recount parents of tasks in callback `onChangeTasks`
    */
   isUpdateDisabledParentsOnChange?: boolean;
+  /**
+   * Invokes when the task expand status changed(task.hideChildren)
+   */
+  onChangeExpandState?: (changedTask: Task) => void;
   /**
    * Invokes on every change of the list of tasks
    */
@@ -574,7 +584,6 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
 export interface TaskListTableProps {
   canMoveTasks: boolean;
   childTasksMap: ChildByLevelMap;
-  closedTasks: Readonly<Record<string, true>>;
   colors: ColorStyles;
   columns: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;

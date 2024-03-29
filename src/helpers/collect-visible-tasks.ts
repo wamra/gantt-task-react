@@ -8,12 +8,9 @@ const collectChildren = (
   arrayRes: TaskOrEmpty[],
   mirrorRes: Record<string, true>,
   task: TaskOrEmpty,
-  childTasksOnLevel: Map<string, TaskOrEmpty[]>,
-  closedTasks: Readonly<Record<string, true>>,
+  childTasksOnLevel: Map<string, TaskOrEmpty[]>
 ) => {
-  const {
-    comparisonLevel = 1,
-  } = task;
+  const { comparisonLevel = 1 } = task;
 
   arrayRes.push(task);
 
@@ -21,43 +18,31 @@ const collectChildren = (
     mirrorRes[task.id] = true;
   }
 
-  if (closedTasks[task.id]) {
+  if (task.type === "empty" || task.hideChildren) {
     return;
   }
 
   const childs = childTasksOnLevel.get(task.id);
   if (childs && childs.length > 0) {
-    childs.forEach((childTask) => {
-      collectChildren(
-        arrayRes,
-        mirrorRes,
-        childTask,
-        childTasksOnLevel,
-        closedTasks,
-      );
+    childs.forEach(childTask => {
+      collectChildren(arrayRes, mirrorRes, childTask, childTasksOnLevel);
     });
   }
 };
 
 export const collectVisibleTasks = (
   childTasksMap: ChildByLevelMap,
-  rootTasksMap: RootMapByLevel,
-  closedTasks: Readonly<Record<string, true>>,
+  rootTasksMap: RootMapByLevel
 ): [readonly TaskOrEmpty[], Readonly<Record<string, true>>] => {
   const arrayRes: TaskOrEmpty[] = [];
   const mirrorRes: Record<string, true> = {};
 
   for (const [comparisonLevel, rootTasks] of rootTasksMap.entries()) {
-    const childTasksOnLevel = childTasksMap.get(comparisonLevel) || new Map<string, TaskOrEmpty[]>();
+    const childTasksOnLevel =
+      childTasksMap.get(comparisonLevel) || new Map<string, TaskOrEmpty[]>();
 
-    rootTasks.forEach((task) => {
-      collectChildren(
-        arrayRes,
-        mirrorRes,
-        task,
-        childTasksOnLevel,
-        closedTasks,
-      );
+    rootTasks.forEach(task => {
+      collectChildren(arrayRes, mirrorRes, task, childTasksOnLevel);
     });
   }
 
