@@ -83,29 +83,6 @@ export const CustomPalette: React.FC<AppProps> = props => {
     return null;
   };
 
-  const columns: readonly Column[] = [
-    {
-      component: TitleColumn,
-      width: 210,
-      title: "Name",
-    },
-    {
-      component: DateStartColumn,
-      width: 150,
-      title: "Date of start",
-    },
-    {
-      component: DateEndColumn,
-      width: 150,
-      title: "Date of end",
-    },
-    {
-      component: ProgressColumn,
-      width: 40,
-      title: "Progress",
-    },
-  ];
-
   const handleTaskDelete = (task: Task) => {
     const conf = window.confirm("Are you sure about " + task.name + " ?");
     if (conf) {
@@ -174,7 +151,6 @@ export const CustomPalette: React.FC<AppProps> = props => {
   return (
     <Gantt
       {...props}
-      columns={columns}
       onAddTask={onAddTask}
       onChangeTasks={onChangeTasks}
       onDoubleClick={handleDblClick}

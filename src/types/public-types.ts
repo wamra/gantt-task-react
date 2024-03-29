@@ -825,7 +825,7 @@ export type ColumnProps = {
 };
 
 export type Column = {
-  id?: string;
+  id: string;
   component: ComponentType<ColumnProps>;
   width: number;
   title?: ReactNode;
@@ -835,7 +835,7 @@ export type Column = {
 export type OnResizeColumn = (
   nextColumns: readonly Column[],
   columnIndex: number,
-  nextWidth: number
+  deltaWidth: number
 ) => void;
 export type ChangeAction =
   | {

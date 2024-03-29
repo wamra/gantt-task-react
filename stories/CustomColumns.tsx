@@ -7,6 +7,7 @@ import {
   DateStartColumn,
   Gantt,
   OnChangeTasks,
+  OnResizeColumn,
   Task,
   TaskOrEmpty,
   TitleColumn,
@@ -169,6 +170,12 @@ export const CustomColumns: React.FC<AppProps> = props => {
     setDisplayedColumns(newDisplayedColumns);
   };
 
+  const onResizeColumn: OnResizeColumn = (newColumns: readonly Column[]) => {
+    setDisplayedColumns(() => {
+      return [...newColumns];
+    });
+  };
+
   return (
     <>
       <FormControl>
@@ -198,6 +205,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
         onEditTask={onEditTask}
         onClick={handleClick}
         tasks={tasks}
+        onResizeColumn={onResizeColumn}
       />
     </>
   );

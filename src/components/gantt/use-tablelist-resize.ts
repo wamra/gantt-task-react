@@ -46,42 +46,49 @@ export const useTableListResize = (
 
     return [
       {
+        id: "TitleColumn",
         component: TitleColumn,
         width: titleCellWidth,
         title: "Name",
       },
 
       {
+        id: "DateStartColumn",
         component: DateStartColumn,
         width: dateCellWidth,
         title: "From",
       },
 
       {
+        id: "DateEndColumn",
         component: DateEndColumn,
         width: dateCellWidth,
         title: "To",
       },
 
       {
+        id: "DependenciesColumn",
         component: DependenciesColumn,
         width: dependenciesCellWidth,
         title: "Dependencies",
       },
 
       {
+        id: "DeleteColumn",
         component: DeleteColumn,
         width: actionColumnWidth,
         canResize: false,
       },
 
       {
+        id: "EditColumn",
         component: EditColumn,
         width: actionColumnWidth,
         canResize: false,
       },
 
       {
+        id: "AddColumn",
         component: AddColumn,
         width: actionColumnWidth,
         canResize: false,
@@ -92,9 +99,24 @@ export const useTableListResize = (
   useEffect(() => {
     if (columnsProp) {
       setColumns([...columnsProp]);
-      setTableWidth(columnsProp.reduce((res, { width }) => res + width, 0));
+      const currentColumnIds = columnsState.map(col => col.id);
+      const newColumnIds = columnsProp.map(col => col.id);
+
+      const widthOfAddedColumns = columnsProp
+        .filter(col => !currentColumnIds.includes(col.id))
+        .reduce((res, { width }) => res + width, 0);
+      const widthOfRemovedColumns = columnsState
+        .filter(col => !newColumnIds.includes(col.id))
+        .reduce((res, { width }) => res + width, 0);
+
+      setTableWidth(prev =>
+        Math.min(
+          prev + widthOfAddedColumns - widthOfRemovedColumns,
+          columnsProp.reduce((res, { width }) => res + width, 0)
+        )
+      );
     }
-  }, []);
+  }, [columnsProp]);
 
   const [tableResizeEvent, setTableResizeEvent] =
     useState<TableResizeEvent | null>(null);
@@ -182,12 +204,11 @@ export const useTableListResize = (
         columnResizeEvent.initialColumnWidth + moveDelta
       );
       let previousColumnWidth = null;
-
       setColumns((prevColumns: readonly Column[]) => {
         const newColumns = prevColumns.map((column, index) => {
           if (index === columnResizeEvent.columnIndex) {
             previousColumnWidth = column.width;
-            column.width = newColumnwidth;
+            return { ...column, width: newColumnwidth };
           }
           return column;
         });
