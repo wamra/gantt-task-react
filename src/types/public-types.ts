@@ -23,7 +23,7 @@ export enum ViewMode {
 
 export interface DateSetup {
   dateFormats: DateFormats;
-  dateLocale: DateLocale;
+  dateLocale?: DateLocale;
   isUnknownDates: boolean;
   preStepsCount: number;
   viewMode: ViewMode;
@@ -488,10 +488,6 @@ export interface DisplayOption {
    * Display offsets from start on timeline instead of dates
    */
   isUnknownDates?: boolean;
-  /**
-   * Locale of date-fns
-   */
-  dateLocale?: DateLocale;
   viewDate?: Date;
   preStepsCount?: number;
 
@@ -566,6 +562,10 @@ export interface StylingOption {
 }
 
 export interface GanttLocale {
+  /**
+   * Locale of date-fns
+   */
+  dateLocale?: DateLocale;
   suffix: {
     days: string;
   }

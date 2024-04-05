@@ -1,5 +1,4 @@
 import type { ContextMenuOptionType, GanttLocale } from "../types/public-types";
-import React from "react";
 
 export const createCutOption = (locale: GanttLocale): ContextMenuOptionType => ({
   action: ({ cutSelectedTasks, cutTask, getSelectedTasks, task }) => {

@@ -1,21 +1,14 @@
-import addMonths from 'date-fns/addMonths';
-import addDays from 'date-fns/addDays';
+import { addDays, addMonths } from "date-fns";
 
-import {
-  getWeekNumberISO8601,
-} from "../helpers/date-helper";
+import { getWeekNumberISO8601 } from "../helpers/date-helper";
 
 describe("add to date", () => {
   test("add month", () => {
-    expect(addMonths(new Date(2020, 0, 1), 40)).toEqual(
-      new Date(2023, 4, 1)
-    );
+    expect(addMonths(new Date(2020, 0, 1), 40)).toEqual(new Date(2023, 4, 1));
   });
 
   test("add day", () => {
-    expect(addDays(new Date(2020, 0, 1), 40)).toEqual(
-      new Date(2020, 1, 10)
-    );
+    expect(addDays(new Date(2020, 0, 1), 40)).toEqual(new Date(2020, 1, 10));
   });
 });
 

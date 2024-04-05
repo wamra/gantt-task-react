@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { PropsWithChildren, useCallback } from "react";
 
 import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
@@ -16,10 +16,9 @@ export const Bar: React.FC<
     onLeftRelationTriggerMouseDown: () => void;
     onRightRelationTriggerMouseDown: () => void;
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
-  }
+  } & PropsWithChildren
 > = ({
-  children: relationhandles,
-
+  children: relationHandles,
   distances: { barCornerRadius, handleWidth },
   hasChildren,
   isCritical,
@@ -147,7 +146,7 @@ export const Bar: React.FC<
         />
       )}
 
-      {relationhandles}
+      {relationHandles}
 
       {isProgressChangeable && (
         <BarProgressHandle

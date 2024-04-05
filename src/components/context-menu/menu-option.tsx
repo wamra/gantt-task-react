@@ -7,7 +7,6 @@ import type {
 } from "../../types/public-types";
 
 import styles from "./menu-option.module.css";
-import React from "react";
 
 type MenuOptionProps = {
   distances: Distances;

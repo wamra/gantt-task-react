@@ -1,9 +1,11 @@
-import format from "date-fns/format";
-import isValid from "date-fns/isValid";
-import parse from "date-fns/parse";
-import startOfMinute from "date-fns/startOfMinute";
-import startOfDay from "date-fns/startOfDay";
-import endOfDay from "date-fns/endOfDay";
+import {
+  format,
+  isValid,
+  parse,
+  startOfMinute,
+  startOfDay,
+  endOfDay,
+} from "date-fns";
 
 import { Task, TaskOrEmpty } from "../src";
 

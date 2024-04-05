@@ -1,45 +1,31 @@
-import format from "date-fns/format";
+import { format } from "date-fns";
 
-import { DateSetup, ViewMode } from '../../types/public-types';
+import { DateSetup, ViewMode } from "../../types/public-types";
 
-const getDayText = (
-  date: Date,
-  dateSetup: DateSetup,
-) => {
+const getDayText = (date: Date, dateSetup: DateSetup) => {
   try {
-    return format(
-      date,
-      dateSetup.dateFormats.dayTopHeaderFormat,
-      {
-        locale: dateSetup.dateLocale,
-      },
-    );
+    return format(date, dateSetup.dateFormats.dayTopHeaderFormat, {
+      locale: dateSetup.dateLocale,
+    });
   } catch (e) {
     return String(date.getDate());
   }
 };
 
-const getMonthText = (
-  date: Date,
-  dateSetup: DateSetup,
-) => {
+const getMonthText = (date: Date, dateSetup: DateSetup) => {
   try {
-    return format(
-      date,
-      dateSetup.dateFormats.monthTopHeaderFormat,
-      {
-        locale: dateSetup.dateLocale,
-      },
-    );
+    return format(date, dateSetup.dateFormats.monthTopHeaderFormat, {
+      locale: dateSetup.dateLocale,
+    });
   } catch (e) {
-    return date.toLocaleString('default', { month: 'long' });
+    return date.toLocaleString("default", { month: "long" });
   }
 };
 
 export const defaultRenderTopHeader = (
   date: Date,
   viewMode: ViewMode,
-  dateSetup: DateSetup,
+  dateSetup: DateSetup
 ): string => {
   switch (viewMode) {
     case ViewMode.Year:
@@ -60,6 +46,6 @@ export const defaultRenderTopHeader = (
       return `${getDayText(date, dateSetup)} ${getMonthText(date, dateSetup)}`;
 
     default:
-      throw new Error('Unknown viewMode');
+      throw new Error("Unknown viewMode");
   }
 };

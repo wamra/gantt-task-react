@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { PropsWithChildren, useMemo } from "react";
 
 import stylesRelationHandle from "../bar/bar-relation-handle.module.css";
 
@@ -12,7 +12,7 @@ export const Milestone: React.FC<
     onLeftRelationTriggerMouseDown: () => void;
     onRightRelationTriggerMouseDown: () => void;
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
-  }
+  } & PropsWithChildren
 > = ({
   children: relationHandles,
   task,
@@ -32,17 +32,17 @@ export const Milestone: React.FC<
   const barColor = useMemo(() => {
     if (isCritical) {
       if (isSelected) {
-        return 'var(--gantt-milestone-background-selected-critical-color)';
+        return "var(--gantt-milestone-background-selected-critical-color)";
       }
 
-      return 'var(--gantt-milestone-background-critical-color)';
+      return "var(--gantt-milestone-background-critical-color)";
     }
 
     if (isSelected) {
-      return 'var(--gantt-milestone-background-selected-color)';
+      return "var(--gantt-milestone-background-selected-color)";
     }
 
-    return 'var(--gantt-milestone-background-color)';
+    return "var(--gantt-milestone-background-color)";
   }, [isSelected, isCritical]);
 
   return (

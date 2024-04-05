@@ -6,8 +6,6 @@ import React, {
   useState,
 } from "react";
 
-import enDateLocale from "date-fns/locale/en-US";
-
 import {
   ChangeAction,
   CheckTaskIdExistsAtLevel,
@@ -107,7 +105,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     columns: columnsProp = undefined,
     comparisonLevels = 1,
     contextMenuOptions: contextMenuOptionsProp = undefined,
-    dateLocale = enDateLocale,
     enableTableListContextMenu = false,
     fixEndPosition: fixEndPositionProp = undefined,
     fixStartPosition: fixStartPositionProp = undefined,
@@ -371,12 +368,12 @@ export const Gantt: React.FC<GanttProps> = props => {
   const dateSetup = useMemo<DateSetup>(
     () => ({
       dateFormats,
-      dateLocale,
+      dateLocale: locale.dateLocale,
       isUnknownDates,
       preStepsCount,
       viewMode,
     }),
-    [dateFormats, dateLocale, isUnknownDates, preStepsCount, viewMode]
+    [dateFormats, locale, isUnknownDates, preStepsCount, viewMode]
   );
 
   const { checkIsHoliday, adjustTaskToWorkingDates } = useHolidays({

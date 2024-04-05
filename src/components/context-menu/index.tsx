@@ -1,5 +1,5 @@
 import type {ReactElement} from "react";
-import React, {useCallback, useEffect, useMemo, useRef} from "react";
+import {useCallback, useEffect, useMemo, useRef} from "react";
 
 import {autoUpdate, flip, shift} from "@floating-ui/dom";
 import {useDismiss, useFloating, useFocus, useInteractions, useRole,} from "@floating-ui/react";

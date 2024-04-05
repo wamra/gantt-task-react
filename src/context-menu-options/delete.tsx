@@ -1,5 +1,4 @@
 import type { ContextMenuOptionType } from "../types/public-types";
-import React from "react";
 import { GanttLocale } from "../types/public-types";
 
 export const createDeleteOption = (locale: GanttLocale): ContextMenuOptionType => ({

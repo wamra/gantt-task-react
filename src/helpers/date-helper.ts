@@ -1,17 +1,19 @@
-import addYears from "date-fns/addYears";
-import addMonths from "date-fns/addMonths";
-import addDays from "date-fns/addDays";
-import addHours from "date-fns/addHours";
-import subYears from "date-fns/subYears";
-import subMonths from "date-fns/subMonths";
-import subDays from "date-fns/subDays";
-import subHours from "date-fns/subHours";
-import subWeeks from "date-fns/subWeeks";
-import startOfYear from "date-fns/startOfYear";
-import startOfMonth from "date-fns/startOfMonth";
-import startOfDay from "date-fns/startOfDay";
-import startOfHour from "date-fns/startOfHour";
-import startOfWeek from "date-fns/startOfWeek";
+import {
+  addYears,
+  addMonths,
+  addDays,
+  addHours,
+  subYears,
+  subMonths,
+  subDays,
+  subHours,
+  subWeeks,
+  startOfYear,
+  startOfMonth,
+  startOfDay,
+  startOfHour,
+  startOfWeek,
+} from "date-fns";
 
 import { TaskOrEmpty, ViewMode } from "../types/public-types";
 import { getDatesDiff } from "./get-dates-diff";
@@ -19,16 +21,12 @@ import { getDatesDiff } from "./get-dates-diff";
 export const ganttDateRange = (
   tasks: readonly TaskOrEmpty[],
   viewMode: ViewMode,
-  preStepsCount: number,
-): [
-  Date,
-  Date,
-  number,
-] => {
+  preStepsCount: number
+): [Date, Date, number] => {
   let minTaskDate: Date | null = null;
   let maxTaskDate: Date | null = null;
   for (const task of tasks) {
-    if (task.type !== 'empty') {
+    if (task.type !== "empty") {
       if (!minTaskDate || task.start < minTaskDate) {
         minTaskDate = task.start;
       }
@@ -91,7 +89,11 @@ export const ganttDateRange = (
       break;
   }
 
-  return [newStartDate, minTaskDate, getDatesDiff(newEndDate, newStartDate, viewMode)];
+  return [
+    newStartDate,
+    minTaskDate,
+    getDatesDiff(newEndDate, newStartDate, viewMode),
+  ];
 };
 
 export const getWeekNumberISO8601 = (date: Date) => {

@@ -1,4 +1,4 @@
-import isAfter from "date-fns/isAfter";
+import { isAfter } from "date-fns";
 
 import {
   ChildByLevelMap,
@@ -12,7 +12,7 @@ import {
 const fillMinAndMaxChildsMap = (
   resOnLevel: Map<string, MinAndMaxChildsOfTask>,
   task: Task,
-  childTasksOnLevel: Map<string, TaskOrEmpty[]>,
+  childTasksOnLevel: Map<string, TaskOrEmpty[]>
 ) => {
   const childs = childTasksOnLevel.get(task.id);
 
@@ -25,8 +25,8 @@ const fillMinAndMaxChildsMap = (
   let firstMax: Task | null = null;
   let secondMax: Task | null = null;
 
-  childs.forEach((task) => {
-    if (task.type === 'empty') {
+  childs.forEach(task => {
+    if (task.type === "empty") {
       return;
     }
 
@@ -55,23 +55,26 @@ const fillMinAndMaxChildsMap = (
     fillMinAndMaxChildsMap(resOnLevel, task, childTasksOnLevel);
   });
 
-  resOnLevel.set(task.id, [[firstMin, secondMin], [firstMax, secondMax]]);
+  resOnLevel.set(task.id, [
+    [firstMin, secondMin],
+    [firstMax, secondMax],
+  ]);
 };
 
 export const getMinAndMaxChildsMap = (
   rootTasksMap: RootMapByLevel,
-  childTasksMap: ChildByLevelMap,
+  childTasksMap: ChildByLevelMap
 ): MinAndMaxChildsMap => {
   const res = new Map<number, Map<string, MinAndMaxChildsOfTask>>();
- 
+
   for (const [comparisonLevel, rootTasks] of rootTasksMap.entries()) {
     const childTasksOnLevel = childTasksMap.get(comparisonLevel);
 
     if (childTasksOnLevel) {
       const resOnLevel = new Map<string, MinAndMaxChildsOfTask>();
 
-      rootTasks.forEach((task) => {
-        if (task.type !== 'empty') {
+      rootTasks.forEach(task => {
+        if (task.type !== "empty") {
           fillMinAndMaxChildsMap(resOnLevel, task, childTasksOnLevel);
         }
       });
