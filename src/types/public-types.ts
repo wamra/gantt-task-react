@@ -71,12 +71,20 @@ export interface ExpandedDependent {
   ownTarget: RelationMoveTarget;
 }
 
-export interface GanttTheme {
+export interface GanttPartialTheme {
   rtl?: boolean;
   colors?: Partial<ColorStyles>;
-  typography?: Partial<TypographyStyles>
-  distances?: Partial<Distances>
-  dateFormats?: Partial<DateFormats>
+  typography?: Partial<TypographyStyles>;
+  distances?: Partial<Distances>;
+  dateFormats?: Partial<DateFormats>;
+}
+
+export interface GanttTheme {
+  rtl?: boolean;
+  colors: ColorStyles;
+  typography: TypographyStyles;
+  distances: Distances;
+  dateFormats: DateFormats;
 }
 
 export interface TypographyStyles {
@@ -256,7 +264,7 @@ export type OnDateChangeSuggestionType = [
   /**
    * Index in array of tasks
    */
-  number
+  number,
 ];
 
 export type OnDateChange = (
@@ -528,7 +536,7 @@ export interface StylingOption {
    */
   canMoveTasks?: boolean;
   canResizeColumns?: boolean;
-  theme?: GanttTheme;
+  theme?: GanttPartialTheme;
   locale?: GanttLocale;
   icons?: Partial<Icons>;
   columns?: readonly Column[];
@@ -568,11 +576,11 @@ export interface GanttLocale {
   dateLocale?: DateLocale;
   suffix: {
     days: string;
-  }
+  };
   tooltip: {
     duration: string;
     progress: string;
-  },
+  };
   table: {
     columns: {
       name: string;
@@ -580,14 +588,14 @@ export interface GanttLocale {
       endDate: string;
       dependencies: string;
       progress: string;
-    }
-  }
+    };
+  };
   context: {
     copy: string;
     cut: string;
     paste: string;
     delete: string;
-  }
+  };
 }
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
@@ -740,7 +748,7 @@ export type MinAndMaxChildsOfTask = [
     /**
      * Second min
      */
-    Task | null
+    Task | null,
   ],
   [
     /**
@@ -750,8 +758,8 @@ export type MinAndMaxChildsOfTask = [
     /**
      * Second max
      */
-    Task | null
-  ]
+    Task | null,
+  ],
 ];
 
 // comparison level -> task id -> [[first min, second min], [first max, second max]]
@@ -934,7 +942,7 @@ export type ChangeMetadata = [
   /**
    * array of suggesgions for change parent
    */
-  OnDateChangeSuggestionType[]
+  OnDateChangeSuggestionType[],
 ];
 
 export type ContextMenuType = {
