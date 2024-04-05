@@ -13,6 +13,5 @@ export * from "./components/context-menu-options";
 
 export * from "./constants";
 
-export { ViewMode } from "./types/public-types";
 export * from "./types/public-types";
 export type { RelationMoveTarget } from "./types/gantt-task-actions";
