@@ -1,17 +1,11 @@
-import React, {
-  useCallback,
-} from "react";
+import React, { useCallback } from "react";
 
 import { ColumnProps } from "../../../types/public-types";
 
 import styles from "./add-column.module.css";
 
 export const AddColumn: React.FC<ColumnProps> = ({
-  data: {
-    handleAddTask,
-    icons,
-    task,
-  },
+  data: { handleAddTask, icons, task },
 }) => {
   const onClick = useCallback(() => {
     if (task.type === "empty") {
@@ -28,6 +22,9 @@ export const AddColumn: React.FC<ColumnProps> = ({
   return (
     <button
       type="button"
+      onContextMenu={e => {
+        e.stopPropagation();
+      }}
       onClick={onClick}
       className={styles.button}
     >

@@ -24,6 +24,7 @@ import { useTableListResize } from "../gantt/use-tablelist-resize";
 // const SCROLL_DELAY = 25;
 
 export type TaskListProps = {
+  ganttRef: RefObject<HTMLDivElement>;
   canMoveTasks: boolean;
   canResizeColumns: boolean;
   childTasksMap: ChildByLevelMap;
@@ -85,7 +86,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   handleMoveTaskAfter,
   handleMoveTasksInside,
   handleOpenContextMenu,
-  icons = undefined,
+  icons,
   isShowTaskNumbers,
   mapTaskToNestedIndex,
   onExpanderClick,
@@ -93,6 +94,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   scrollToTask,
   selectTaskOnMouseDown,
   selectedIdsMirror,
+  ganttRef,
   taskListContainerRef,
   taskListRef,
   tasks,
@@ -107,7 +109,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     tableWidth,
     onTableResizeStart,
     onColumnResizeStart,
-  ] = useTableListResize(columnsProp, distances, onResizeColumn, taskListContainerRef);
+  ] = useTableListResize(columnsProp, distances, onResizeColumn, ganttRef);
 
   const renderedIndexes = useOptimizedList(
     taskListContainerRef,

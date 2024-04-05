@@ -1835,6 +1835,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     taskListContainerRef,
     taskListRef,
     tasks: visibleTasks,
+    ganttRef: wrapperRef,
     onResizeColumn,
   };
 

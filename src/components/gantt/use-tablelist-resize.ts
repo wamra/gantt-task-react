@@ -26,7 +26,7 @@ export const useTableListResize = (
   columnsProp: readonly Column[],
   distances: Distances,
   onResizeColumn: OnResizeColumn,
-  taskListContainerRef: RefObject<HTMLDivElement>
+  ganttRef: RefObject<HTMLDivElement>
 ): [
   columns: readonly Column[],
   taskListWidth: number,
@@ -183,26 +183,26 @@ export const useTableListResize = (
       setTableResizeEvent(null);
     };
 
-    if (!taskListContainerRef.current) {
+    if (!ganttRef.current) {
       return () => {};
     }
 
-    taskListContainerRef.current.addEventListener("mousemove", handleMouseMove);
-    taskListContainerRef.current.addEventListener("touchmove", handleTouchMove);
-    taskListContainerRef.current.addEventListener("mouseup", handleUp);
-    taskListContainerRef.current.addEventListener("touchend", handleUp);
+    ganttRef.current.addEventListener("mousemove", handleMouseMove);
+    ganttRef.current.addEventListener("touchmove", handleTouchMove);
+    ganttRef.current.addEventListener("mouseup", handleUp);
+    ganttRef.current.addEventListener("touchend", handleUp);
 
     return () => {
-      taskListContainerRef.current.removeEventListener(
+      ganttRef.current.removeEventListener(
         "mousemove",
         handleMouseMove
       );
-      taskListContainerRef.current.removeEventListener(
+      ganttRef.current.removeEventListener(
         "touchmove",
         handleTouchMove
       );
-      taskListContainerRef.current.removeEventListener("mouseup", handleUp);
-      taskListContainerRef.current.removeEventListener("touchend", handleUp);
+      ganttRef.current.removeEventListener("mouseup", handleUp);
+      ganttRef.current.removeEventListener("touchend", handleUp);
     };
   }, [isResizeTableInProgress, tableWidthState, tableResizeEvent]);
 

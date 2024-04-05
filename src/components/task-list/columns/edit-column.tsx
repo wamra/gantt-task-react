@@ -20,6 +20,9 @@ export const EditColumn: React.FC<ColumnProps> = ({
   return (
     <button
       type="button"
+      onContextMenu={e => {
+        e.stopPropagation();
+      }}
       onClick={onClick}
       className={styles.button}
     >
