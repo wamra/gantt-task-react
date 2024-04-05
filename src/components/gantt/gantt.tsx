@@ -147,7 +147,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     renderTopHeader = undefined,
     roundEndDate: roundEndDateProp = defaultRoundEndDate,
     roundStartDate: roundStartDateProp = defaultRoundStartDate,
-    rtl = false,
     tasks,
     timeStep = 300000,
     viewDate,
@@ -159,7 +158,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   const taskListRef = useRef<HTMLDivElement>(null);
   const locale = useMemo(() => clientLocale ?? GANTT_EN_LOCALE, [clientLocale]);
   const theme = useMemo(() => buildGanttTheme(clientTheme), [clientTheme]);
-  const { distances, dateFormats } = theme;
+  const { distances, dateFormats, rtl } = theme;
 
   const [
     horizontalContainerRef,

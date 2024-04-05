@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 
 import { Column, Distances, OnResizeColumn } from "../../types/public-types";
 import { AddColumn } from "../task-list/columns/add-column";
@@ -8,6 +8,7 @@ import { DateEndColumn } from "../task-list/columns/date-end-column";
 import { DependenciesColumn } from "../task-list/columns/dependencies-column";
 import { DeleteColumn } from "../task-list/columns/delete-column";
 import { EditColumn } from "../task-list/columns/edit-column";
+import { useGanttLocale } from "../gantt-locale";
 
 type TableResizeEvent = {
   initialClientX: number;
@@ -24,14 +25,17 @@ type ColumnResizeEvent = {
 export const useTableListResize = (
   columnsProp: readonly Column[],
   distances: Distances,
-  onResizeColumn: OnResizeColumn
+  onResizeColumn: OnResizeColumn,
+  taskListContainerRef: RefObject<HTMLDivElement>
 ): [
   columns: readonly Column[],
   taskListWidth: number,
   tableWidth: number,
+
   onTableResizeStart: (clientX: number) => void,
   onColumnResizeStart: (columnIndex: number, clientX: number) => void
 ] => {
+  const locale = useGanttLocale();
   const [columnsState, setColumns] = useState<readonly Column[]>(() => {
     if (columnsProp) {
       return [...columnsProp];
@@ -49,28 +53,28 @@ export const useTableListResize = (
         id: "TitleColumn",
         component: TitleColumn,
         width: titleCellWidth,
-        title: "Name",
+        title: locale.table.columns.name,
       },
 
       {
         id: "DateStartColumn",
         component: DateStartColumn,
         width: dateCellWidth,
-        title: "From",
+        title: locale.table.columns.startDate,
       },
 
       {
         id: "DateEndColumn",
         component: DateEndColumn,
         width: dateCellWidth,
-        title: "To",
+        title: locale.table.columns.endDate,
       },
 
       {
         id: "DependenciesColumn",
         component: DependenciesColumn,
         width: dependenciesCellWidth,
-        title: "Dependencies",
+        title: locale.table.columns.dependencies,
       },
 
       {
@@ -179,16 +183,26 @@ export const useTableListResize = (
       setTableResizeEvent(null);
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("touchmove", handleTouchMove);
-    document.addEventListener("mouseup", handleUp);
-    document.addEventListener("touchend", handleUp);
+    if (!taskListContainerRef.current) {
+      return () => {};
+    }
+
+    taskListContainerRef.current.addEventListener("mousemove", handleMouseMove);
+    taskListContainerRef.current.addEventListener("touchmove", handleTouchMove);
+    taskListContainerRef.current.addEventListener("mouseup", handleUp);
+    taskListContainerRef.current.addEventListener("touchend", handleUp);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("mouseup", handleUp);
-      document.removeEventListener("touchend", handleUp);
+      taskListContainerRef.current.removeEventListener(
+        "mousemove",
+        handleMouseMove
+      );
+      taskListContainerRef.current.removeEventListener(
+        "touchmove",
+        handleTouchMove
+      );
+      taskListContainerRef.current.removeEventListener("mouseup", handleUp);
+      taskListContainerRef.current.removeEventListener("touchend", handleUp);
     };
   }, [isResizeTableInProgress, tableWidthState, tableResizeEvent]);
 

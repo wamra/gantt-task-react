@@ -72,6 +72,7 @@ export interface ExpandedDependent {
 }
 
 export interface GanttTheme {
+  rtl?: boolean;
   colors: ColorStyles;
   typography: TypographyStyles
   distances: Distances
@@ -482,7 +483,6 @@ export interface DisplayOption {
   dateLocale?: DateLocale;
   viewDate?: Date;
   preStepsCount?: number;
-  rtl?: boolean;
 
   /**
    * Show an warning icon next to task
@@ -556,6 +556,15 @@ export interface StylingOption {
 }
 
 export interface GanttLocale {
+  table: {
+    columns: {
+      name: string;
+      startDate: string;
+      endDate: string;
+      dependencies: string;
+      progress: string;
+    }
+  }
   context: {
     copy: string;
     cut: string;

@@ -1,6 +1,7 @@
 import {GanttTheme} from "../../types/public-types";
 
 export const DEFAULT_THEME: GanttTheme = {
+  rtl: false,
   colors: {
     arrowColor: "grey",
     arrowCriticalColor: "#ff0000",
