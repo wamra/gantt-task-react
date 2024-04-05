@@ -44,8 +44,9 @@ export const useContextMenu = (
       x: clientX - left,
       y: clientY - top,
     });
+
+    toggleTask(task.id, true);
     if (task.type !== 'empty') {
-      toggleTask(task.id, true);
       scrollToTask(task);
     }
   }, [wrapperRef, toggleTask]);

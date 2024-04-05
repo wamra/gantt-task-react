@@ -12,10 +12,8 @@ import {
   ChangeAction,
   CheckTaskIdExistsAtLevel,
   ContextMenuOptionType,
-  DateFormats,
   DateSetup,
   Dependency,
-  Distances,
   FixPosition,
   GanttProps,
   OnDateChange,
@@ -87,47 +85,11 @@ import {
 import { useHolidays } from "./use-holidays";
 
 import styles from "./gantt.module.css";
-import { GanttTheme } from "../gantt-theme";
-
-const defaultDateFormats: DateFormats = {
-  dateColumnFormat: "E, d MMMM yyyy",
-  dayBottomHeaderFormat: "E, d",
-  dayTopHeaderFormat: "E, d",
-  hourBottomHeaderFormat: "HH",
-  monthBottomHeaderFormat: "LLL",
-  monthTopHeaderFormat: "LLLL",
-};
-
-const defaultDistances: Distances = {
-  actionColumnWidth: 40,
-  arrowIndent: 20,
-  barCornerRadius: 3,
-  barFill: 60,
-  columnWidth: 60,
-  contextMenuIconWidth: 20,
-  contextMenuOptionHeight: 25,
-  contextMenuSidePadding: 10,
-  dateCellWidth: 220,
-  dependenciesCellWidth: 120,
-  dependencyFixHeight: 20,
-  dependencyFixIndent: 50,
-  dependencyFixWidth: 20,
-  expandIconWidth: 20,
-  handleWidth: 8,
-  headerHeight: 50,
-  ganttHeight: 600,
-  minimumRowDisplayed: 4,
-  nestedTaskNameOffset: 20,
-  relationCircleOffset: 10,
-  relationCircleRadius: 5,
-  rowHeight: 50,
-  taskWarningOffset: 35,
-  titleCellWidth: 220,
-};
+import { GanttThemeProvider, buildGanttTheme } from "../gantt-theme";
 
 export const Gantt: React.FC<GanttProps> = props => {
   const {
-    theme,
+    theme: clientTheme,
     TaskListHeader = TaskListHeaderDefault,
     TaskListTable = TaskListTableDefault,
     TooltipContent = StandardTooltipContent,
@@ -144,9 +106,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     columns: columnsProp = undefined,
     comparisonLevels = 1,
     contextMenuOptions: contextMenuOptionsProp = undefined,
-    dateFormats: dateFormatsProp = undefined,
     dateLocale = enDateLocale,
-    distances: distancesProp = undefined,
     enableTableListContextMenu = false,
     fixEndPosition: fixEndPositionProp = undefined,
     fixStartPosition: fixStartPositionProp = undefined,
@@ -194,6 +154,8 @@ export const Gantt: React.FC<GanttProps> = props => {
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
+  const theme = useMemo(() => buildGanttTheme(clientTheme), [clientTheme]);
+  const { distances, dateFormats } = theme;
 
   const [
     horizontalContainerRef,
@@ -312,14 +274,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     return getChildOutOfParentWarnings(tasks, childTasksMap);
   }, [tasks, childTasksMap, isShowChildOutOfParentWarnings]);
 
-  const distances = useMemo<Distances>(
-    () => ({
-      ...defaultDistances,
-      ...distancesProp,
-    }),
-    [distancesProp]
-  );
-
   const fullRowHeight = useMemo(
     () => distances.rowHeight * comparisonLevels,
     [distances, comparisonLevels]
@@ -410,14 +364,6 @@ export const Gantt: React.FC<GanttProps> = props => {
   const getDate = useCallback(
     (index: number) => getDateByOffset(startDate, index, viewMode),
     [startDate, viewMode]
-  );
-
-  const dateFormats = useMemo<DateFormats>(
-    () => ({
-      ...defaultDateFormats,
-      ...dateFormatsProp,
-    }),
-    [dateFormatsProp]
   );
 
   const dateSetup = useMemo<DateSetup>(
@@ -1885,7 +1831,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   };
 
   return (
-    <GanttTheme theme={theme}>
+    <GanttThemeProvider theme={theme}>
       <div
         className={`${styles.wrapper} gantt`}
         onKeyDown={handleKeyDown}
@@ -1945,6 +1891,6 @@ export const Gantt: React.FC<GanttProps> = props => {
           />
         )}
       </div>
-    </GanttTheme>
+    </GanttThemeProvider>
   );
 };

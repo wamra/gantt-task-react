@@ -71,10 +71,20 @@ export interface ExpandedDependent {
   ownTarget: RelationMoveTarget;
 }
 
-export interface ColorStyles {
+export interface GanttTheme {
+  colors: ColorStyles;
+  typography: TypographyStyles
+  distances: Distances
+  dateFormats: DateFormats
+}
+
+export interface TypographyStyles {
   fontFamily: string;
   fontSize: string;
+  rtl?: boolean;
+}
 
+export interface ColorStyles {
   arrowColor: string;
   arrowCriticalColor: string;
   arrowWarningColor: string;
@@ -193,7 +203,6 @@ export interface EmptyTask {
   comparisonLevel?: number;
   displayOrder?: number;
   isDisabled?: boolean;
-  styles?: Partial<ColorStyles>;
 }
 
 export type TaskOrEmpty = Task | EmptyTask;
@@ -207,11 +216,11 @@ export type OnArrowDoubleClick = (
 
 export type OnRelationChange = (
   /**
-   * Task, targer, index
+   * Task, from, index
    */
   from: [Task, RelationMoveTarget, number],
   /**
-   * Task, targer, index
+   * Task, to, index
    */
   to: [Task, RelationMoveTarget, number],
   /**
@@ -513,9 +522,7 @@ export interface StylingOption {
    */
   canMoveTasks?: boolean;
   canResizeColumns?: boolean;
-  colors?: Partial<ColorStyles>;
-  dateFormats?: Partial<DateFormats>;
-  distances?: Partial<Distances>;
+  theme?: GanttTheme;
   icons?: Partial<Icons>;
   columns?: readonly Column[];
   onResizeColumn?: OnResizeColumn;
@@ -581,7 +588,6 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
    */
   isAdjustToWorkingDates?: boolean;
   tasks: readonly TaskOrEmpty[];
-  theme?: ColorStyles;
 }
 
 export interface TaskListTableProps {
