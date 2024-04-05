@@ -3,6 +3,8 @@ import React, { useCallback, useMemo } from "react";
 import { ColumnProps, Icons } from "../../../types/public-types";
 
 import styles from "./title-column.module.css";
+import { ExpandMoreIcon } from "../../icons/expand-more-icon";
+import { ExpandLessIcon } from "../../icons/expand-less-icon";
 
 const getExpanderSymbol = (
   hasChildren: boolean,
@@ -14,10 +16,18 @@ const getExpanderSymbol = (
   }
 
   if (isClosed) {
-    return icons?.renderClosedIcon ? icons.renderClosedIcon() : "⊞";
+    return icons?.renderClosedIcon ? (
+      icons.renderClosedIcon()
+    ) : (
+      <ExpandMoreIcon />
+    );
   }
 
-  return icons?.renderOpenedIcon ? icons.renderOpenedIcon() : "⊟";
+  return icons?.renderOpenedIcon ? (
+    icons.renderOpenedIcon()
+  ) : (
+    <ExpandLessIcon />
+  );
 };
 
 export const TitleColumn: React.FC<ColumnProps> = ({
