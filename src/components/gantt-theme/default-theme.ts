@@ -4,6 +4,16 @@ export const DEFAULT_THEME: GanttTheme = {
   rtl: false,
   colors: {
     arrowColor: "grey",
+    dividerColor: "#e6e4e4",
+    primaryTextColor: "#555",
+    secondaryTextColor: "#333",
+
+    calendarStrokeColor: '#e0e0e0',
+    scrollbarThumbColor: "rgba(0, 0, 0, 0.3)",
+
+    tableResizeColor: "#e6e4e4",
+    tableResizeHoverColor: "#555",
+
     arrowCriticalColor: "#ff0000",
     arrowWarningColor: "#ffbc00",
     barProgressColor: "#a3a3ff",

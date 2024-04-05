@@ -12,7 +12,6 @@ import {
   GlobalRowIndexToTaskMap,
   RelationKind,
   Task,
-  TaskContextualPaletteProps,
   TaskCoordinates,
   TaskOrEmpty,
   TaskToHasDependencyWarningMap,
@@ -74,7 +73,6 @@ export type TaskGanttContentProps = {
   visibleTasksMirror: Readonly<Record<string, true>>;
   taskHeight: number;
   taskHalfHeight: number;
-  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
 };
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({

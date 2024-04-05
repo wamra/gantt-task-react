@@ -1,26 +1,17 @@
 import React, { useCallback, useState } from "react";
 
 import {
-  Column,
   ColumnProps,
-  DateEndColumn,
-  DateStartColumn,
   Gantt,
-  GanttProps,
   OnChangeTasks,
   Task,
-  TaskContextualPaletteProps,
   TaskOrEmpty,
-  TitleColumn,
   ViewMode,
 } from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import styles from "./CustomPalette.module.css";
 
 type AppProps = {
@@ -109,34 +100,6 @@ export const CustomPalette: React.FC<AppProps> = props => {
     }
   };
 
-  const ContextualPalette: React.FC<TaskContextualPaletteProps> = ({
-    selectedTask,
-    onClose,
-  }) => {
-    return (
-      <div className={styles.buttonEntries}>
-        <IconButton
-          size="small"
-          aria-label="Delete task"
-          title="Delete task"
-          onClick={() => handleTaskDelete(selectedTask)}
-          data-testid="delete-task"
-        >
-          <DeleteForeverIcon fontSize="small" />
-        </IconButton>
-        <IconButton
-          size="small"
-          aria-label="Close toolbar"
-          title="Close toolbar"
-          onClick={onClose}
-          data-testid="close-toolbar"
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </div>
-    );
-  };
-
   const onChangeExpandState = (changedTask: Task) => {
     setTasks(prev => {
       return prev.map(task => {
@@ -160,7 +123,6 @@ export const CustomPalette: React.FC<AppProps> = props => {
       viewMode={viewMode}
       roundEndDate={(date: Date) => date}
       roundStartDate={(date: Date) => date}
-      ContextualPalette={ContextualPalette}
       onWheel={handleWheel}
       onChangeExpandState={onChangeExpandState}
       enableTableListContextMenu={1}

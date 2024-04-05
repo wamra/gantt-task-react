@@ -5,10 +5,6 @@ import { GridProps, Grid } from "../grid/grid";
 import { CalendarProps, Calendar } from "../calendar/calendar";
 import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
 import styles from "./gantt.module.css";
-import Popper from "@material-ui/core/Popper";
-import Paper from "@material-ui/core/Paper";
-import { TaskContextualPaletteProps, Task } from "../../types/public-types";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
 
 export type TaskGanttProps = {
   barProps: TaskGanttContentProps;
@@ -70,49 +66,6 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
     ]
   );
 
-  // Manage the contextual palette
-  const [anchorEl, setAnchorEl] = React.useState<null | SVGElement>(null);
-  const [selectedTask, setSelectedTask] = React.useState<Task>(null);
-  const open = Boolean(anchorEl);
-  const onClickTask: (
-    task: Task,
-    event: React.MouseEvent<SVGElement>
-  ) => void = (task, event) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedTask(task);
-    barProps.onClick(task, event);
-  };
-
-  const onClose = () => {
-    setAnchorEl(null);
-  };
-
-  let contextualPalette:
-    | React.FunctionComponentElement<TaskContextualPaletteProps>
-    | undefined;
-  if (barProps.ContextualPalette && selectedTask) {
-    contextualPalette = React.createElement(barProps.ContextualPalette, {
-      selectedTask,
-      onClose,
-    });
-  } else {
-    contextualPalette = <div></div>;
-  }
-
-  const onClickAway = (e: React.MouseEvent<Document, MouseEvent>) => {
-    const svgElement = e.target as SVGElement;
-    if (svgElement) {
-      const keepPalette =
-        svgElement.ownerSVGElement?.classList.contains("TaskItemClassName");
-      // In a better world the contextual palette should be defined in TaskItem component but ClickAwayListener and Popper uses div that are not displayed in svg
-      // So in order to let the palette open when clicking on another task, this checks if the user clicked on another task
-      if (!keepPalette) {
-        setAnchorEl(null);
-        setSelectedTask(null);
-      }
-    }
-  };
-
   return (
     <div
       className={styles.ganttVerticalContainer}
@@ -143,23 +96,9 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             ref={ganttSVGRef}
           >
             <Grid {...gridProps} />
-            <TaskGanttContent {...barProps} onClick={onClickTask} />
+            <TaskGanttContent {...barProps} />
           </svg>
         </div>
-        {barProps.ContextualPalette && open && (
-          <ClickAwayListener onClickAway={onClickAway}>
-            <Popper
-              key={`contextual-palette`}
-              open={open}
-              anchorEl={anchorEl}
-              transition
-              disablePortal
-              placement="top"
-            >
-              <Paper>{contextualPalette}</Paper>
-            </Popper>
-          </ClickAwayListener>
-        )}
       </div>
     </div>
   );

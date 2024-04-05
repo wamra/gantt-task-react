@@ -1,6 +1,7 @@
 .calendarBottomText {
   text-anchor: middle;
-  fill: #333;
+  /*noinspection CssUnresolvedCustomProperty*/
+  fill: var(--gantt-calendar-bottom-text-color, var(--gantt-secondary-text-color));
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -10,12 +11,14 @@
 }
 
 .calendarTopTick {
-  stroke: #e6e4e4;
+  /*noinspection CssUnresolvedCustomProperty*/
+  stroke: var(--gantt-calendar-top-divider-color, var(--gantt-divider-color));
 }
 
 .calendarTopText {
   text-anchor: middle;
-  fill: #555;
+  /*noinspection CssUnresolvedCustomProperty*/
+  fill: var(--gantt-calendar-top-text-color, var(--gantt-primary-text-color));
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -25,7 +28,8 @@
 }
 
 .calendarHeader {
-  fill: #ffffff;
-  stroke: #e0e0e0;
+  fill: transparent;
+  /*noinspection CssUnresolvedCustomProperty*/
+  stroke: var(--gantt-calendar-stroke-color);
   stroke-width: 1.4;
 }

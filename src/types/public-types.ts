@@ -86,6 +86,8 @@ export interface TypographyStyles {
 
 export interface ColorStyles {
   arrowColor: string;
+  dividerColor: string;
+
   arrowCriticalColor: string;
   arrowWarningColor: string;
   barProgressColor: string;
@@ -124,6 +126,15 @@ export interface ColorStyles {
   contextMenuBoxShadow: string;
   contextMenuBgColor: string;
   contextMenuTextColor: string;
+
+
+  tableResizeColor: string;
+  tableResizeHoverColor: string;
+  scrollbarThumbColor: string;
+
+  calendarStrokeColor: string;
+  primaryTextColor: string;
+  secondaryTextColor: string;
 }
 
 /**
@@ -552,7 +563,6 @@ export interface StylingOption {
    * @returns next date
    */
   roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
-  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
 }
 
 export interface GanttLocale {
@@ -571,11 +581,6 @@ export interface GanttLocale {
     paste: string;
     delete: string;
   }
-}
-
-export interface TaskContextualPaletteProps {
-  selectedTask: Task;
-  onClose: () => void;
 }
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {

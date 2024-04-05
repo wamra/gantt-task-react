@@ -1,6 +1,7 @@
 .taskListRoot {
   position: relative;
-  border-left: #e6e4e4 1px solid;
+  /*noinspection CssUnresolvedCustomProperty*/
+  border-left: 1px solid var(--gantt-table-divider-color, var(--gantt-divider-color));
 }
 
 .taskListHorizontalScroll {
@@ -18,16 +19,16 @@
 
 .taskListHorizontalScroll::-webkit-scrollbar-thumb {
   border: 6px solid transparent;
-  background: rgba(0, 0, 0, 0.2);
-  background: var(--palette-black-alpha-20, rgba(0, 0, 0, 0.2));
+  /*noinspection CssUnresolvedCustomProperty*/
+  background: var(--gantt-scrollbar-thumb-color);
   border-radius: 10px;
   background-clip: padding-box;
 }
 
 .taskListHorizontalScroll::-webkit-scrollbar-thumb:hover {
   border: 4px solid transparent;
-  background: rgba(0, 0, 0, 0.3);
-  background: var(--palette-black-alpha-30, rgba(0, 0, 0, 0.3));
+  /*noinspection CssUnresolvedCustomProperty*/
+  background: var(--gantt-scrollbar-thumb-color);
   background-clip: padding-box;
 }
 
@@ -42,7 +43,8 @@
 }
 
 .taskListResizer:hover {
-  background-color: grey;
+  /*noinspection CssUnresolvedCustomProperty*/
+  background-color: var(--gantt-table-resize-hover-color);
 }
 
 .taskListResizer::before {
@@ -52,7 +54,8 @@
   left: 4px;
   height: 100%;
   width: 2px;
-  background-color: #e5e5e5;
+  /*noinspection CssUnresolvedCustomProperty*/
+  background-color: var(--gantt-table-resize-color);
 }
 
 .horizontalContainer {

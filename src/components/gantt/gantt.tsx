@@ -95,7 +95,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     TaskListHeader = TaskListHeaderDefault,
     TaskListTable = TaskListTableDefault,
     TooltipContent = StandardTooltipContent,
-    ContextualPalette,
     authorizedRelations = [
       "startToStart",
       "startToEnd",
@@ -1750,7 +1749,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       taskYOffset,
       timeStep,
       visibleTasksMirror,
-      ContextualPalette,
     }),
     [
       additionalLeftSpace,

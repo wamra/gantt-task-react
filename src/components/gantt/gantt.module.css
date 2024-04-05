@@ -4,6 +4,8 @@
   font-size: 0;
   margin: 0;
   padding: 0;
+  /*noinspection CssUnresolvedCustomProperty*/
+  border-right: 1px solid var(--gantt-calendar-divider-color, var(--gantt-divider-color));
 }
 
 .ganttVerticalContainer::-webkit-scrollbar {
@@ -17,16 +19,16 @@
 
 .ganttVerticalContainer::-webkit-scrollbar-thumb {
   border: 6px solid transparent;
-  background: rgba(0, 0, 0, 0.2);
-  background: var(--palette-black-alpha-20, rgba(0, 0, 0, 0.2));
+  /*noinspection CssUnresolvedCustomProperty*/
+  background: var(--gantt-scrollbar-thumb-color);
   border-radius: 10px;
   background-clip: padding-box;
 }
 
 .ganttVerticalContainer::-webkit-scrollbar-thumb:hover {
   border: 4px solid transparent;
-  background: rgba(0, 0, 0, 0.3);
-  background: var(--palette-black-alpha-30, rgba(0, 0, 0, 0.3));
+  /*noinspection CssUnresolvedCustomProperty*/
+  background: var(--gantt-scrollbar-thumb-color);
   background-clip: padding-box;
 }
 
@@ -43,4 +45,6 @@
   list-style: none;
   outline: none;
   position: relative;
+  /*noinspection CssUnresolvedCustomProperty*/
+  border-bottom: 1px solid var(--gantt-divider-color);
 }

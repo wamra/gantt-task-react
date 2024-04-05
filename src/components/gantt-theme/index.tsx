@@ -66,8 +66,7 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
         colors.milestoneBackgroundSelectedColor,
       "--gantt-milestone-background-color": colors.milestoneBackgroundColor,
 
-      "--gantt-selected-task-background-color":
-        colors.selectedTaskBackgroundColor,
+      "--gantt-selected-task-background-color": colors.selectedTaskBackgroundColor,
       "--gantt-even-task-background-color": colors.evenTaskBackgroundColor,
       "--gantt-holiday-background-color": colors.holidayBackgroundColor,
       "--gantt-task-drag-color": colors.taskDragColor,
@@ -77,8 +76,18 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-context-menu-text-color": colors.contextMenuTextColor,
       "--gantt-context-menu-box-shadow": colors.contextMenuBoxShadow,
 
+      "--gantt-divider-color": colors.dividerColor,
+      "--gantt-table-resize-color": colors.tableResizeColor,
+      "--gantt-table-resize-hover-color": colors.tableResizeHoverColor,
+      "--gantt-scrollbar-thumb-color": colors.scrollbarThumbColor,
+      "--gantt-calendar-stroke-color": colors.calendarStrokeColor,
+
+      "--gantt-primary-text-color": colors.primaryTextColor,
+      "--gantt-secondary-text-color": colors.secondaryTextColor,
+
       "--gantt-font-family": typography.fontFamily,
       "--gantt-font-size": typography.fontSize,
+
     };
   }, [theme]);
 
