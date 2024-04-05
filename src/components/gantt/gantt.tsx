@@ -76,10 +76,10 @@ import { defaultGetCopiedTaskId } from "./default-get-copied-task-id";
 
 import { copyTasks } from "../../helpers/copy-tasks";
 import {
-  copyOption,
-  cutOption,
-  deleteOption,
-  pasteOption,
+  createCopyOption,
+  createCutOption,
+  createDeleteOption,
+  createPasteOption,
 } from "../../context-menu-options";
 
 import { useHolidays } from "./use-holidays";
@@ -87,6 +87,7 @@ import { useHolidays } from "./use-holidays";
 import styles from "./gantt.module.css";
 import { GanttThemeProvider, buildGanttTheme } from "../gantt-theme";
 import { GanttLocaleProvider } from "../gantt-locale";
+import { GANTT_EN_LOCALE } from "../../locales";
 
 export const Gantt: React.FC<GanttProps> = props => {
   const {
@@ -151,11 +152,12 @@ export const Gantt: React.FC<GanttProps> = props => {
     timeStep = 300000,
     viewDate,
     viewMode = ViewMode.Day,
-    locale,
+    locale: clientLocale,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
+  const locale = useMemo(() => clientLocale ?? GANTT_EN_LOCALE, [clientLocale]);
   const theme = useMemo(() => buildGanttTheme(clientTheme), [clientTheme]);
   const { distances, dateFormats } = theme;
 
@@ -1584,7 +1586,12 @@ export const Gantt: React.FC<GanttProps> = props => {
       return contextMenuOptionsProp;
     }
 
-    return [cutOption, copyOption, pasteOption, deleteOption];
+    return [
+      createCutOption(locale),
+      createCopyOption(locale),
+      createPasteOption(locale),
+      createDeleteOption(locale),
+    ];
   }, [contextMenuOptionsProp]);
 
   /**

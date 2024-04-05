@@ -1,4 +1,4 @@
-export { copyOption } from './copy';
-export { cutOption } from './cut';
-export { deleteOption } from './delete';
-export { pasteOption } from './paste';
+export { createCopyOption } from './copy';
+export { createCutOption } from './cut';
+export { createDeleteOption } from './delete';
+export { createPasteOption } from './paste';

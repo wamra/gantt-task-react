@@ -1,21 +1,13 @@
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useContext,
-  useMemo,
-} from "react";
+import { createContext, FC, PropsWithChildren, useContext } from "react";
 import { GanttLocale } from "../../types/public-types";
-import { GANTT_EN_LOCALE } from "../../locales";
 
 const LocaleContext = createContext<GanttLocale>({} as GanttLocale);
 
 interface Props extends PropsWithChildren<any> {
-  locale: GanttLocale | undefined | null;
+  locale: GanttLocale;
 }
 
-export const GanttLocaleProvider: FC<Props> = ({ children, locale: clientLocale }) => {
-  const locale = useMemo(() => clientLocale ?? GANTT_EN_LOCALE, [clientLocale]);
+export const GanttLocaleProvider: FC<Props> = ({ children, locale }) => {
   return (
     // @ts-ignore
     <LocaleContext.Provider value={locale}>{children}</LocaleContext.Provider>
