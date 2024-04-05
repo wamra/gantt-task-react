@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { Comparison } from "./Comparison";
-import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 const Template = (props: any) => {

@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { CustomPalette } from "./CustomPalette";
-import React from "react";
 
 const Template = (props: any) => {
   return <CustomPalette {...props} />;

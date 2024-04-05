@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { CustomIcons } from "./CustomIcons";
-import React from "react";
 
 const Template = (props: any) => {
   return <CustomIcons {...props} />;

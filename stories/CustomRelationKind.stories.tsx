@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { CustomRelationKind } from "./CustomRelationKind";
-import React from "react";
 
 const Template = (props: any) => {
   return <CustomRelationKind {...props} />;

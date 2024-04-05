@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { CriticalPath } from "./CriticalPath";
-import React from "react";
 
 const Template = (props: any) => {
   return <CriticalPath {...props} />;

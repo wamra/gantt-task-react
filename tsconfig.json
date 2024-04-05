@@ -23,7 +23,7 @@
       "dom",
       "esnext"
     ],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,

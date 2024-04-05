@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { StressTest } from "./StressTest";
-import React from "react";
 
 const Template = (props: any) => {
   return <StressTest {...props} />;

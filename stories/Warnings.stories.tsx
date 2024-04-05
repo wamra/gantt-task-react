@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { Warnings } from "./Warnings";
-import React from "react";
 
 const Template = (props: any) => {
   return <Warnings {...props} />;

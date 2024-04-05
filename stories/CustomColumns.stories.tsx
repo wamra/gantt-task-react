@@ -1,7 +1,6 @@
 import { Gantt } from "../src";
 
 import { CustomColumns } from "./CustomColumns";
-import React from "react";
 
 const Template = (props: any) => {
   return <CustomColumns {...props} />;
