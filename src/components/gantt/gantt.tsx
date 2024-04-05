@@ -78,7 +78,7 @@ import {
   createCutOption,
   createDeleteOption,
   createPasteOption,
-} from "../../context-menu-options";
+} from "../context-menu-options";
 
 import { useHolidays } from "./use-holidays";
 

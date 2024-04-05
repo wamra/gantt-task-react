@@ -1,17 +1,12 @@
-import React, {
-  useCallback,
-} from "react";
+import React, { useCallback } from "react";
 
 import { ColumnProps } from "../../../types/public-types";
 
 import styles from "./edit-column.module.css";
+import { EditIcon } from "../../icons/edit-icon";
 
 export const EditColumn: React.FC<ColumnProps> = ({
-  data: {
-    handleEditTask,
-    icons,
-    task,
-  },
+  data: { handleEditTask, icons, task },
 }) => {
   const onClick = useCallback(() => {
     handleEditTask(task);
@@ -26,7 +21,7 @@ export const EditColumn: React.FC<ColumnProps> = ({
       onClick={onClick}
       className={styles.button}
     >
-      {icons?.renderEditIcon ? icons.renderEditIcon() : "✎"}
+      {icons?.renderEditIcon ? icons.renderEditIcon() : <EditIcon />}
     </button>
   );
 };

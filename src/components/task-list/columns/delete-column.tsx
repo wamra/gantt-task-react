@@ -3,6 +3,7 @@ import React, { useCallback } from "react";
 import { ColumnProps } from "../../../types/public-types";
 
 import styles from "./delete-column.module.css";
+import { DeleteIcon } from "../../icons/delete-icon";
 
 export const DeleteColumn: React.FC<ColumnProps> = ({
   data: { handleDeleteTasks, icons, task },
@@ -20,7 +21,7 @@ export const DeleteColumn: React.FC<ColumnProps> = ({
       onClick={onClick}
       className={styles.button}
     >
-      {icons?.renderDeleteIcon ? icons.renderDeleteIcon() : "-"}
+      {icons?.renderDeleteIcon ? icons.renderDeleteIcon() : <DeleteIcon />}
     </button>
   );
 };
