@@ -131,7 +131,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             width={columnWidth}
             x={additionalLeftSpace + i * columnWidth}
             y={0}
-            fill={'var(--gantt-holiday-background-color)'}
+            fill={'var(--gantt-calendar-holiday-color)'}
             key={i}
           />
         );
@@ -187,7 +187,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             y={Math.floor(index / comparisonLevels) * fullRowHeight}
             width="100%"
             height={fullRowHeight}
-            fill={'var(--gantt-selected-task-background-color)'}
+            fill={'var(--gantt-table-selected-task-background-color)'}
             key={taskId}
           />
         );

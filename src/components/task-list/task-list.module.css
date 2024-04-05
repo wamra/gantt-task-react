@@ -35,23 +35,28 @@
 .taskListResizer {
   position: absolute;
   top: 0;
-  right: -5px;
+  right: -3px;
   height: 100%;
-  width: 10px;
+  width: 6px;
   cursor: ew-resize;
   user-select: none;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .taskListResizer:hover {
-  /*noinspection CssUnresolvedCustomProperty*/
   background-color: var(--gantt-table-resize-hover-color);
+  filter: var(--gantt-hover-filter);
+}
+
+.taskListResizer:hover::before {
+  display: none;
 }
 
 .taskListResizer::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 4px;
+  left: 3px;
   height: 100%;
   width: 1px;
   /*noinspection CssUnresolvedCustomProperty*/

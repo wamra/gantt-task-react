@@ -186,7 +186,7 @@ const ArrowInner: React.FC<ArrowProps> = (props) => {
             y={toY}
             dependencyFixIndent={dependencyFixIndent}
             isLeft={rtl}
-            color="grey"
+            color={'var(--gantt-arrow-fix-color)'}
             width={dependencyFixWidth}
             height={dependencyFixHeight}
             handleFixPosition={fixDependencyTaskTo}
@@ -197,7 +197,7 @@ const ArrowInner: React.FC<ArrowProps> = (props) => {
             y={fromY}
             dependencyFixIndent={dependencyFixIndent}
             isLeft={!rtl}
-            color="grey"
+            color={'var(--gantt-arrow-fix-color)'}
             width={dependencyFixWidth}
             height={dependencyFixHeight}
             handleFixPosition={fixDependencyTaskFrom}

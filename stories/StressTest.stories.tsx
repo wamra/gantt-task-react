@@ -34,7 +34,7 @@ export default {
   },
 };
 
-export const StressTestGantss = {
+export const StressTestGantt = {
   render: Template.bind({}),
   name: "StressTest",
 };

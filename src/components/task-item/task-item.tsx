@@ -393,7 +393,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
               height={16}
               width={10}
               isLeft={outOfParentWarnings.start.isOutside !== rtl}
-              color="grey"
+              color={'var(--gantt-arrow-fix-color)'}
               handleFixWidth={handleFixStartPosition}
             />
           )}
@@ -405,7 +405,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
               height={16}
               width={10}
               isLeft={outOfParentWarnings.end.isOutside === rtl}
-              color="grey"
+              color={'var(--gantt-arrow-fix-color)'}
               handleFixWidth={handleFixEndPosition}
             />
           )}

@@ -99,8 +99,12 @@ export interface ShapeStyles {
 }
 
 export interface ColorStyles {
+  backgroundColor: string;
   arrowColor: string;
+  arrowFixColor: string;
+  arrowRelationColor: string;
   dividerColor: string;
+  hoverFilter: string;
 
   arrowCriticalColor: string;
   arrowWarningColor: string;
@@ -132,13 +136,13 @@ export interface ColorStyles {
   milestoneBackgroundCriticalColor: string;
   milestoneBackgroundSelectedColor: string;
   milestoneBackgroundSelectedCriticalColor: string;
-  evenTaskBackgroundColor: string;
-  holidayBackgroundColor: string;
-  taskDragColor: string;
-  taskDependencyHoverColor: string;
-  taskDependencyHoverFilter: string;
-  selectedTaskBackgroundColor: string;
-  todayColor: string;
+  tableEvenBackgroundColor: string;
+  calendarHolidayColor: string;
+  tableDragTaskBackgroundColor: string;
+  arrowHoverColor: string;
+
+  tableSelectedTaskBackgroundColor: string;
+  calendarTodayColor: string;
 
 
   contextMenuBoxShadow: string;

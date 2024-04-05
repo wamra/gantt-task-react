@@ -12,9 +12,14 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
   const ganttVariables = useMemo(() => {
     const { colors, typography, shape } = theme;
     return {
+      "--gantt-background-color": colors.backgroundColor,
       "--gantt-arrow-color": colors.arrowColor,
+      "--gantt-arrow-fix-color": colors.arrowFixColor,
+      "--gantt-arrow-relation-color": colors.arrowRelationColor,
+      "--gantt-arrow-hover-color": colors.arrowHoverColor,
       "--gantt-arrow-warning-color": colors.arrowWarningColor,
       "--gantt-arrow-critical-color": colors.arrowCriticalColor,
+      "--gantt-hover-filter": colors.hoverFilter,
 
       "--gantt-bar-progress-color": colors.barProgressColor,
       "--gantt-bar-progress-critical-color": colors.barProgressCriticalColor,
@@ -66,10 +71,7 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
         colors.milestoneBackgroundSelectedColor,
       "--gantt-milestone-background-color": colors.milestoneBackgroundColor,
 
-      "--gantt-selected-task-background-color": colors.selectedTaskBackgroundColor,
-      "--gantt-even-task-background-color": colors.evenTaskBackgroundColor,
-      "--gantt-holiday-background-color": colors.holidayBackgroundColor,
-      "--gantt-today-color": colors.todayColor,
+
 
       "--gantt-context-menu-bg-color": colors.contextMenuBgColor,
       "--gantt-context-menu-text-color": colors.contextMenuTextColor,
@@ -79,15 +81,16 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
 
       "--gantt-divider-color": colors.dividerColor,
 
+      "--gantt-table-selected-task-background-color": colors.tableSelectedTaskBackgroundColor,
       "--gantt-table-resize-hover-color": colors.tableResizeHoverColor,
       "--gantt-table-action-color": colors.tableActionColor,
+      "--gantt-table-even-background-color": colors.tableEvenBackgroundColor,
+      "--gantt-table-drag-task-background-color": colors.tableDragTaskBackgroundColor,
 
       "--gantt-scrollbar-thumb-color": colors.scrollbarThumbColor,
       "--gantt-calendar-stroke-color": colors.calendarStrokeColor,
-
-      "--gantt-task-drag-color": colors.taskDragColor,
-      "--gantt-task-dependency-hover-color": colors.taskDependencyHoverColor,
-      "--gantt-task-dependency-hover-filter": colors.taskDependencyHoverFilter,
+      "--gantt-calendar-holiday-color": colors.calendarHolidayColor,
+      "--gantt-calendar-today-color": colors.calendarTodayColor,
 
       "--gantt-primary-text-color": colors.primaryTextColor,
       "--gantt-secondary-text-color": colors.secondaryTextColor,

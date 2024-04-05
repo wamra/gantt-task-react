@@ -49,7 +49,7 @@ const GridBodyInner: React.FC<GridBodyProps> = ({
         y={0}
         width={columnWidth}
         height={ganttFullHeight}
-        fill={'var(--gantt-today-color)'}
+        fill={'var(--gantt-calendar-today-color)'}
       />
     );
   }, [

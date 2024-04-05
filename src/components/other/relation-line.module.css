@@ -1,5 +1,6 @@
 .relationLine {
-  stroke: grey;
+  /*noinspection CssUnresolvedCustomProperty*/
+  stroke: var(--gantt-arrow-relation-color);
   stroke-width: 2;
   stroke-dasharray: 4;
 }

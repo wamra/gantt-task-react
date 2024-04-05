@@ -193,16 +193,16 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
   });
 
   let backgroundColor = isSelected
-    ? 'var(--gantt-selected-task-background-color)'
+    ? 'var(--gantt-table-selected-task-background-color)'
     : isEven && !hoveringState.hoveringInside
-      ? 'var(--gantt-even-task-background-color)'
+      ? 'var(--gantt-table-even-background-color)'
       : undefined;
   if (
     hoveringState.hoveringInside &&
     !hoveringState.hoveringAfter &&
     !hoveringState.hoveringBefore
   ) {
-    backgroundColor = 'var(--gantt-task-drag-color)';
+    backgroundColor = 'var(--gantt-table-drag-task-background-color)';
   }
 
   const handleDragStart: React.DragEventHandler<HTMLDivElement> = (
@@ -367,10 +367,10 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         style={{
           left: dropPreviewOffset,
           backgroundColor: hoveringState.hoveringBefore
-            ? 'var(--gantt-task-drag-color)'
+            ? 'var(--gantt-table-drag-task-background-color)'
             : undefined,
           color: hoveringState.hoveringBefore
-            ? 'var(--gantt-task-drag-color)'
+            ? 'var(--gantt-table-drag-task-background-color)'
             : undefined,
         }}
         onDragEnter={event => {
@@ -400,9 +400,9 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         style={{
           left: dropPreviewOffset,
           backgroundColor: hoveringState.hoveringAfter
-            ? 'var(--gantt-task-drag-color)'
+            ? 'var(--gantt-table-drag-task-background-color)'
             : undefined,
-          color: hoveringState.hoveringAfter ? 'var(--gantt-task-drag-color)' : undefined,
+          color: hoveringState.hoveringAfter ? 'var(--gantt-table-drag-task-background-color)' : undefined,
         }}
         onDragEnter={() =>
           setHoveringState({
