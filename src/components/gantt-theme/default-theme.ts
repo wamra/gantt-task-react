@@ -46,11 +46,15 @@ export const DEFAULT_THEME: GanttTheme = {
     evenTaskBackgroundColor: "#f5f5f5",
     holidayBackgroundColor: "rgba(233, 233, 233, 0.3)",
     selectedTaskBackgroundColor: "rgba(252, 248, 227, 0.5)",
-    taskDragColor: "#7474ff",
+
     todayColor: "rgba(252, 248, 227, 0.5)",
     contextMenuBoxShadow: "rgb(0 0 0 / 25%) 1px 1px 5px 1px",
     contextMenuBgColor: "#fff",
     contextMenuTextColor: "inherit",
+
+    taskDragColor: "#7474ff",
+    taskDependencyHoverColor: "#7474ff",
+    taskDependencyHoverFilter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, .7))",
 
     tooltipBoxShadow: "0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)",
   },

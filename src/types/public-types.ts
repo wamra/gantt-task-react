@@ -129,6 +129,8 @@ export interface ColorStyles {
   evenTaskBackgroundColor: string;
   holidayBackgroundColor: string;
   taskDragColor: string;
+  taskDependencyHoverColor: string;
+  taskDependencyHoverFilter: string;
   selectedTaskBackgroundColor: string;
   todayColor: string;
   contextMenuBoxShadow: string;

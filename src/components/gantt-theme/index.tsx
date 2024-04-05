@@ -69,7 +69,6 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-selected-task-background-color": colors.selectedTaskBackgroundColor,
       "--gantt-even-task-background-color": colors.evenTaskBackgroundColor,
       "--gantt-holiday-background-color": colors.holidayBackgroundColor,
-      "--gantt-task-drag-color": colors.taskDragColor,
       "--gantt-today-color": colors.todayColor,
 
       "--gantt-context-menu-bg-color": colors.contextMenuBgColor,
@@ -83,11 +82,16 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-scrollbar-thumb-color": colors.scrollbarThumbColor,
       "--gantt-calendar-stroke-color": colors.calendarStrokeColor,
 
+      "--gantt-task-drag-color": colors.taskDragColor,
+      "--gantt-task-dependency-hover-color": colors.taskDependencyHoverColor,
+      "--gantt-task-dependency-hover-filter": colors.taskDependencyHoverFilter,
+
       "--gantt-primary-text-color": colors.primaryTextColor,
       "--gantt-secondary-text-color": colors.secondaryTextColor,
 
       "--gantt-font-family": typography.fontFamily,
       "--gantt-font-size": typography.fontSize,
+
 
     };
   }, [theme]);
