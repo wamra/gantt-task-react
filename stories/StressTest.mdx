@@ -1,0 +1,14 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as StressTestStories from './StressTest.stories';
+
+import { StressTest } from './StressTest';
+
+<Meta of={StressTestStories} />
+
+export const Template = (props) => {
+  return <StressTest {...props} />;
+}
+
+# Stress test example
+
+<Story of={StressTestStories.StressTest} />

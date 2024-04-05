@@ -73,10 +73,10 @@ export interface ExpandedDependent {
 
 export interface GanttTheme {
   rtl?: boolean;
-  colors: ColorStyles;
-  typography: TypographyStyles
-  distances: Distances
-  dateFormats: DateFormats
+  colors?: Partial<ColorStyles>;
+  typography?: Partial<TypographyStyles>
+  distances?: Partial<Distances>
+  dateFormats?: Partial<DateFormats>
 }
 
 export interface TypographyStyles {

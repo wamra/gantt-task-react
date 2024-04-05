@@ -1,0 +1,14 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as CustomColumnsStories from './CustomColumns.stories';
+
+import { CustomColumns } from './CustomColumns';
+
+<Meta of={CustomColumnsStories} />
+
+export const Template = (props) => {
+  return <CustomColumns {...props} />;
+}
+
+# Custom columns example
+
+<Story of={CustomColumnsStories.CustomColumns} />

@@ -54,6 +54,7 @@
     "@rollup/plugin-image": "3.0.3",
     "@storybook/addon-controls": "^8.0.6",
     "@storybook/addon-docs": "^8.0.6",
+    "@storybook/blocks": "^8.0.6",
     "@storybook/react-vite": "^8.0.6",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",

@@ -68,7 +68,9 @@ export const CustomIcons: React.FC<AppProps> = props => {
   return (
     <Gantt
       {...props}
-      distances={distances}
+      theme={{
+        distances
+      }}
       icons={icons}
       onAddTask={onAddTask}
       onChangeTasks={onChangeTasks}

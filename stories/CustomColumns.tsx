@@ -115,12 +115,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
     console.log("On Click event Id:" + task.id);
   }, []);
 
-  const [columnTypes, setColumnTypes] = useState<TaskListColumnEnum[]>([
-    TaskListColumnEnum.NAME,
-    TaskListColumnEnum.FROM,
-    TaskListColumnEnum.TO,
-    TaskListColumnEnum.PROGRESS,
-  ]);
+  
   const typeToColumn: Map<TaskListColumnEnum, Column> = getColumns(
     [
       TaskListColumnEnum.NAME,
@@ -133,35 +128,6 @@ export const CustomColumns: React.FC<AppProps> = props => {
   const [displayedColumns, setDisplayedColumns] = useState<Column[]>(
     Array.from(typeToColumn.values())
   );
-
-  const allMetaColumns = [
-    { type: TaskListColumnEnum.NAME, name: "Name" },
-    { type: TaskListColumnEnum.FROM, name: "From" },
-    { type: TaskListColumnEnum.TO, name: "To" },
-    { type: TaskListColumnEnum.PROGRESS, name: "Progress" },
-  ];
-
-  const handleChangeColumns = event => {
-    const columnTypes: TaskListColumnEnum[] = event.target.value;
-    const newMetaColumns = allMetaColumns.filter(col =>
-      columnTypes.includes(col.type)
-    );
-    setColumnTypes(newMetaColumns.map(col => col.type));
-
-    const newDisplayedColumns: Column[] = [];
-
-    newMetaColumns.forEach(metaColumn => {
-      let column = displayedColumns.find(col => col.id == metaColumn.type);
-      if (!column) {
-        column = typeToColumn.get(metaColumn.type);
-      }
-      if (column) {
-        newDisplayedColumns.push(column);
-      }
-    });
-
-    setDisplayedColumns(newDisplayedColumns);
-  };
 
   const onResizeColumn: OnResizeColumn = (newColumns: readonly Column[]) => {
     setDisplayedColumns(() => {

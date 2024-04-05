@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 
 import {
-  ColumnProps,
   Gantt,
   OnChangeTasks,
   Task,
@@ -12,7 +11,6 @@ import {
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
-import styles from "./CustomPalette.module.css";
 
 type AppProps = {
   ganttHeight?: number;
@@ -66,24 +64,8 @@ export const CustomPalette: React.FC<AppProps> = props => {
     console.log("On Click event Id:" + task.id);
   }, []);
 
-  const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
-    if (task.type === "project" || task.type === "task") {
-      return <>{task.progress}%</>;
-    }
-
-    return null;
-  };
-
-  const handleTaskDelete = (task: Task) => {
-    const conf = window.confirm("Are you sure about " + task.name + " ?");
-    if (conf) {
-      setTasks(tasks.filter(t => t.id !== task.id));
-    }
-    return conf;
-  };
-
   const handleWheel = (wheelEvent: WheelEvent) => {
-    const deltaY = wheelEvent.deltaY;
+    const deltaY = (wheelEvent as any).deltaY;
 
     if (deltaY < 0 && viewMode !== ViewMode.Hour) {
       const currentIndex = Object.values(ViewMode).indexOf(viewMode);

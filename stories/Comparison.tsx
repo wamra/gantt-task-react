@@ -17,7 +17,7 @@ export const Comparison: React.FC<AppProps> = props => {
     const secondLevelTasks = firstLevelTasks.map<Task>(task => ({
       ...task,
       comparisonLevel: 2,
-    }));
+    } as Task));
 
     return [...firstLevelTasks, ...secondLevelTasks];
   });

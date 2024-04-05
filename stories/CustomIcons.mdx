@@ -1,0 +1,14 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as CustomIconsStories from './CustomIcons.stories';
+
+import { CustomIcons } from './CustomIcons';
+
+<Meta of={CustomIconsStories} />
+
+export const Template = (props) => {
+  return <CustomIcons {...props} />;
+}
+
+# Custom шcons example
+
+<Story of={CustomIconsStories.CustomIcons} />

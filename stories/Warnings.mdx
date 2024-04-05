@@ -1,0 +1,14 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as WarningsStories from './Warnings.stories';
+
+import { Warnings } from './Warnings';
+
+<Meta of={WarningsStories} />
+
+export const Template = (props) => {
+  return <Warnings {...props} />;
+}
+
+# Warnings example
+
+<Story of={WarningsStories.Warnings} />

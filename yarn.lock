@@ -1779,7 +1779,7 @@
     rehype-slug "^6.0.0"
     ts-dedent "^2.0.0"
 
-"@storybook/blocks@8.0.6":
+"@storybook/blocks@8.0.6", "@storybook/blocks@^8.0.6":
   version "8.0.6"
   resolved "https://registry.yarnpkg.com/@storybook/blocks/-/blocks-8.0.6.tgz#73da4c16290aa8d4c39aeb86fc69aebfa967bf42"
   integrity sha512-ycuPJwxyngSor4YNa4kkX3rAmX+w2pXNsIo+Zs4fEdAfCvha9+GZ/3jQSdrsHxjeIm9l9guiv4Ag8QTnnllXkw==

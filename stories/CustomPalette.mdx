@@ -1,0 +1,16 @@
+import { Meta, Story } from "@storybook/blocks";
+import * as CustomPaletteStories from './CustomPalette.stories';
+
+import { Gantt } from "../src";
+
+import { CustomPalette } from "./CustomPalette";
+
+<Meta of={CustomPaletteStories} />
+
+export const Template = props => {
+  return <CustomPalette {...props} />;
+};
+
+# CustomPalette example
+
+<Story of={CustomPaletteStories.CustomPalette} />

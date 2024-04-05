@@ -1,0 +1,14 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as ComparisonStories from './Comparison.stories';
+
+import { Comparison } from './Comparison';
+
+<Meta of={ComparisonStories} />
+
+export const Template = (props) => {
+  return <Comparison {...props} />;
+}
+
+# Comparison example
+
+<Story of={ComparisonStories.Comparison} />

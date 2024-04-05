@@ -47,7 +47,6 @@ export const Warnings: React.FC<AppProps> = props => {
 
   return (
     <Gantt
-      isRecountParentsOnChange={false}
       isShowChildOutOfParentWarnings
       isShowDependencyWarnings
       {...props}

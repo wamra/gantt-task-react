@@ -1,0 +1,14 @@
+import { Meta, Story } from '@storybook/blocks';
+import * as CriticalPathStories from './CriticalPath.stories';
+
+import { CriticalPath } from './CriticalPath';
+
+<Meta of={CriticalPathStories} />
+
+export const Template = (props) => {
+  return <CriticalPath {...props} />;
+}
+
+# Critical path example
+
+<Story of={CriticalPathStories.CriticalPath} />

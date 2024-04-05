@@ -1,0 +1,14 @@
+import { Meta, Story } from "@storybook/blocks";
+import * as CustomRelationKindStories from './CustomRelationKind.stories';
+
+import { CustomRelationKind } from "./CustomRelationKind";
+
+<Meta of={CustomRelationKindStories} />
+
+export const Template = props => {
+  return <CustomRelationKind {...props} />;
+};
+
+# CustomRelationKind example
+
+<Story of={CustomRelationKindStories.CustomRelationKind} />
