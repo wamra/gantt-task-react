@@ -84,7 +84,7 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
         handleCloseContextMenu()
       }
     },
-    strategy: 'fixed',
+    strategy: 'absolute',
     placement: "bottom-start",
     middleware: [flip(), shift()],
     whileElementsMounted: autoUpdate,
@@ -144,8 +144,11 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
             width: "max-content",
             backgroundColor: 'var(--gantt-context-menu-bg-color)',
             boxShadow: 'var(--gantt-context-menu-box-shadow)',
+            borderRadius: 'var(--gantt-shape-border-radius)',
+            fontFamily: 'var(--gantt-font-family)',
             display: 'flex',
             flexDirection: 'column',
+            overflow: 'hidden',
             gap: 6,
             zIndex: 1,
           }}

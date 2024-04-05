@@ -1,3 +1,4 @@
+/*noinspection CssUnresolvedCustomProperty*/
 .menuOption {
   display: flex;
   align-items: center;
@@ -12,6 +13,12 @@
   padding-inline: unset;
   min-height: 36px;
   z-index: 1;
+  fill: var(--gantt-table-action-color);
+}
+
+.menuOption svg {
+  width: 20px;
+  height: 20px;
 }
 
 .menuOption:hover {

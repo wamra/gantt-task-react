@@ -2,6 +2,9 @@ import {GanttTheme} from "../../types/public-types";
 
 export const DEFAULT_THEME: GanttTheme = {
   rtl: false,
+  shape: {
+    borderRadius: '8px'
+  },
   colors: {
     arrowColor: "grey",
     dividerColor: "#e6e4e4",

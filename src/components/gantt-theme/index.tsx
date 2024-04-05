@@ -10,7 +10,7 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
   theme,
 }) => {
   const ganttVariables = useMemo(() => {
-    const { colors, typography } = theme;
+    const { colors, typography, shape } = theme;
     return {
       "--gantt-arrow-color": colors.arrowColor,
       "--gantt-arrow-warning-color": colors.arrowWarningColor,
@@ -94,6 +94,8 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
 
       "--gantt-font-family": typography.fontFamily,
       "--gantt-font-size": typography.fontSize,
+
+      "--gantt-shape-border-radius": shape.borderRadius,
 
 
     };

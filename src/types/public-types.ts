@@ -74,6 +74,7 @@ export interface ExpandedDependent {
 export interface GanttPartialTheme {
   rtl?: boolean;
   colors?: Partial<ColorStyles>;
+  shape?: Partial<ShapeStyles>;
   typography?: Partial<TypographyStyles>;
   distances?: Partial<Distances>;
   dateFormats?: Partial<DateFormats>;
@@ -82,6 +83,7 @@ export interface GanttPartialTheme {
 export interface GanttTheme {
   rtl?: boolean;
   colors: ColorStyles;
+  shape: ShapeStyles;
   typography: TypographyStyles;
   distances: Distances;
   dateFormats: DateFormats;
@@ -90,6 +92,10 @@ export interface GanttTheme {
 export interface TypographyStyles {
   fontFamily: string;
   fontSize: string;
+}
+
+export interface ShapeStyles {
+  borderRadius: string;
 }
 
 export interface ColorStyles {
@@ -133,11 +139,13 @@ export interface ColorStyles {
   taskDependencyHoverFilter: string;
   selectedTaskBackgroundColor: string;
   todayColor: string;
+
+
   contextMenuBoxShadow: string;
   contextMenuBgColor: string;
   contextMenuTextColor: string;
-
   tooltipBoxShadow: string;
+
 
   tableActionColor: string;
   tableResizeHoverColor: string;

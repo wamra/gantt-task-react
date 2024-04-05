@@ -92,7 +92,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
 
   const onRootMouseDown = useCallback(
     (event: MouseEvent) => {
-      event.preventDefault();
+      // event.preventDefault();
       if (event.button !== 0) {
         return;
       }
@@ -109,7 +109,6 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
 
   const onContextMenu = useCallback(
     (event: MouseEvent) => {
-      console.log('onContextMenu', event)
       event.preventDefault();
       if (event.ctrlKey) {
         return;

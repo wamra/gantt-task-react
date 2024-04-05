@@ -1,8 +1,9 @@
+/*noinspection CssUnresolvedCustomProperty*/
 .tooltipDefaultContainer {
   background: #fff;
   padding: 12px;
-  /*noinspection CssUnresolvedCustomProperty*/
   box-shadow: var(--gant--tooltip-box-shadow);
+  border-radius: var(--gantt-shape-border-radius);
 }
 
 .tooltipDefaultContainerParagraph {
