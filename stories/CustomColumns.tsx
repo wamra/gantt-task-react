@@ -15,8 +15,6 @@ import {
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
-import "../dist/style.css";
-
 const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   if (task.type === "project" || task.type === "task") {
     return <>{task.progress}%</>;

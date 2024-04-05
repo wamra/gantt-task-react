@@ -6,8 +6,6 @@ import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
 
 import { onAddTask, onEditTask } from "./helper";
 
-import "../dist/style.css";
-
 // 4 * ()
 
 type AppProps = {

@@ -36,7 +36,8 @@
     "test:watch": "react-scripts test --env=jsdom",
     "predeploy": "yarn storybook build",
     "deploy-storybook": "gh-pages -d storybook-static",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "dependencies": {
     "@floating-ui/dom": "1.6.3",
@@ -68,6 +69,7 @@
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.24",
     "@vitejs/plugin-react": "4.2.1",
+    "chromatic": "^11.3.0",
     "cross-env": "^7.0.3",
     "doctrine": "^3.0.0",
     "gh-pages": "^6.1.1",
@@ -84,6 +86,7 @@
     "storybook": "^8.0.6",
     "typescript": "^5.1.6",
     "vite": "5.2.8",
+    "vite-plugin-turbosnap": "^1.0.3",
     "vitest": "1.4.0"
   },
   "files": [

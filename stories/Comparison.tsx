@@ -4,8 +4,6 @@ import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
-import "../dist/style.css";
-
 type AppProps = {
   ganttHeight?: number;
 };

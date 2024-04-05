@@ -1,20 +1,18 @@
-# gantt-task-react
+# kvandake-gantt-task-react
 
 ## Interactive Gantt Chart for React with TypeScript.
 
-![example](https://user-images.githubusercontent.com/26743903/88215863-f35d5f00-cc64-11ea-81db-e829e6e9b5c8.png)
-
-## [Live Demo](https://matematuk.github.io/gantt-task-react/)
+## [Live Demo In Storybook](https://661071b076b50cb537c16c19-fzycyfgbid.chromatic.com/)
 
 ## Install
 
 ```
-npm install gantt-task-react
+npm install kvandake-gantt-task-react
 ```
 
 ## How to use it
 
-```javascript
+```ts
 import { Gantt, Task, EventOption, StylingOption, ViewMode, DisplayOption } from 'gantt-task-react';
 import "gantt-task-react/dist/index.css";
 
@@ -36,7 +34,7 @@ let tasks: Task[] = [
 
 You may handle actions
 
-```javascript
+```ts
 <Gantt
   tasks={tasks}
   viewMode={view}
@@ -50,10 +48,8 @@ You may handle actions
 
 ## How to run example
 
-```
-cd ./example
-npm install
-npm start
+```shell
+yarn storebook
 ```
 
 ## Gantt Configuration
@@ -150,4 +146,4 @@ npm start
 
 ## License
 
-[MIT](https://oss.ninja/mit/jaredpalmer/)
+[MIT](./LICENSE)

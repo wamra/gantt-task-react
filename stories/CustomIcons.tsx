@@ -11,8 +11,6 @@ import {
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
-import "../dist/style.css";
-
 const icons: Icons = {
   renderAddIcon: () => <>➕</>,
   renderClosedIcon: () => <>📁</>,

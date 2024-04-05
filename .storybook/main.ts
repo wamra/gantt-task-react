@@ -1,6 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
-import { mergeConfig } from "vite";
-import path from "path";
+import { withoutVitePlugins } from "@storybook/builder-vite";
 
 const config: StorybookConfig = {
   stories: ["../stories/*.mdx", "../stories/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -16,14 +15,10 @@ const config: StorybookConfig = {
     options: {},
   },
   async viteFinal(config) {
-    return mergeConfig(config, {
-      base: "../",
-      resolve: {
-        alias: {
-          assert: path.resolve(__dirname, './assert_fallback.cjs'),
-        },
-      },
-    });
+    return {
+      ...config,
+      plugins: await withoutVitePlugins(config.plugins, ["peer-deps-external"]),
+    };
   },
   docs: {
     autodocs: "tag",

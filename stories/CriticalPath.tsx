@@ -6,8 +6,6 @@ import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
 
 import { onAddTask, onEditTask } from "./helper";
 
-import "../dist/style.css";
-
 const NUMBER_OF_SUBTASKS = 6;
 
 type AppProps = {

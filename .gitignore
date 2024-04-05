@@ -36,5 +36,6 @@ storybook-static
 .idea
 .vscode
 .yarn
+build-storybook
 
 *storybook.log
