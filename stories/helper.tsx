@@ -184,9 +184,11 @@ export const getTaskFields = (initialValues: {
   start?: Date | null;
   end?: Date | null;
 }) => {
+  // @ts-ignore
   const name = prompt("Name", initialValues.name);
 
   const startDateStr =
+    // @ts-ignore
     prompt(
       "Start date",
       initialValues.start ? format(initialValues.start, dateFormat) : ""
@@ -195,6 +197,7 @@ export const getTaskFields = (initialValues: {
   const startDate = startOfMinute(parse(startDateStr, dateFormat, new Date()));
 
   const endDateStr =
+    // @ts-ignore
     prompt(
       "End date",
       initialValues.end ? format(initialValues.end, dateFormat) : ""
@@ -226,7 +229,7 @@ export const onAddTask = (parentTask: Task) => {
           name: taskFields.name || "",
           progress: 0,
           parent: parentTask.id,
-          styles: parentTask.styles,
+          style: parentTask.style,
         }
       : {
           type: "empty",
@@ -234,7 +237,6 @@ export const onAddTask = (parentTask: Task) => {
           id: String(Date.now()),
           name: taskFields.name || "",
           parent: parentTask.id,
-          styles: parentTask.styles,
         };
 
   return Promise.resolve(nextTask);
@@ -260,7 +262,6 @@ export const onEditTask = (task: TaskOrEmpty) => {
             progress: task.type === "empty" ? 0 : task.progress,
             dependencies: task.type === "empty" ? undefined : task.dependencies,
             parent: task.parent,
-            styles: task.styles,
             isDisabled: task.isDisabled,
           }
         : {
@@ -269,7 +270,6 @@ export const onEditTask = (task: TaskOrEmpty) => {
             id: task.id,
             name: taskFields.name || task.name,
             parent: task.parent,
-            styles: task.styles,
             isDisabled: task.isDisabled,
           }
       : {

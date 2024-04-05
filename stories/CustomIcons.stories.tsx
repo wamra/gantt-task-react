@@ -1,17 +1,22 @@
 import { Gantt } from "../src";
 
 import { CustomIcons } from "./CustomIcons";
+import React from "react";
 
-const Template = props => {
+const Template = (props: any) => {
   return <CustomIcons {...props} />;
 };
 
 export default {
   title: "CustomIcons",
   component: Gantt,
+  parameters: {
+    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
+    layout: 'fullscreen',
+  },
 };
 
-export const CustomIcons = {
+export const CustomIconsGantt = {
   render: Template.bind({}),
   name: "CustomIcons",
 };

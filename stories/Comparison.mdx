@@ -6,9 +6,11 @@ import { Comparison } from './Comparison';
 <Meta of={ComparisonStories} />
 
 export const Template = (props) => {
-  return <Comparison {...props} />;
+  return (
+    <Comparison {...props} />
+  );
 }
 
 # Comparison example
 
-<Story of={ComparisonStories.Comparison} />
+<Story of={ComparisonStories.ComparisonGantt} />

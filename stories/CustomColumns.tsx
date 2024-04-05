@@ -87,6 +87,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
     switch (action.type) {
       case "delete_relation":
         if (
+          // @ts-ignore
           window.confirm(
             `Do yo want to remove relation between ${action.payload.taskFrom.name} and ${action.payload.taskTo.name}?`
           )
@@ -96,6 +97,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
         break;
 
       case "delete_task":
+        // @ts-ignore
         if (window.confirm("Are you sure?")) {
           setTasks(nextTasks);
         }
@@ -108,6 +110,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
   }, []);
 
   const handleDblClick = useCallback((task: Task) => {
+    // @ts-ignore
     alert("On Double Click event Id:" + task.id);
   }, []);
 
@@ -115,7 +118,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
     console.log("On Click event Id:" + task.id);
   }, []);
 
-  
+
   const typeToColumn: Map<TaskListColumnEnum, Column> = getColumns(
     [
       TaskListColumnEnum.NAME,

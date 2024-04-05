@@ -3,7 +3,7 @@
     /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "target": "es6",
+    "target": "ES2019",
     "verbatimModuleSyntax": false,
     "allowJs": true,
     "resolveJsonModule": true,
@@ -23,7 +23,7 @@
       "dom",
       "esnext"
     ],
-    "jsx": "react-jsx",
+    "jsx": "react",
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,

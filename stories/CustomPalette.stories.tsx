@@ -1,17 +1,22 @@
 import { Gantt } from "../src";
 
 import { CustomPalette } from "./CustomPalette";
+import React from "react";
 
-const Template = props => {
+const Template = (props: any) => {
   return <CustomPalette {...props} />;
 };
 
 export default {
   title: "CustomPalette",
   component: Gantt,
+  parameters: {
+    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
+    layout: 'fullscreen',
+  },
 };
 
-export const CustomPalette = {
+export const CustomPaletteGantt = {
   render: Template.bind({}),
   name: "CustomPalette",
 };
