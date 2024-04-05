@@ -86,6 +86,7 @@ import { useHolidays } from "./use-holidays";
 
 import styles from "./gantt.module.css";
 import { GanttThemeProvider, buildGanttTheme } from "../gantt-theme";
+import { GanttLocaleProvider } from "../gantt-locale";
 
 export const Gantt: React.FC<GanttProps> = props => {
   const {
@@ -150,6 +151,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     timeStep = 300000,
     viewDate,
     viewMode = ViewMode.Day,
+    locale,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1832,65 +1834,67 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   return (
     <GanttThemeProvider theme={theme}>
-      <div
-        className={`${styles.wrapper} gantt`}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        ref={wrapperRef}
-        data-testid={`gantt-main`}
-      >
-        {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
-        {(!columnsProp || columnsProp.length > 0) && (
-          <TaskList {...tableProps} />
-        )}
+      <GanttLocaleProvider locale={locale}>
+        <div
+          className={`${styles.wrapper} gantt`}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+          ref={wrapperRef}
+          data-testid={`gantt-main`}
+        >
+          {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
+          {(!columnsProp || columnsProp.length > 0) && (
+            <TaskList {...tableProps} />
+          )}
 
-        <TaskGantt
-          barProps={barProps}
-          calendarProps={calendarProps}
-          fullRowHeight={fullRowHeight}
-          fullSvgWidth={fullSvgWidth}
-          ganttFullHeight={ganttFullHeight}
-          ganttHeight={ganttHeight}
-          ganttSVGRef={ganttSVGRef}
-          gridProps={gridProps}
-          horizontalContainerRef={horizontalContainerRef}
-          onVerticalScrollbarScrollX={onVerticalScrollbarScrollX}
-          verticalGanttContainerRef={verticalGanttContainerRef}
-        />
-
-        {tooltipTaskFromMap && (
-          <Tooltip
-            tooltipX={tooltipX}
-            tooltipY={tooltipY}
-            tooltipStrategy={tooltipStrategy}
-            setFloatingRef={setFloatingRef}
-            getFloatingProps={getFloatingProps}
-            task={tooltipTaskFromMap}
-            TooltipContent={TooltipContent}
+          <TaskGantt
+            barProps={barProps}
+            calendarProps={calendarProps}
+            fullRowHeight={fullRowHeight}
+            fullSvgWidth={fullSvgWidth}
+            ganttFullHeight={ganttFullHeight}
+            ganttHeight={ganttHeight}
+            ganttSVGRef={ganttSVGRef}
+            gridProps={gridProps}
+            horizontalContainerRef={horizontalContainerRef}
+            onVerticalScrollbarScrollX={onVerticalScrollbarScrollX}
+            verticalGanttContainerRef={verticalGanttContainerRef}
           />
-        )}
 
-        <VerticalScroll
-          ganttFullHeight={ganttFullHeight}
-          ganttHeight={ganttHeight}
-          headerHeight={distances.headerHeight}
-          isChangeInProgress={Boolean(changeInProgress)}
-          onScroll={onVerticalScrollbarScrollY}
-          rtl={rtl}
-          verticalScrollbarRef={verticalScrollbarRef}
-        />
-        {enableTableListContextMenu && (
-          <ContextMenu
-            checkHasCopyTasks={checkHasCopyTasks}
-            checkHasCutTasks={checkHasCutTasks}
-            contextMenu={contextMenu}
-            distances={distances}
-            handleAction={handleAction}
-            handleCloseContextMenu={handleCloseContextMenu}
-            options={contextMenuOptions}
+          {tooltipTaskFromMap && (
+            <Tooltip
+              tooltipX={tooltipX}
+              tooltipY={tooltipY}
+              tooltipStrategy={tooltipStrategy}
+              setFloatingRef={setFloatingRef}
+              getFloatingProps={getFloatingProps}
+              task={tooltipTaskFromMap}
+              TooltipContent={TooltipContent}
+            />
+          )}
+
+          <VerticalScroll
+            ganttFullHeight={ganttFullHeight}
+            ganttHeight={ganttHeight}
+            headerHeight={distances.headerHeight}
+            isChangeInProgress={Boolean(changeInProgress)}
+            onScroll={onVerticalScrollbarScrollY}
+            rtl={rtl}
+            verticalScrollbarRef={verticalScrollbarRef}
           />
-        )}
-      </div>
+          {enableTableListContextMenu && (
+            <ContextMenu
+              checkHasCopyTasks={checkHasCopyTasks}
+              checkHasCutTasks={checkHasCutTasks}
+              contextMenu={contextMenu}
+              distances={distances}
+              handleAction={handleAction}
+              handleCloseContextMenu={handleCloseContextMenu}
+              options={contextMenuOptions}
+            />
+          )}
+        </div>
+      </GanttLocaleProvider>
     </GanttThemeProvider>
   );
 };

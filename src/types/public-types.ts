@@ -81,7 +81,6 @@ export interface GanttTheme {
 export interface TypographyStyles {
   fontFamily: string;
   fontSize: string;
-  rtl?: boolean;
 }
 
 export interface ColorStyles {
@@ -523,6 +522,7 @@ export interface StylingOption {
   canMoveTasks?: boolean;
   canResizeColumns?: boolean;
   theme?: GanttTheme;
+  locale?: GanttLocale;
   icons?: Partial<Icons>;
   columns?: readonly Column[];
   onResizeColumn?: OnResizeColumn;
@@ -553,6 +553,15 @@ export interface StylingOption {
    */
   roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
   ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+}
+
+export interface GanttLocale {
+  context: {
+    copy: string;
+    cut: string;
+    paste: string;
+    delete: string;
+  }
 }
 
 export interface TaskContextualPaletteProps {
