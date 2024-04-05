@@ -17,7 +17,6 @@ import {
   ChildOutOfParentWarnings,
   FixPosition,
   Task,
-  ColorStyles,
   TaskOrEmpty,
   Distances,
   RelationKind,
@@ -68,14 +67,11 @@ export type TaskItemProps = {
   fixStartPosition?: FixPosition;
   fixEndPosition?: FixPosition;
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
-  colorStyles: ColorStyles;
 };
 
 const TaskItemInner: React.FC<TaskItemProps> = props => {
   const {
     childOutOfParentWarnings,
-    colorStyles: stylesProp,
-
     distances: {
       arrowIndent,
       handleWidth,
@@ -101,10 +97,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     rtl,
     selectTaskOnMouseDown,
     setTooltipTask,
-
     task,
-    task: { styles: taskStyles },
-
     taskHalfHeight,
     taskHeight,
     taskYOffset,
@@ -114,17 +107,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   } = props;
 
   const taskRootRef = useRef<SVGGElement>(null);
-
-  const styles = useMemo(() => {
-    if (taskStyles) {
-      return {
-        ...stylesProp,
-        ...taskStyles,
-      };
-    }
-
-    return stylesProp;
-  }, [taskStyles, stylesProp]);
 
   const outOfParentWarnings = useMemo(() => {
     if (!childOutOfParentWarnings) {
@@ -284,7 +266,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       return (
         <Milestone
           {...props}
-          colorStyles={styles}
           onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
@@ -296,7 +277,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       return (
         <BarSmall
           {...props}
-          colorStyles={styles}
           onTaskEventStart={onTaskEventStart}
         />
       );
@@ -307,7 +287,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
-          colorStyles={styles}
         >
           {relationhandles}
         </Bar>
@@ -317,7 +296,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     isSelected,
     outOfParentWarnings,
     props,
-    styles,
     task,
     width,
   ]);

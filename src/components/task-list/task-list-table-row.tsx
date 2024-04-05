@@ -2,7 +2,6 @@ import React, {memo, useCallback, useMemo, useState} from "react";
 import type {CSSProperties, MouseEvent} from "react";
 
 import {
-  ColorStyles,
   Column,
   ColumnData,
   DateSetup,
@@ -17,7 +16,6 @@ import styles from "./task-list-table-row.module.css";
 
 type TaskListTableRowProps = {
   canMoveTasks: boolean;
-  colors: ColorStyles;
   columns: readonly Column[];
   dateSetup: DateSetup;
   dependencyMap: DependencyMap;
@@ -58,7 +56,6 @@ type TaskListTableRowProps = {
 const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
   const {
     canMoveTasks,
-    colors,
     columns,
     dateSetup,
     dependencyMap,
@@ -196,16 +193,16 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
   });
 
   let backgroundColor = isSelected
-    ? colors.selectedTaskBackgroundColor
+    ? 'var(--gantt-selected-task-background-color)'
     : isEven && !hoveringState.hoveringInside
-      ? colors.evenTaskBackgroundColor
+      ? 'var(--gantt-even-task-background-color)'
       : undefined;
   if (
     hoveringState.hoveringInside &&
     !hoveringState.hoveringAfter &&
     !hoveringState.hoveringBefore
   ) {
-    backgroundColor = colors.taskDragColor;
+    backgroundColor = 'var(--gantt-task-drag-color)';
   }
 
   const handleDragStart: React.DragEventHandler<HTMLDivElement> = (
@@ -370,10 +367,10 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         style={{
           left: dropPreviewOffset,
           backgroundColor: hoveringState.hoveringBefore
-            ? colors.taskDragColor
+            ? 'var(--gantt-task-drag-color)'
             : undefined,
           color: hoveringState.hoveringBefore
-            ? colors.taskDragColor
+            ? 'var(--gantt-task-drag-color)'
             : undefined,
         }}
         onDragEnter={event => {
@@ -403,9 +400,9 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         style={{
           left: dropPreviewOffset,
           backgroundColor: hoveringState.hoveringAfter
-            ? colors.taskDragColor
+            ? 'var(--gantt-task-drag-color)'
             : undefined,
-          color: hoveringState.hoveringAfter ? colors.taskDragColor : undefined,
+          color: hoveringState.hoveringAfter ? 'var(--gantt-task-drag-color)' : undefined,
         }}
         onDragEnter={() =>
           setHoveringState({

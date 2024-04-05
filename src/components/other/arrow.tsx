@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, {memo, useCallback, useMemo} from "react";
 
-import { ColorStyles, Distances, Task } from "../../types/public-types";
-import { RelationMoveTarget } from "../../types/gantt-task-actions";
-import { generateTrianglePoints } from "../../helpers/generate-triangle-points";
+import {Distances, Task} from "../../types/public-types";
+import {RelationMoveTarget} from "../../types/gantt-task-actions";
+import {generateTrianglePoints} from "../../helpers/generate-triangle-points";
 import {
   FixDependencyPosition,
   fixPositionContainerClass,
@@ -11,7 +11,6 @@ import {
 import styles from "./arrow.module.css";
 
 type ArrowProps = {
-  colorStyles: ColorStyles;
   distances: Distances;
   taskFrom: Task;
   targetFrom: RelationMoveTarget;
@@ -33,35 +32,33 @@ type ArrowProps = {
   handleFixDependency: (task: Task, delta: number) => void;
 };
 
-const ArrowInner: React.FC<ArrowProps> = ({
-  colorStyles: { arrowColor, arrowWarningColor, arrowCriticalColor },
-
-  distances: {
-    arrowIndent,
-    dependencyFixWidth,
-    dependencyFixHeight,
-    dependencyFixIndent,
-  },
-
-  taskFrom,
-  targetFrom,
-  fromX1,
-  fromX2,
-  fromY,
-  taskTo,
-  targetTo,
-  toX1,
-  toX2,
-  toY,
-  marginBetweenTasks = undefined,
-  fullRowHeight,
-  taskHeight,
-  isShowDependencyWarnings,
-  isCritical,
-  rtl,
-  onArrowDoubleClick = undefined,
-  handleFixDependency,
-}) => {
+const ArrowInner: React.FC<ArrowProps> = (props) => {
+  const {
+    distances: {
+      arrowIndent,
+      dependencyFixWidth,
+      dependencyFixHeight,
+      dependencyFixIndent,
+    },
+    taskFrom,
+    targetFrom,
+    fromX1,
+    fromX2,
+    fromY,
+    taskTo,
+    targetTo,
+    toX1,
+    toX2,
+    toY,
+    marginBetweenTasks = undefined,
+    fullRowHeight,
+    taskHeight,
+    isShowDependencyWarnings,
+    isCritical,
+    rtl,
+    onArrowDoubleClick = undefined,
+    handleFixDependency,
+  } = props;
   const indexFrom = useMemo(
     () => Math.floor(fromY / fullRowHeight),
     [fromY, fullRowHeight]
@@ -158,21 +155,15 @@ const ArrowInner: React.FC<ArrowProps> = ({
 
   const color = useMemo(() => {
     if (isCritical) {
-      return arrowCriticalColor;
+      return 'var(--gantt-arrow-critical-color)';
     }
 
     if (hasWarning) {
-      return arrowWarningColor;
+      return 'var(--gantt-arrow-warning-color)';
     }
 
-    return arrowColor;
-  }, [
-    hasWarning,
-    isCritical,
-    arrowColor,
-    arrowCriticalColor,
-    arrowWarningColor,
-  ]);
+    return 'var(--gantt-arrow-color)';
+  }, [hasWarning, isCritical,]);
 
   return (
     <g className={fixPositionContainerClass} fill={color} stroke={color}>
@@ -181,11 +172,11 @@ const ArrowInner: React.FC<ArrowProps> = ({
         className={`"arrow" ${styles.arrow_clickable}`}
         onDoubleClick={onDoubleClick}
       >
-        {onArrowDoubleClick && <path d={path} className={styles.clickZone} />}
+        {onArrowDoubleClick && <path d={path} className={styles.clickZone}/>}
 
-        <path className={styles.mainPath} d={path} />
+        <path className={styles.mainPath} d={path}/>
 
-        <polygon points={trianglePoints} />
+        <polygon points={trianglePoints}/>
       </g>
 
       {hasWarning && (

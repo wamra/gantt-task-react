@@ -1,8 +1,7 @@
-import { useCallback } from "react";
-import type { ReactElement } from "react";
+import {useCallback} from "react";
+import type {ReactElement} from "react";
 
 import type {
-  ColorStyles,
   ContextMenuOptionType,
   Distances,
 } from "../../types/public-types";
@@ -11,25 +10,22 @@ import styles from "./menu-option.module.css";
 import React from "react";
 
 type MenuOptionProps = {
-  colors: ColorStyles;
   distances: Distances;
   handleAction: (option: ContextMenuOptionType) => void;
   option: ContextMenuOptionType;
 };
 
-export function MenuOption({
-  colors: { contextMenuTextColor },
-
-  distances: {
-    contextMenuIconWidth,
-    contextMenuOptionHeight,
-    contextMenuSidePadding,
-  },
-  handleAction,
-
-  option,
-  option: { icon, label },
-}: MenuOptionProps): ReactElement {
+export function MenuOption(props: MenuOptionProps): ReactElement {
+  const {
+    distances: {
+      contextMenuIconWidth,
+      contextMenuOptionHeight,
+      contextMenuSidePadding,
+    },
+    handleAction,
+    option,
+    option: {icon, label},
+  } = props;
   const onClick = useCallback(() => {
     handleAction(option);
   }, [handleAction, option]);
@@ -41,7 +37,7 @@ export function MenuOption({
         height: contextMenuOptionHeight,
         paddingLeft: contextMenuSidePadding,
         paddingRight: contextMenuSidePadding,
-        color: contextMenuTextColor,
+        color: 'var(--gantt-context-menu-text-color)',
       }}
       onClick={onClick}
     >
@@ -49,7 +45,7 @@ export function MenuOption({
         className={styles.icon}
         style={{
           width: contextMenuIconWidth,
-          color: contextMenuTextColor,
+          color: 'var(--gantt-context-menu-text-color)',
           opacity: 0.5
         }}
       >

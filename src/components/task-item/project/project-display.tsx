@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
+import React, { CSSProperties, useMemo } from "react";
 
 import styles from "./project.module.css";
-import { ColorStyles } from "../../../types/public-types";
 
 type ProjectDisplayProps = {
   barCornerRadius: number;
@@ -16,10 +15,10 @@ type ProjectDisplayProps = {
   progressX: number;
   startMoveFullTask: (clientX: number) => void;
   taskName: string;
-  colorStyles: ColorStyles;
   width: number;
   x1: number;
   x2: number;
+  customStyle?: CSSProperties;
 };
 
 export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
@@ -29,7 +28,6 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   taskHeight,
   isSelected,
   isCritical,
-  colorStyles,
   progressWidth,
   progressX,
   taskYOffset,
@@ -37,38 +35,39 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
   x1,
   x2,
   startMoveFullTask,
+  customStyle,
 }) => {
   const barColor = useMemo(() => {
     if (isCritical) {
       if (isSelected) {
-        return colorStyles.projectBackgroundSelectedCriticalColor;
+        return "var(--gantt-project-background-selected-critical-color)";
       }
 
-      return colorStyles.projectBackgroundCriticalColor;
+      return "var(--gantt-project-background-critical-color)";
     }
 
     if (isSelected) {
-      return colorStyles.projectBackgroundSelectedColor;
+      return "var(--gantt-project-background-selected-color)";
     }
 
-    return colorStyles.projectBackgroundColor;
-  }, [isSelected, isCritical, colorStyles]);
+    return "var(--gantt-project-background-color)";
+  }, [isSelected, isCritical]);
 
   const processColor = useMemo(() => {
     if (isCritical) {
       if (isSelected) {
-        return colorStyles.projectProgressSelectedCriticalColor;
+        return "var(--gantt-project-progress-selected-critical-color)";
       }
 
-      return colorStyles.projectProgressCriticalColor;
+      return "var(--gantt-project-progress-critical-color)";
     }
 
     if (isSelected) {
-      return colorStyles.projectProgressSelectedColor;
+      return "var(--gantt-project-progress-selected-color)";
     }
 
-    return colorStyles.projectProgressColor;
-  }, [isSelected, isCritical, colorStyles]);
+    return "var(--gantt-project-progress-color)";
+  }, [isSelected, isCritical]);
 
   const projectLeftTriangle = [
     x1,
@@ -89,6 +88,7 @@ export const ProjectDisplay: React.FC<ProjectDisplayProps> = ({
 
   return (
     <g
+      style={customStyle}
       data-testid={`task-project-${taskName}`}
       onMouseDown={e => {
         startMoveFullTask(e.clientX);

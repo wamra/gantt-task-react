@@ -4,7 +4,6 @@ import type { MouseEvent, ReactNode } from "react";
 import {
   ChildByLevelMap,
   ChildOutOfParentWarnings,
-  ColorStyles,
   CriticalPaths,
   DependencyMap,
   DependentMap,
@@ -37,7 +36,6 @@ export type TaskGanttContentProps = {
   checkIsHoliday: (date: Date) => boolean;
   childOutOfParentWarnings: ChildOutOfParentWarnings | null;
   childTasksMap: ChildByLevelMap;
-  colorStyles: ColorStyles;
   comparisonLevels: number;
   criticalPaths: CriticalPaths | null;
   dependencyMap: DependencyMap;
@@ -46,8 +44,6 @@ export type TaskGanttContentProps = {
   endColumnIndex: number;
   fixEndPosition?: FixPosition;
   fixStartPosition?: FixPosition;
-  fontFamily: string;
-  fontSize: string;
   fullRowHeight: number;
   ganttRelationEvent: GanttRelationEvent | null;
   getDate: (index: number) => Date;
@@ -88,7 +84,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   checkIsHoliday,
   childOutOfParentWarnings,
   childTasksMap,
-  colorStyles,
   comparisonLevels,
   criticalPaths,
   dependencyMap,
@@ -97,8 +92,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   endColumnIndex,
   fixEndPosition = undefined,
   fixStartPosition = undefined,
-  fontFamily,
-  fontSize,
   fullRowHeight,
   ganttRelationEvent,
   getDate,
@@ -126,7 +119,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   visibleTasksMirror,
 }) => {
   const renderedHolidays = useMemo(() => {
-    const { holidayBackgroundColor } = colorStyles;
     const { columnWidth } = distances;
 
     const res: ReactNode[] = [];
@@ -141,7 +133,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             width={columnWidth}
             x={additionalLeftSpace + i * columnWidth}
             y={0}
-            fill={holidayBackgroundColor}
+            fill={'var(--gantt-holiday-background-color)'}
             key={i}
           />
         );
@@ -152,7 +144,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   }, [
     additionalLeftSpace,
     checkIsHoliday,
-    colorStyles,
     distances,
     endColumnIndex,
     getDate,
@@ -198,7 +189,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             y={Math.floor(index / comparisonLevels) * fullRowHeight}
             width="100%"
             height={fullRowHeight}
-            fill={colorStyles.selectedTaskBackgroundColor}
+            fill={'var(--gantt-selected-task-background-color)'}
             key={taskId}
           />
         );
@@ -284,7 +275,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             fixStartPosition={fixStartPosition}
             fixEndPosition={fixEndPosition}
             handleDeleteTasks={handleDeleteTasks}
-            colorStyles={colorStyles}
           />
         </svg>
       );
@@ -350,7 +340,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                   key={`Arrow from ${source.id} to ${taskId} on ${comparisonLevel}`}
                 >
                   <Arrow
-                    colorStyles={colorStyles}
                     distances={distances}
                     taskFrom={source}
                     targetFrom={sourceTarget}
@@ -434,7 +423,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                   key={`Arrow from ${taskId} to ${dependent.id} on ${comparisonLevel}`}
                 >
                   <Arrow
-                    colorStyles={colorStyles}
                     distances={distances}
                     taskFrom={task}
                     targetFrom={ownTarget}
@@ -466,7 +454,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   }, [
     additionalLeftSpace,
     additionalRightSpace,
-    colorStyles,
     dependencyMap,
     dependentMap,
     fullRowHeight,
@@ -487,13 +474,13 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
       <g
         className="arrows"
-        fill={colorStyles.arrowColor}
-        stroke={colorStyles.arrowColor}
+        fill={'var(--gantt-arrow-color)'}
+        stroke={'var(--gantt-arrow-color)'}
       >
         {renderedArrows}
       </g>
 
-      <g className="bar" fontFamily={fontFamily} fontSize={fontSize}>
+      <g className="bar" fontFamily={'var(--gantt-font-family)'} fontSize={'var(--gantt-font-size)'}>
         {renderedTasks}
       </g>
 

@@ -25,7 +25,6 @@ export const BarSmall: React.FC<
   onTaskEventStart,
   isSelected,
   isCritical,
-  colorStyles,
   x1,
   task,
 }) => {
@@ -51,6 +50,7 @@ export const BarSmall: React.FC<
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
+        customStyle={task.style}
         taskName={task.name}
         barCornerRadius={barCornerRadius}
         hasChildren={hasChildren}
@@ -60,7 +60,6 @@ export const BarSmall: React.FC<
         progressWidth={progressWidth}
         progressX={progressX}
         startMoveFullTask={startMoveFullTask}
-        styles={colorStyles}
         width={handleWidth * 2}
         x={x1}
         y={taskYOffset}

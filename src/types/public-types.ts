@@ -1,4 +1,9 @@
-import type { ComponentType, MouseEvent, ReactNode } from "react";
+import type {
+  ComponentType,
+  CSSProperties,
+  MouseEvent,
+  ReactNode,
+} from "react";
 
 import type { Locale as DateLocale } from "date-fns";
 
@@ -67,6 +72,9 @@ export interface ExpandedDependent {
 }
 
 export interface ColorStyles {
+  fontFamily: string;
+  fontSize: string;
+
   arrowColor: string;
   arrowCriticalColor: string;
   arrowWarningColor: string;
@@ -165,7 +173,7 @@ export interface Task {
    */
   progress: number;
   assignees?: string[];
-  styles?: Partial<ColorStyles>;
+  style?: CSSProperties;
   isDisabled?: boolean;
   /**
    * Project or task
@@ -511,13 +519,7 @@ export interface StylingOption {
   icons?: Partial<Icons>;
   columns?: readonly Column[];
   onResizeColumn?: OnResizeColumn;
-  fontFamily?: string;
-  fontSize?: string;
-  TooltipContent?: ComponentType<{
-    task: Task;
-    fontSize: string;
-    fontFamily: string;
-  }>;
+  TooltipContent?: ComponentType<{ task: Task }>;
   TaskListHeader?: ComponentType<TaskListHeaderProps>;
   TaskListTable?: ComponentType<TaskListTableProps>;
 
@@ -579,19 +581,17 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
    */
   isAdjustToWorkingDates?: boolean;
   tasks: readonly TaskOrEmpty[];
+  theme?: ColorStyles;
 }
 
 export interface TaskListTableProps {
   canMoveTasks: boolean;
   childTasksMap: ChildByLevelMap;
-  colors: ColorStyles;
   columns: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
   dateSetup: DateSetup;
   dependencyMap: DependencyMap;
   distances: Distances;
-  fontFamily: string;
-  fontSize: string;
   fullRowHeight: number;
   ganttFullHeight: number;
   getTaskCurrentState: (task: Task) => Task;
@@ -622,8 +622,6 @@ export interface TaskListTableProps {
 export interface TaskListHeaderProps {
   headerHeight: number;
   columns: readonly Column[];
-  fontFamily: string;
-  fontSize: string;
   canResizeColumns: boolean;
   onColumnResizeStart: (columnIndex: number, clientX: number) => void;
 }

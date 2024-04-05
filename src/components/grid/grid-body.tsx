@@ -15,7 +15,6 @@ export type GridBodyProps = {
   ganttFullHeight: number;
   isUnknownDates: boolean;
   startDate: Date;
-  todayColor: string;
   rtl: boolean;
   viewMode: ViewMode;
 };
@@ -25,11 +24,8 @@ const GridBodyInner: React.FC<GridBodyProps> = ({
   distances: {
     columnWidth,
   },
-
   ganttFullHeight,
-
   isUnknownDates,
-  todayColor,
   rtl,
   startDate,
   viewMode,
@@ -53,7 +49,7 @@ const GridBodyInner: React.FC<GridBodyProps> = ({
         y={0}
         width={columnWidth}
         height={ganttFullHeight}
-        fill={todayColor}
+        fill={'var(--gantt-today-color)'}
       />
     );
   }, [
@@ -63,7 +59,6 @@ const GridBodyInner: React.FC<GridBodyProps> = ({
     isUnknownDates,
     rtl,
     startDate,
-    todayColor,
     viewMode,
   ]);
 

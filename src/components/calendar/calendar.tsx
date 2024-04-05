@@ -26,8 +26,6 @@ export type CalendarProps = {
   dateSetup: DateSetup;
   distances: Distances;
   endColumnIndex: number;
-  fontFamily: string;
-  fontSize: string;
   fullSvgWidth: number;
   getDate: (index: number) => Date;
   isUnknownDates: boolean;
@@ -49,8 +47,6 @@ export const Calendar: React.FC<CalendarProps> = ({
   endColumnIndex,
   getDate,
   isUnknownDates,
-  fontFamily,
-  fontSize,
   fullSvgWidth,
   renderBottomHeader = defaultRenderBottomHeader,
   renderTopHeader = defaultRenderTopHeader,
@@ -294,7 +290,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={additionalLeftSpace + columnWidth * (i + +rtl)}
           className={styles.calendarBottomText}
-          fontFamily={fontFamily}
+          fontFamily={'var(--gantt-font-family)'}
         >
           {bottomValue}
         </text>
@@ -346,7 +342,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={additionalLeftSpace + columnWidth * (i + +rtl)}
           className={styles.calendarBottomText}
-          fontFamily={fontFamily}
+          fontFamily={'var(--gantt-font-family)'}
         >
           {bottomValue}
         </text>
@@ -403,7 +399,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       [topValues, bottomValues] = getCalendarValuesForHour();
   }
   return (
-    <g className="calendar" fontSize={fontSize} fontFamily={fontFamily}>
+    <g className="calendar" fontSize={'var(--gantt-font-size)'} fontFamily={'var(--gantt-font-family)'}>
       <rect
         x={0}
         y={0}

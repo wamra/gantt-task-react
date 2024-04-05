@@ -3,7 +3,6 @@ import type { ComponentType, MouseEvent, RefObject } from "react";
 
 import {
   ChildByLevelMap,
-  ColorStyles,
   Column,
   DateSetup,
   DependencyMap,
@@ -28,14 +27,11 @@ export type TaskListProps = {
   canMoveTasks: boolean;
   canResizeColumns: boolean;
   childTasksMap: ChildByLevelMap;
-  colors: ColorStyles;
   columnsProp: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
   dateSetup: DateSetup;
   dependencyMap: DependencyMap;
   distances: Distances;
-  fontFamily: string;
-  fontSize: string;
   fullRowHeight: number;
   ganttFullHeight: number;
   ganttHeight: number;
@@ -73,14 +69,11 @@ const TaskListInner: React.FC<TaskListProps> = ({
   canMoveTasks,
   canResizeColumns,
   childTasksMap,
-  colors,
   columnsProp,
   cutIdsMirror,
   dateSetup,
   dependencyMap,
   distances,
-  fontFamily,
-  fontSize,
   fullRowHeight,
   ganttFullHeight,
   ganttHeight,
@@ -187,8 +180,6 @@ const TaskListInner: React.FC<TaskListProps> = ({
       >
         <TaskListHeader
           headerHeight={distances.headerHeight}
-          fontFamily={fontFamily}
-          fontSize={fontSize}
           columns={columns}
           onColumnResizeStart={onColumnResizeStart}
           canResizeColumns={canResizeColumns}
@@ -219,14 +210,11 @@ const TaskListInner: React.FC<TaskListProps> = ({
               <TaskListTable
                 canMoveTasks={canMoveTasks}
                 childTasksMap={childTasksMap}
-                colors={colors}
                 columns={columns}
                 cutIdsMirror={cutIdsMirror}
                 dateSetup={dateSetup}
                 dependencyMap={dependencyMap}
                 distances={distances}
-                fontFamily={fontFamily}
-                fontSize={fontSize}
                 fullRowHeight={fullRowHeight}
                 ganttFullHeight={ganttFullHeight}
                 getTaskCurrentState={getTaskCurrentState}

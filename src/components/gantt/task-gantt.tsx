@@ -89,7 +89,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
 
   let contextualPalette:
     | React.FunctionComponentElement<TaskContextualPaletteProps>
-    | undefined = undefined;
+    | undefined;
   if (barProps.ContextualPalette && selectedTask) {
     contextualPalette = React.createElement(barProps.ContextualPalette, {
       selectedTask,
@@ -124,7 +124,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         width={fullSvgWidth}
         height={calendarProps.distances.headerHeight}
-        fontFamily={barProps.fontFamily}
+        fontFamily={'var(--gantt-font-family)'}
       >
         <Calendar {...calendarProps} />
       </svg>
@@ -139,7 +139,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             xmlns="http://www.w3.org/2000/svg"
             width={fullSvgWidth}
             height={ganttFullHeight}
-            fontFamily={barProps.fontFamily}
+            fontFamily={'var(--gantt-font-family)'}
             ref={ganttSVGRef}
           >
             <Grid {...gridProps} />

@@ -11,7 +11,6 @@ import enDateLocale from "date-fns/locale/en-US";
 import {
   ChangeAction,
   CheckTaskIdExistsAtLevel,
-  ColorStyles,
   ContextMenuOptionType,
   DateFormats,
   DateSetup,
@@ -34,7 +33,7 @@ import { TaskListHeaderDefault } from "../task-list/task-list-header";
 import { TaskListTableDefault } from "../task-list/task-list-table";
 import { StandardTooltipContent, Tooltip } from "../other/tooltip";
 import { VerticalScroll } from "../other/vertical-scroll";
-import { TaskListProps, TaskList } from "../task-list/task-list";
+import { TaskList, TaskListProps } from "../task-list/task-list";
 import { TaskGantt } from "./task-gantt";
 import { sortTasks } from "../../helpers/sort-tasks";
 import { getChildsAndRoots } from "../../helpers/get-childs-and-roots";
@@ -78,56 +77,17 @@ import { useHandleAction } from "./use-handle-action";
 import { defaultGetCopiedTaskId } from "./default-get-copied-task-id";
 
 import { copyTasks } from "../../helpers/copy-tasks";
-import { copyOption } from "../../context-menu-options/copy";
-import { cutOption } from "../../context-menu-options/cut";
-import { pasteOption } from "../../context-menu-options/paste";
-import { deleteOption } from "../../context-menu-options/delete";
+import {
+  copyOption,
+  cutOption,
+  deleteOption,
+  pasteOption,
+} from "../../context-menu-options";
 
 import { useHolidays } from "./use-holidays";
 
 import styles from "./gantt.module.css";
-
-const defaultColors: ColorStyles = {
-  arrowColor: "grey",
-  arrowCriticalColor: "#ff0000",
-  arrowWarningColor: "#ffbc00",
-  barProgressColor: "#a3a3ff",
-  barProgressCriticalColor: "#ff1919",
-  barProgressSelectedColor: "#8282f5",
-  barProgressSelectedCriticalColor: "#ff0000",
-  barBackgroundColor: "#b8c2cc",
-  barBackgroundCriticalColor: "#ff6363",
-  barBackgroundSelectedColor: "#aeb8c2",
-  barBackgroundSelectedCriticalColor: "#ff8e8e",
-  groupProgressColor: "#2dbb2e",
-  groupProgressCriticalColor: "#2dbb2e",
-  groupProgressSelectedColor: "#28a329",
-  groupProgressSelectedCriticalColor: "#28a329",
-  groupBackgroundColor: "#006bc1",
-  groupBackgroundCriticalColor: "#006bc1",
-  groupBackgroundSelectedColor: "#407fbf",
-  groupBackgroundSelectedCriticalColor: "#407fbf",
-  projectProgressColor: "#7db59a",
-  projectProgressCriticalColor: "#7db59a",
-  projectProgressSelectedColor: "#59a985",
-  projectProgressSelectedCriticalColor: "#59a985",
-  projectBackgroundColor: "#fac465",
-  projectBackgroundCriticalColor: "#fac465",
-  projectBackgroundSelectedColor: "#f7bb53",
-  projectBackgroundSelectedCriticalColor: "#f7bb53",
-  milestoneBackgroundColor: "#f1c453",
-  milestoneBackgroundCriticalColor: "#ff8e8e",
-  milestoneBackgroundSelectedColor: "#f29e4c",
-  milestoneBackgroundSelectedCriticalColor: "#ff0000",
-  evenTaskBackgroundColor: "#f5f5f5",
-  holidayBackgroundColor: "rgba(233, 233, 233, 0.3)",
-  selectedTaskBackgroundColor: "rgba(252, 248, 227, 0.5)",
-  taskDragColor: "#7474ff",
-  todayColor: "rgba(252, 248, 227, 0.5)",
-  contextMenuBoxShadow: "rgb(0 0 0 / 25%) 1px 1px 5px 1px",
-  contextMenuBgColor: "#fff",
-  contextMenuTextColor: "inherit",
-};
+import { GanttTheme } from "../gantt-theme";
 
 const defaultDateFormats: DateFormats = {
   dateColumnFormat: "E, d MMMM yyyy",
@@ -165,73 +125,72 @@ const defaultDistances: Distances = {
   titleCellWidth: 220,
 };
 
-export const Gantt: React.FC<GanttProps> = ({
-  TaskListHeader = TaskListHeaderDefault,
-  TaskListTable = TaskListTableDefault,
-  TooltipContent = StandardTooltipContent,
-  ContextualPalette,
-  authorizedRelations = [
-    "startToStart",
-    "startToEnd",
-    "endToStart",
-    "endToEnd",
-  ],
-  canMoveTasks = true,
-  canResizeColumns = true,
-  checkIsHoliday: checkIsHolidayProp = defaultCheckIsHoliday,
-  colors = undefined,
-  columns: columnsProp = undefined,
-  comparisonLevels = 1,
-  contextMenuOptions: contextMenuOptionsProp = undefined,
-  dateFormats: dateFormatsProp = undefined,
-  dateLocale = enDateLocale,
-  distances: distancesProp = undefined,
-  enableTableListContextMenu = false,
-  fixEndPosition: fixEndPositionProp = undefined,
-  fixStartPosition: fixStartPositionProp = undefined,
-  fontFamily = "Arial, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
-  fontSize = "14px",
-  getCopiedTaskId = defaultGetCopiedTaskId,
-  icons = undefined,
-  isDeleteDependencyOnDoubleClick = true,
-  isMoveChildsWithParent = true,
-  isUpdateDisabledParentsOnChange = true,
-  isShowChildOutOfParentWarnings = false,
-  isShowCriticalPath = false,
-  isShowDependencyWarnings = false,
-  isShowTaskNumbers = true,
-  isUnknownDates = false,
-  isAdjustToWorkingDates = true,
-  onAddTask = undefined,
-  onAddTaskClick = undefined,
-  onArrowDoubleClick: onArrowDoubleClickProp = undefined,
-  onChangeExpandState = undefined,
-  onChangeTasks = undefined,
-  onClick = undefined,
-  onDateChange: onDateChangeProp = undefined,
-  onDelete = undefined,
-  onDoubleClick = undefined,
-  onEditTask = undefined,
-  onEditTaskClick = undefined,
-  onFixDependencyPosition: onFixDependencyPositionProp = undefined,
-  onMoveTaskBefore = undefined,
-  onMoveTaskAfter = undefined,
-  onMoveTaskInside = undefined,
-  onProgressChange: onProgressChangeProp = undefined,
-  onRelationChange: onRelationChangeProp = undefined,
-  onResizeColumn = undefined,
-  onWheel,
-  preStepsCount = 1,
-  renderBottomHeader = undefined,
-  renderTopHeader = undefined,
-  roundEndDate: roundEndDateProp = defaultRoundEndDate,
-  roundStartDate: roundStartDateProp = defaultRoundStartDate,
-  rtl = false,
-  tasks,
-  timeStep = 300000,
-  viewDate,
-  viewMode = ViewMode.Day,
-}) => {
+export const Gantt: React.FC<GanttProps> = props => {
+  const {
+    theme,
+    TaskListHeader = TaskListHeaderDefault,
+    TaskListTable = TaskListTableDefault,
+    TooltipContent = StandardTooltipContent,
+    ContextualPalette,
+    authorizedRelations = [
+      "startToStart",
+      "startToEnd",
+      "endToStart",
+      "endToEnd",
+    ],
+    canMoveTasks = true,
+    canResizeColumns = true,
+    checkIsHoliday: checkIsHolidayProp = defaultCheckIsHoliday,
+    columns: columnsProp = undefined,
+    comparisonLevels = 1,
+    contextMenuOptions: contextMenuOptionsProp = undefined,
+    dateFormats: dateFormatsProp = undefined,
+    dateLocale = enDateLocale,
+    distances: distancesProp = undefined,
+    enableTableListContextMenu = false,
+    fixEndPosition: fixEndPositionProp = undefined,
+    fixStartPosition: fixStartPositionProp = undefined,
+    getCopiedTaskId = defaultGetCopiedTaskId,
+    icons = undefined,
+    isDeleteDependencyOnDoubleClick = true,
+    isMoveChildsWithParent = true,
+    isUpdateDisabledParentsOnChange = true,
+    isShowChildOutOfParentWarnings = false,
+    isShowCriticalPath = false,
+    isShowDependencyWarnings = false,
+    isShowTaskNumbers = true,
+    isUnknownDates = false,
+    isAdjustToWorkingDates = true,
+    onAddTask = undefined,
+    onAddTaskClick = undefined,
+    onArrowDoubleClick: onArrowDoubleClickProp = undefined,
+    onChangeExpandState = undefined,
+    onChangeTasks = undefined,
+    onClick = undefined,
+    onDateChange: onDateChangeProp = undefined,
+    onDelete = undefined,
+    onDoubleClick = undefined,
+    onEditTask = undefined,
+    onEditTaskClick = undefined,
+    onFixDependencyPosition: onFixDependencyPositionProp = undefined,
+    onMoveTaskBefore = undefined,
+    onMoveTaskAfter = undefined,
+    onMoveTaskInside = undefined,
+    onProgressChange: onProgressChangeProp = undefined,
+    onRelationChange: onRelationChangeProp = undefined,
+    onResizeColumn = undefined,
+    onWheel,
+    preStepsCount = 1,
+    renderBottomHeader = undefined,
+    renderTopHeader = undefined,
+    roundEndDate: roundEndDateProp = defaultRoundEndDate,
+    roundStartDate: roundStartDateProp = defaultRoundStartDate,
+    rtl = false,
+    tasks,
+    timeStep = 300000,
+    viewDate,
+    viewMode = ViewMode.Day,
+  } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
@@ -372,14 +331,6 @@ export const Gantt: React.FC<GanttProps> = ({
     distances.rowHeight
   );
 
-  const colorStyles = useMemo<ColorStyles>(
-    () => ({
-      ...defaultColors,
-      ...colors,
-    }),
-    [colors]
-  );
-
   const taskHeight = useMemo(
     () => (distances.rowHeight * distances.barFill) / 100,
     [distances]
@@ -450,8 +401,6 @@ export const Gantt: React.FC<GanttProps> = ({
     selectedIdsMirror,
     toggleTask,
   } = useSelection(taskToRowIndexMap, rowIndexToTaskMap, checkTaskIdExists);
-
-
 
   const [startDate, minTaskDate, datesLength] = useMemo(
     () => ganttDateRange(visibleTasks, viewMode, preStepsCount),
@@ -798,10 +747,7 @@ export const Gantt: React.FC<GanttProps> = ({
    */
   const prepareSuggestions = useCallback(
     (suggestions: readonly OnDateChangeSuggestionType[]): TaskOrEmpty[] => {
-      const prevTasks = [...tasks];
-
-      const nextTasks = prevTasks;
-
+      const nextTasks = [...tasks];
       suggestions.forEach(([start, end, task, index]) => {
         nextTasks[index] = {
           ...task,
@@ -1756,12 +1702,10 @@ export const Gantt: React.FC<GanttProps> = ({
       isUnknownDates,
       rtl,
       startDate,
-      todayColor: colorStyles.todayColor,
       viewMode,
     }),
     [
       additionalLeftSpace,
-      colorStyles.todayColor,
       distances,
       ganttFullHeight,
       isUnknownDates,
@@ -1777,8 +1721,6 @@ export const Gantt: React.FC<GanttProps> = ({
       dateSetup,
       distances,
       endColumnIndex,
-      fontFamily,
-      fontSize,
       fullSvgWidth,
       getDate,
       isUnknownDates,
@@ -1792,8 +1734,6 @@ export const Gantt: React.FC<GanttProps> = ({
       dateSetup,
       distances,
       endColumnIndex,
-      fontFamily,
-      fontSize,
       fullSvgWidth,
       getDate,
       isUnknownDates,
@@ -1818,7 +1758,6 @@ export const Gantt: React.FC<GanttProps> = ({
       checkIsHoliday,
       childOutOfParentWarnings,
       childTasksMap,
-      colorStyles,
       comparisonLevels,
       criticalPaths,
       dependencyMap,
@@ -1827,8 +1766,6 @@ export const Gantt: React.FC<GanttProps> = ({
       endColumnIndex,
       fixEndPosition,
       fixStartPosition,
-      fontFamily,
-      fontSize,
       fullRowHeight,
       ganttRelationEvent,
       getDate,
@@ -1867,7 +1804,6 @@ export const Gantt: React.FC<GanttProps> = ({
       checkIsHoliday,
       childOutOfParentWarnings,
       childTasksMap,
-      colorStyles,
       comparisonLevels,
       criticalPaths,
       dependencyMap,
@@ -1876,8 +1812,6 @@ export const Gantt: React.FC<GanttProps> = ({
       endColumnIndex,
       fixEndPosition,
       fixStartPosition,
-      fontFamily,
-      fontSize,
       fullRowHeight,
       ganttRelationEvent,
       getDate,
@@ -1918,14 +1852,11 @@ export const Gantt: React.FC<GanttProps> = ({
     canMoveTasks,
     canResizeColumns,
     childTasksMap,
-    colors: colorStyles,
     columnsProp,
     cutIdsMirror,
     dateSetup,
     dependencyMap,
     distances,
-    fontFamily,
-    fontSize,
     fullRowHeight,
     ganttFullHeight,
     ganttHeight,
@@ -1954,65 +1885,66 @@ export const Gantt: React.FC<GanttProps> = ({
   };
 
   return (
-    <div
-      className={styles.wrapper}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      ref={wrapperRef}
-      data-testid={`gantt-main`}
-    >
-      {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
-      {(!columnsProp || columnsProp.length > 0) && <TaskList {...tableProps} />}
+    <GanttTheme theme={theme}>
+      <div
+        className={`${styles.wrapper} gantt`}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        ref={wrapperRef}
+        data-testid={`gantt-main`}
+      >
+        {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
+        {(!columnsProp || columnsProp.length > 0) && (
+          <TaskList {...tableProps} />
+        )}
 
-      <TaskGantt
-        barProps={barProps}
-        calendarProps={calendarProps}
-        fullRowHeight={fullRowHeight}
-        fullSvgWidth={fullSvgWidth}
-        ganttFullHeight={ganttFullHeight}
-        ganttHeight={ganttHeight}
-        ganttSVGRef={ganttSVGRef}
-        gridProps={gridProps}
-        horizontalContainerRef={horizontalContainerRef}
-        onVerticalScrollbarScrollX={onVerticalScrollbarScrollX}
-        verticalGanttContainerRef={verticalGanttContainerRef}
-      />
-
-      {tooltipTaskFromMap && (
-        <Tooltip
-          tooltipX={tooltipX}
-          tooltipY={tooltipY}
-          tooltipStrategy={tooltipStrategy}
-          setFloatingRef={setFloatingRef}
-          getFloatingProps={getFloatingProps}
-          fontFamily={fontFamily}
-          fontSize={fontSize}
-          task={tooltipTaskFromMap}
-          TooltipContent={TooltipContent}
+        <TaskGantt
+          barProps={barProps}
+          calendarProps={calendarProps}
+          fullRowHeight={fullRowHeight}
+          fullSvgWidth={fullSvgWidth}
+          ganttFullHeight={ganttFullHeight}
+          ganttHeight={ganttHeight}
+          ganttSVGRef={ganttSVGRef}
+          gridProps={gridProps}
+          horizontalContainerRef={horizontalContainerRef}
+          onVerticalScrollbarScrollX={onVerticalScrollbarScrollX}
+          verticalGanttContainerRef={verticalGanttContainerRef}
         />
-      )}
 
-      <VerticalScroll
-        ganttFullHeight={ganttFullHeight}
-        ganttHeight={ganttHeight}
-        headerHeight={distances.headerHeight}
-        isChangeInProgress={Boolean(changeInProgress)}
-        onScroll={onVerticalScrollbarScrollY}
-        rtl={rtl}
-        verticalScrollbarRef={verticalScrollbarRef}
-      />
-      {enableTableListContextMenu && (
-        <ContextMenu
-          checkHasCopyTasks={checkHasCopyTasks}
-          checkHasCutTasks={checkHasCutTasks}
-          colors={colorStyles}
-          contextMenu={contextMenu}
-          distances={distances}
-          handleAction={handleAction}
-          handleCloseContextMenu={handleCloseContextMenu}
-          options={contextMenuOptions}
+        {tooltipTaskFromMap && (
+          <Tooltip
+            tooltipX={tooltipX}
+            tooltipY={tooltipY}
+            tooltipStrategy={tooltipStrategy}
+            setFloatingRef={setFloatingRef}
+            getFloatingProps={getFloatingProps}
+            task={tooltipTaskFromMap}
+            TooltipContent={TooltipContent}
+          />
+        )}
+
+        <VerticalScroll
+          ganttFullHeight={ganttFullHeight}
+          ganttHeight={ganttHeight}
+          headerHeight={distances.headerHeight}
+          isChangeInProgress={Boolean(changeInProgress)}
+          onScroll={onVerticalScrollbarScrollY}
+          rtl={rtl}
+          verticalScrollbarRef={verticalScrollbarRef}
         />
-      )}
-    </div>
+        {enableTableListContextMenu && (
+          <ContextMenu
+            checkHasCopyTasks={checkHasCopyTasks}
+            checkHasCutTasks={checkHasCutTasks}
+            contextMenu={contextMenu}
+            distances={distances}
+            handleAction={handleAction}
+            handleCloseContextMenu={handleCloseContextMenu}
+            options={contextMenuOptions}
+          />
+        )}
+      </div>
+    </GanttTheme>
   );
 };

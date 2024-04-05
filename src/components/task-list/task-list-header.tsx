@@ -6,8 +6,6 @@ import styles from "./task-list-header.module.css";
 
 const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
   headerHeight,
-  fontFamily,
-  fontSize,
   columns,
   canResizeColumns,
   onColumnResizeStart,
@@ -16,8 +14,8 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
     <div
       className={styles.ganttTable}
       style={{
-        fontFamily: fontFamily,
-        fontSize: fontSize,
+        fontFamily: 'var(--gantt-font-family)',
+        fontSize: 'var(--gantt-font-size)',
       }}
     >
       <div

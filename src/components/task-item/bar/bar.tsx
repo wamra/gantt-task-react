@@ -19,7 +19,6 @@ export const Bar: React.FC<
   }
 > = ({
   children: relationhandles,
-  colorStyles,
 
   distances: { barCornerRadius, handleWidth },
   hasChildren,
@@ -78,6 +77,7 @@ export const Bar: React.FC<
   if (task.type === "project") {
     barDisplay = (
       <ProjectDisplay
+        customStyle={task.style}
         taskName={task.name}
         x1={x1}
         x2={x2}
@@ -88,7 +88,6 @@ export const Bar: React.FC<
         progressX={progressX}
         progressWidth={progressWidth}
         barCornerRadius={barCornerRadius}
-        colorStyles={colorStyles}
         isSelected={isSelected}
         isCritical={isCritical}
         hasChildren={hasChildren}
@@ -98,6 +97,7 @@ export const Bar: React.FC<
   } else {
     barDisplay = (
       <BarDisplay
+        customStyle={task.style}
         taskName={task.name}
         x={x1}
         y={taskYOffset}
@@ -106,7 +106,6 @@ export const Bar: React.FC<
         progressX={progressX}
         progressWidth={progressWidth}
         barCornerRadius={barCornerRadius}
-        styles={colorStyles}
         isSelected={isSelected}
         isCritical={isCritical}
         hasChildren={hasChildren}

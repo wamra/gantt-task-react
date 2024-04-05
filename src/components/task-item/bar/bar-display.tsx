@@ -1,6 +1,4 @@
-import React, { useMemo } from "react";
-
-import { ColorStyles } from "../../../types/public-types";
+import React, { CSSProperties, useMemo } from "react";
 
 import style from "./bar.module.css";
 
@@ -14,11 +12,11 @@ type BarDisplayProps = {
   /* progress start point */
   progressX: number;
   startMoveFullTask: (clientX: number) => void;
-  styles: ColorStyles;
   taskName: string;
   width: number;
   x: number;
   y: number;
+  customStyle?: CSSProperties;
 };
 
 export const BarDisplay: React.FC<BarDisplayProps> = ({
@@ -31,77 +29,78 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   progressWidth,
   progressX,
   startMoveFullTask,
-  styles,
   width,
   x,
   y,
+  customStyle,
 }) => {
   const processColor = useMemo(() => {
     if (isCritical) {
       if (hasChildren) {
         if (isSelected) {
-          return styles.groupProgressSelectedCriticalColor;
+          return "var(--gantt-group-progress-selected-critical-color)";
         }
 
-        return styles.groupProgressCriticalColor;
+        return "var(--gantt-group-progress-critical-color)";
       }
 
       if (isSelected) {
-        return styles.barProgressSelectedCriticalColor;
+        return "var(--gantt-bar-progress-selected-critical-color)";
       }
 
-      return styles.barProgressCriticalColor;
+      return "var(--gantt-bar-progress-critical-color)";
     }
 
     if (hasChildren) {
       if (isSelected) {
-        return styles.groupProgressSelectedColor;
+        return "var(--gantt-group-progress-selected-color)";
       }
 
-      return styles.groupProgressColor;
+      return "var(--gantt-group-progress-color)";
     }
 
     if (isSelected) {
-      return styles.barProgressSelectedColor;
+      return "var(--gantt-bar-progress-selected-color)";
     }
 
-    return styles.barProgressColor;
-  }, [isSelected, isCritical, hasChildren, styles]);
+    return "var(--gantt-bar-progress-color)";
+  }, [isSelected, isCritical, hasChildren]);
 
   const barColor = useMemo(() => {
     if (isCritical) {
       if (hasChildren) {
         if (isSelected) {
-          return styles.groupBackgroundSelectedCriticalColor;
+          return "var(--gantt-group-background-selected-critical-color)";
         }
 
-        return styles.groupBackgroundCriticalColor;
+        return "var(--gantt-group-background-critical-color)";
       }
 
       if (isSelected) {
-        return styles.barBackgroundSelectedCriticalColor;
+        return "var(--gantt-bar-background-selected-critical-color)";
       }
 
-      return styles.barBackgroundCriticalColor;
+      return "var(--gantt-bar-background-critical-color)";
     }
 
     if (hasChildren) {
       if (isSelected) {
-        return styles.groupBackgroundSelectedColor;
+        return "var(--gantt-group-background-selected-color)";
       }
 
-      return styles.groupBackgroundColor;
+      return "var(--gantt-group-background-color)";
     }
 
     if (isSelected) {
-      return styles.barBackgroundSelectedColor;
+      return "var(--gantt-bar-background-selected-color)";
     }
 
-    return styles.barBackgroundColor;
-  }, [isSelected, isCritical, hasChildren, styles]);
+    return "var(--gantt-bar-background-color)";
+  }, [isSelected, isCritical, hasChildren]);
 
   return (
     <g
+      style={customStyle}
       data-testid={`task-bar-${taskName}`}
       onMouseDown={e => {
         startMoveFullTask(e.clientX);

@@ -1,12 +1,8 @@
-import React, {
-  ComponentType,
-} from "react";
+import React, { ComponentType } from "react";
 
 import type { Strategy } from "@floating-ui/dom";
 
-import type {
-  Task,
-} from "../../types/public-types";
+import type { Task } from "../../types/public-types";
 
 import styles from "./tooltip.module.css";
 
@@ -17,13 +13,7 @@ export type TooltipProps = {
   setFloatingRef: (node: HTMLElement | null) => void;
   getFloatingProps: () => Record<string, unknown>;
   task: Task;
-  fontSize: string;
-  fontFamily: string;
-  TooltipContent: ComponentType<{
-    task: Task;
-    fontSize: string;
-    fontFamily: string;
-  }>;
+  TooltipContent: ComponentType<{ task: Task }>;
 };
 
 export const Tooltip: React.FC<TooltipProps> = ({
@@ -33,8 +23,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
   setFloatingRef,
   getFloatingProps,
   task,
-  fontSize,
-  fontFamily,
   TooltipContent,
 }) => {
   return (
@@ -44,31 +32,23 @@ export const Tooltip: React.FC<TooltipProps> = ({
         position: tooltipStrategy,
         top: tooltipY ?? 0,
         left: tooltipX ?? 0,
-        width: 'max-content',
+        width: "max-content",
+        fontFamily: "var(--gantt-font-family)",
       }}
       {...getFloatingProps()}
     >
-      <TooltipContent task={task} fontSize={fontSize} fontFamily={fontFamily} />
+      <TooltipContent task={task} />
     </div>
   );
 };
 
-export const StandardTooltipContent: React.FC<{
-  task: Task;
-  fontSize: string;
-  fontFamily: string;
-}> = ({ task, fontSize, fontFamily }) => {
-  const style = {
-    fontSize,
-    fontFamily,
-  };
-
+export const StandardTooltipContent: React.FC<{ task: Task }> = ({ task }) => {
   return (
     <div
       className={styles.tooltipDefaultContainer}
-      style={style}
+      style={{ fontSize: "var(--gantt-font-size)" }}
     >
-      <b style={{ fontSize: fontSize + 6 }}>{`${
+      <b style={{ fontSize: "var(--gantt-font-size)" }}>{`${
         task.name
       }: ${task.start.getDate()}-${
         task.start.getMonth() + 1

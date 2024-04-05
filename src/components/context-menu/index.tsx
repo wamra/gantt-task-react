@@ -1,4 +1,3 @@
-// import type { MutableRefObject, ReactElement } from "react";
 import type {ReactElement} from "react";
 import React, {useCallback, useEffect, useMemo, useRef} from "react";
 
@@ -8,7 +7,6 @@ import {useDismiss, useFloating, useFocus, useInteractions, useRole,} from "@flo
 import type {
   ActionMetaType,
   CheckIsAvailableMetaType,
-  ColorStyles,
   ContextMenuOptionType,
   ContextMenuType,
   Distances,
@@ -21,7 +19,6 @@ type ContextMenuProps = {
   checkHasCopyTasks: () => boolean;
   checkHasCutTasks: () => boolean;
   contextMenu: ContextMenuType;
-  colors: ColorStyles;
   distances: Distances;
   handleAction: (
     task: TaskOrEmpty,
@@ -35,12 +32,7 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
   const {
     checkHasCopyTasks,
     checkHasCutTasks,
-
-    colors,
-    colors: {contextMenuBgColor, contextMenuBoxShadow},
-
     contextMenu: {task, x, y},
-
     distances,
     handleAction,
     handleCloseContextMenu,
@@ -150,8 +142,8 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
             top: menuY ?? 0,
             left: menuX ?? 0,
             width: "max-content",
-            backgroundColor: contextMenuBgColor,
-            boxShadow: contextMenuBoxShadow,
+            backgroundColor: 'var(--gantt-context-menu-bg-color)',
+            boxShadow: 'var(--gantt-context-menu-box-shadow)',
             display: 'flex',
             flexDirection: 'column',
             gap: 6,
@@ -161,7 +153,6 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
         >
           {optionsForRender.map((option, index) => (
             <MenuOption
-              colors={colors}
               distances={distances}
               handleAction={handleOptionAction}
               option={option}

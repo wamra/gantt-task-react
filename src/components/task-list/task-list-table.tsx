@@ -10,14 +10,11 @@ import styles from "./task-list-table.module.css";
 const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
   canMoveTasks,
   childTasksMap,
-  colors,
   columns,
   cutIdsMirror,
   dateSetup,
   dependencyMap,
   distances,
-  fontFamily,
-  fontSize,
   fullRowHeight,
   getTaskCurrentState,
   handleAddTask,
@@ -84,7 +81,6 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
       renderedList.push(
         <TaskListTableRow
           canMoveTasks={canMoveTasks}
-          colors={colors}
           columns={columns}
           dateSetup={dateSetup}
           dependencyMap={dependencyMap}
@@ -132,7 +128,6 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
       </>
     );
   }, [
-    colors,
     columns,
     cutIdsMirror,
     fullRowHeight,
@@ -148,8 +143,8 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
     <div
       className={styles.taskListWrapper}
       style={{
-        fontFamily: fontFamily,
-        fontSize: fontSize,
+        fontFamily: 'var(--gantt-font-family)',
+        fontSize: 'var(--gantt-font-size)',
       }}
     >
       {renderedListWithOffset}

@@ -14,7 +14,7 @@ export const Milestone: React.FC<
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
 > = ({
-  children: relationhandles,
+  children: relationHandles,
   task,
   taskYOffset,
   distances: { barCornerRadius },
@@ -22,29 +22,28 @@ export const Milestone: React.FC<
   onTaskEventStart,
   isSelected,
   isCritical,
-  colorStyles,
   x1,
 }) => {
   const rotatedHeight = taskHeight / 1.414;
 
-  const transform = `rotate(45 ${x1 + rotatedHeight * 0.356} 
+  const transform = `rotate(45 ${x1 + rotatedHeight * 0.356}
     ${taskYOffset + rotatedHeight * 0.85})`;
 
   const barColor = useMemo(() => {
     if (isCritical) {
       if (isSelected) {
-        return colorStyles.milestoneBackgroundSelectedCriticalColor;
+        return 'var(--gantt-milestone-background-selected-critical-color)';
       }
 
-      return colorStyles.milestoneBackgroundCriticalColor;
+      return 'var(--gantt-milestone-background-critical-color)';
     }
 
     if (isSelected) {
-      return colorStyles.milestoneBackgroundSelectedColor;
+      return 'var(--gantt-milestone-background-selected-color)';
     }
 
-    return colorStyles.milestoneBackgroundColor;
-  }, [isSelected, isCritical, colorStyles]);
+    return 'var(--gantt-milestone-background-color)';
+  }, [isSelected, isCritical]);
 
   return (
     <g
@@ -74,7 +73,7 @@ export const Milestone: React.FC<
         }}
       />
 
-      {relationhandles}
+      {relationHandles}
     </g>
   );
 };
