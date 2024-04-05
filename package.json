@@ -6,9 +6,6 @@
   "homepage": "https://github.com/kvandake/gantt-task-react",
   "license": "MIT",
   "repository": "https://github.com/kvandake/gantt-task-react",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "main": "./dist/gantt-task-react.umd.js",
   "module": "./dist/gantt-task-react.es.js",
   "types": "./dist/index.d.ts",
