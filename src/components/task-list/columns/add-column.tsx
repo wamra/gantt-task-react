@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 
 import { ColumnProps } from "../../../types/public-types";
 
-import styles from "./add-column.module.css";
+import styles from "./button-column.module.css";
 import { AddIcon } from "../../icons/add-icon";
 
 export const AddColumn: React.FC<ColumnProps> = ({

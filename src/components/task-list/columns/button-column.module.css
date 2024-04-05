@@ -8,4 +8,11 @@
   font-size: 20px;
   font-weight: bold;
   z-index: 2;
+  /*noinspection CssUnresolvedCustomProperty*/
+  fill: var(--gantt-table-action-color);
+}
+
+.button svg {
+  width: 20px;
+  height: 20px;
 }

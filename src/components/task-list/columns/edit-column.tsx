@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 
 import { ColumnProps } from "../../../types/public-types";
 
-import styles from "./edit-column.module.css";
+import styles from "./button-column.module.css";
 import { EditIcon } from "../../icons/edit-icon";
 
 export const EditColumn: React.FC<ColumnProps> = ({

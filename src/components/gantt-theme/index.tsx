@@ -78,7 +78,10 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gant--tooltip-box-shadow": colors.tooltipBoxShadow,
 
       "--gantt-divider-color": colors.dividerColor,
+
       "--gantt-table-resize-hover-color": colors.tableResizeHoverColor,
+      "--gantt-table-action-color": colors.tableActionColor,
+
       "--gantt-scrollbar-thumb-color": colors.scrollbarThumbColor,
       "--gantt-calendar-stroke-color": colors.calendarStrokeColor,
 

@@ -12,6 +12,7 @@ export const DEFAULT_THEME: GanttTheme = {
     scrollbarThumbColor: "rgba(0, 0, 0, 0.3)",
 
     tableResizeHoverColor: "#555",
+    tableActionColor: "#555",
 
     arrowCriticalColor: "#ff0000",
     arrowWarningColor: "#ffbc00",

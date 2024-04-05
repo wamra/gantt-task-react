@@ -139,6 +139,7 @@ export interface ColorStyles {
 
   tooltipBoxShadow: string;
 
+  tableActionColor: string;
   tableResizeHoverColor: string;
   scrollbarThumbColor: string;
 
