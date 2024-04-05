@@ -1,6 +1,13 @@
 import {GanttLocale} from "../types/public-types";
 
 export const GANTT_EN_LOCALE: GanttLocale = {
+  suffix: {
+    days: "day(s)"
+  },
+  tooltip: {
+    duration: "Duration",
+    progress: "Progress"
+  },
   context: {
     cut: "Cut",
     copy: "Copy",

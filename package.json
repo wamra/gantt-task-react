@@ -1,11 +1,11 @@
 {
-  "name": "@ObeoNetwork/gantt-task-react",
+  "name": "kvandake-gantt-task-react",
   "version": "0.4.7",
   "description": "Interactive Gantt Chart for React with TypeScript.",
-  "author": "MaTeMaTuK <maksym.vikarii@gmail.com>",
-  "homepage": "https://github.com/ObeoNetwork/gantt-task-react",
+  "author": "kvandake@gmail.com>",
+  "homepage": "https://github.com/kvandake/gantt-task-react",
   "license": "MIT",
-  "repository": "ObeoNetwork/gantt-task-react",
+  "repository": "kvandake/gantt-task-react",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
@@ -45,15 +45,11 @@
   },
   "peerDependencies": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "@material-ui/core": "4.12.4",
-    "@material-ui/icons": "4.11.3"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@babel/plugin-transform-regenerator": "^7.20.5",
     "@babel/types": "^7.20.7",
-    "@material-ui/core": "4.12.4",
-    "@material-ui/icons": "4.11.3",
     "@mdx-js/react": "^2.2.1",
     "@rollup/plugin-image": "2.1.1",
     "@storybook/addon-controls": "^7.6.7",

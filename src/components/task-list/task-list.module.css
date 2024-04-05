@@ -53,9 +53,9 @@
   top: 0;
   left: 4px;
   height: 100%;
-  width: 2px;
+  width: 1px;
   /*noinspection CssUnresolvedCustomProperty*/
-  background-color: var(--gantt-table-resize-color);
+  background-color: var(--gantt-table-resize-color, var(--gantt-divider-color));
 }
 
 .horizontalContainer {

@@ -5,6 +5,7 @@ import type { Strategy } from "@floating-ui/dom";
 import type { Task } from "../../types/public-types";
 
 import styles from "./tooltip.module.css";
+import {useGanttLocale} from "../gantt-locale";
 
 export type TooltipProps = {
   tooltipX: number | null;
@@ -43,6 +44,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 };
 
 export const StandardTooltipContent: React.FC<{ task: Task }> = ({ task }) => {
+  const locale = useGanttLocale();
   return (
     <div
       className={styles.tooltipDefaultContainer}
@@ -56,14 +58,14 @@ export const StandardTooltipContent: React.FC<{ task: Task }> = ({ task }) => {
         task.end.getMonth() + 1
       }-${task.end.getFullYear()}`}</b>
       {task.end.getTime() - task.start.getTime() !== 0 && (
-        <p className={styles.tooltipDefaultContainerParagraph}>{`Duration: ${~~(
+        <p className={styles.tooltipDefaultContainerParagraph}>{`${locale.tooltip.duration},: ${~~(
           (task.end.getTime() - task.start.getTime()) /
           (1000 * 60 * 60 * 24)
-        )} day(s)`}</p>
+        )} ${locale.suffix.days}`}</p>
       )}
 
       <p className={styles.tooltipDefaultContainerParagraph}>
-        {!!task.progress && `Progress: ${task.progress} %`}
+        {!!task.progress && `${locale.tooltip.progress}: ${task.progress} %`}
       </p>
     </div>
   );

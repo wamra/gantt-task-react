@@ -127,8 +127,8 @@ export interface ColorStyles {
   contextMenuBgColor: string;
   contextMenuTextColor: string;
 
+  tooltipBoxShadow: string;
 
-  tableResizeColor: string;
   tableResizeHoverColor: string;
   scrollbarThumbColor: string;
 
@@ -566,6 +566,13 @@ export interface StylingOption {
 }
 
 export interface GanttLocale {
+  suffix: {
+    days: string;
+  }
+  tooltip: {
+    duration: string;
+    progress: string;
+  },
   table: {
     columns: {
       name: string;

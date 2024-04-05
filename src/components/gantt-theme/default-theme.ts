@@ -11,7 +11,6 @@ export const DEFAULT_THEME: GanttTheme = {
     calendarStrokeColor: '#e0e0e0',
     scrollbarThumbColor: "rgba(0, 0, 0, 0.3)",
 
-    tableResizeColor: "#e6e4e4",
     tableResizeHoverColor: "#555",
 
     arrowCriticalColor: "#ff0000",
@@ -52,6 +51,8 @@ export const DEFAULT_THEME: GanttTheme = {
     contextMenuBoxShadow: "rgb(0 0 0 / 25%) 1px 1px 5px 1px",
     contextMenuBgColor: "#fff",
     contextMenuTextColor: "inherit",
+
+    tooltipBoxShadow: "0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)",
   },
   typography: {
     fontSize: '14px',

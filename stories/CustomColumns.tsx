@@ -16,13 +16,6 @@ import {
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
-import {
-  Checkbox,
-  FormControl,
-  ListItemText,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
 
 const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   if (task.type === "project" || task.type === "task") {
@@ -178,24 +171,6 @@ export const CustomColumns: React.FC<AppProps> = props => {
 
   return (
     <>
-      <FormControl>
-        <Select
-          labelId="columns-checkbox-label"
-          id="columns-checkbox"
-          multiple
-          disableUnderline
-          value={columnTypes}
-          onChange={handleChangeColumns}
-          renderValue={() => "Columns"}
-        >
-          {allMetaColumns.map(column => (
-            <MenuItem key={column.type} value={column.type}>
-              <Checkbox checked={columnTypes.indexOf(column.type) > -1} />
-              <ListItemText primary={column.name} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
       <Gantt
         {...props}
         columns={displayedColumns}
