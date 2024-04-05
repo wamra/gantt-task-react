@@ -35,7 +35,7 @@ export function MenuOption({
   }, [handleAction, option]);
 
   return (
-    <div
+    <button
       className={styles.menuOption}
       style={{
         height: contextMenuOptionHeight,
@@ -49,12 +49,14 @@ export function MenuOption({
         className={styles.icon}
         style={{
           width: contextMenuIconWidth,
+          color: contextMenuTextColor,
+          opacity: 0.5
         }}
       >
         {icon}
       </div>
 
       <div className={styles.label}>{label}</div>
-    </div>
+    </button>
   );
 }

@@ -10,9 +10,12 @@ import type {
   ContextMenuType,
   TaskOrEmpty,
 } from '../../types/public-types';
+import {Task} from "../../types/public-types";
 
 export const useContextMenu = (
   wrapperRef: RefObject<HTMLDivElement>,
+  toggleTask: (taskId: string, singleMode: boolean) => void,
+  scrollToTask: (task: Task) => void,
 ) => {
   const [contextMenu, setContextMenu] = useState<ContextMenuType>({
     task: null,
@@ -41,7 +44,11 @@ export const useContextMenu = (
       x: clientX - left,
       y: clientY - top,
     });
-  }, [wrapperRef]);
+    if (task.type !== 'empty') {
+      toggleTask(task.id, true);
+      scrollToTask(task);
+    }
+  }, [wrapperRef, toggleTask]);
 
   const handleCloseContextMenu = useCallback(() => {
     setContextMenu({
@@ -49,7 +56,8 @@ export const useContextMenu = (
       x: 0,
       y: 0,
     });
-  }, []);
+    toggleTask(null, true);
+  }, [toggleTask]);
 
   return {
     contextMenu,

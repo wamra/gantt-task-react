@@ -29,7 +29,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
         {columns.map(({ title, width, canResize }, index) => {
           return (
             <Fragment key={index}>
-              {index > 0 && (
+              {index > 0 && !!title && (
                 <div
                   className={styles.ganttTable_HeaderSeparator}
                   style={{

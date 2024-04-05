@@ -1,17 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
 // import type { MutableRefObject, ReactElement } from "react";
-import type { ReactElement } from "react";
+import type {ReactElement} from "react";
+import React, {useCallback, useEffect, useMemo, useRef} from "react";
 
-import { autoUpdate, flip, shift } from "@floating-ui/dom";
-import {
-  useFloating,
-  useFocus,
-  useDismiss,
-  useRole,
-  useInteractions,
-} from "@floating-ui/react";
-
-// import { useOutsideClick } from 'use-dom-outside-click';
+import {autoUpdate, flip, shift} from "@floating-ui/dom";
+import {useDismiss, useFloating, useFocus, useInteractions, useRole,} from "@floating-ui/react";
 
 import type {
   ActionMetaType,
@@ -23,8 +15,7 @@ import type {
   TaskOrEmpty,
 } from "../../types/public-types";
 
-import { MenuOption } from "./menu-option";
-import React from "react";
+import {MenuOption} from "./menu-option";
 
 type ContextMenuProps = {
   checkHasCopyTasks: () => boolean;
@@ -40,20 +31,21 @@ type ContextMenuProps = {
   options: ContextMenuOptionType[];
 };
 
-export function ContextMenu({
-  checkHasCopyTasks,
-  checkHasCutTasks,
+export function ContextMenu(props: ContextMenuProps): ReactElement {
+  const {
+    checkHasCopyTasks,
+    checkHasCutTasks,
 
-  colors,
-  colors: { contextMenuBgColor, contextMenuBoxShadow },
+    colors,
+    colors: {contextMenuBgColor, contextMenuBoxShadow},
 
-  contextMenu: { task, x, y },
+    contextMenu: {task, x, y},
 
-  distances,
-  handleAction,
-  handleCloseContextMenu,
-  options,
-}: ContextMenuProps): ReactElement {
+    distances,
+    handleAction,
+    handleCloseContextMenu,
+    options,
+  } = props;
   const optionsForRender = useMemo(() => {
     if (!task) {
       return [];
@@ -65,7 +57,7 @@ export function ContextMenu({
       checkHasCutTasks,
     };
 
-    return options.filter(({ checkIsAvailable }) => {
+    return options.filter(({checkIsAvailable}) => {
       if (!checkIsAvailable) {
         return true;
       }
@@ -91,14 +83,22 @@ export function ContextMenu({
     x: menuX,
     y: menuY,
     strategy,
-    refs: { setFloating, setReference },
+    refs,
     context,
   } = useFloating({
     open: Boolean(task),
+    onOpenChange: (isOpen) => {
+      if (!isOpen) {
+        handleCloseContextMenu()
+      }
+    },
+    strategy: 'fixed',
     placement: "bottom-start",
     middleware: [flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
+
+  const {setFloating, setReference} = refs;
 
   useEffect(() => {
     if (task) {
@@ -108,9 +108,9 @@ export function ContextMenu({
 
   const focus = useFocus(context);
   const dismiss = useDismiss(context);
-  const role = useRole(context, { role: "tooltip" });
+  const role = useRole(context, {role: "tooltip"});
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([
+  const {getReferenceProps, getFloatingProps} = useInteractions([
     focus,
     dismiss,
     role,
@@ -152,6 +152,10 @@ export function ContextMenu({
             width: "max-content",
             backgroundColor: contextMenuBgColor,
             boxShadow: contextMenuBoxShadow,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            zIndex: 1,
           }}
           {...getFloatingProps()}
         >

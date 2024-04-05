@@ -236,9 +236,6 @@ export const Gantt: React.FC<GanttProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const taskListRef = useRef<HTMLDivElement>(null);
 
-  const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
-    useContextMenu(wrapperRef);
-
   const [
     horizontalContainerRef,
     taskListContainerRef,
@@ -451,7 +448,10 @@ export const Gantt: React.FC<GanttProps> = ({
     resetSelectedTasks,
     selectTaskOnMouseDown,
     selectedIdsMirror,
+    toggleTask,
   } = useSelection(taskToRowIndexMap, rowIndexToTaskMap, checkTaskIdExists);
+
+
 
   const [startDate, minTaskDate, datesLength] = useMemo(
     () => ganttDateRange(visibleTasks, viewMode, preStepsCount),
@@ -567,6 +567,9 @@ export const Gantt: React.FC<GanttProps> = ({
     },
     [mapTaskToCoordinates, setScrollXProgrammatically]
   );
+
+  const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
+    useContextMenu(wrapperRef, toggleTask, scrollToTask);
 
   const [dependencyMap, dependentMap, dependencyMarginsMap] = useMemo(
     () =>

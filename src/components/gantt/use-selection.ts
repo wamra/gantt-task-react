@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from "react";
-import type { MouseEvent } from "react";
+import {useCallback, useRef, useState} from "react";
+import type {MouseEvent} from "react";
 
 import type {
   CheckTaskIdExistsAtLevel,
@@ -32,9 +32,20 @@ export const useSelection = (
     lastSelectedIdRef.current = taskId;
   }, []);
 
-  const toggleTask = useCallback((taskId: string) => {
+  const toggleTask = useCallback((taskId?: string | null, singleMode: boolean = false) => {
     setCutIdsMirror(initialValue);
     setSelectedIdsMirror(prevValue => {
+
+      if (!taskId) {
+        return {}
+      }
+
+      if (singleMode) {
+        return {
+          [taskId]: true,
+        }
+      }
+
       if (prevValue[taskId]) {
         const nextValue = {
           ...prevValue,

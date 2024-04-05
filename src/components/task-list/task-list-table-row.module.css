@@ -2,7 +2,7 @@
   position: relative;
   display: table-row;
   text-overflow: ellipsis;
-  cursor:grab
+  cursor: grab;
 }
 .taskListTableRowGrabbing {
   cursor:grabbing

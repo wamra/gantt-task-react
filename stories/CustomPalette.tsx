@@ -163,6 +163,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
       ContextualPalette={ContextualPalette}
       onWheel={handleWheel}
       onChangeExpandState={onChangeExpandState}
+      enableTableListContextMenu={1}
     />
   );
 };

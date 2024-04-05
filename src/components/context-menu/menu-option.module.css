@@ -1,10 +1,17 @@
 .menuOption {
   display: flex;
   align-items: center;
-  gap: 5px;
+  text-align: left;
+  gap: 12px;
   background-color: #fff;
   cursor: pointer;
-  padding: 5px;
+  font-size: 16px;
+  min-width: 120px;
+  border: none;
+  padding-block: unset;
+  padding-inline: unset;
+  min-height: 36px;
+  z-index: 1;
 }
 
 .menuOption:hover {
@@ -12,7 +19,7 @@
 }
 
 .icon {
-  width: 30px;
+  font-size: inherit;
 }
 
 .label {

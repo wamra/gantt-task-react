@@ -63,7 +63,8 @@ export const Comparison: React.FC<AppProps> = props => {
       onDoubleClick={handleDblClick}
       onEditTask={onEditTask}
       onClick={handleClick}
-      tasks={tasks}
+      isShowTaskNumbers={false}
+      tasks={tasks} isAdjustToWorkingDates={false}
     />
   );
 };
