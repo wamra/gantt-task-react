@@ -169,14 +169,14 @@ const ArrowInner: React.FC<ArrowProps> = (props) => {
     <g className={fixPositionContainerClass} fill={color} stroke={color}>
       <g
         data-testid={`task-arrow-${targetFrom}-${taskFrom.name}-${targetTo}-${taskTo.name}`}
-        className={`"arrow" ${styles.arrow_clickable}`}
+        className={`arrow ${styles.arrow_clickable}`}
         onDoubleClick={onDoubleClick}
       >
         {onArrowDoubleClick && <path d={path} className={styles.clickZone}/>}
 
         <path className={styles.mainPath} d={path}/>
 
-        <polygon points={trianglePoints}/>
+        <polygon className={'polygon'} points={trianglePoints}/>
       </g>
 
       {hasWarning && (

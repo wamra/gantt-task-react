@@ -9,6 +9,7 @@ export const GANTT_EN_LOCALE: GanttLocale = {
     progress: "Progress"
   },
   context: {
+    edit: "Edit",
     cut: "Cut",
     copy: "Copy",
     paste: "Paste",

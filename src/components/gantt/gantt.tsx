@@ -77,6 +77,7 @@ import {
   createCopyOption,
   createCutOption,
   createDeleteOption,
+  createEditOption,
   createPasteOption,
 } from "../context-menu-options";
 
@@ -1527,6 +1528,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     copySelectedTasks,
     copyTask,
     cutIdsMirror,
+    handleEditTask,
     cutSelectedTasks,
     cutTask,
     handleAddChilds,
@@ -1574,6 +1576,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     }
 
     return [
+      createEditOption(locale),
       createCutOption(locale),
       createCopyOption(locale),
       createPasteOption(locale),
@@ -1657,7 +1660,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     ]
   );
 
-  const calendarProps: Omit<CalendarProps, 'scrollRef'> = useMemo(
+  const calendarProps: Omit<CalendarProps, "scrollRef"> = useMemo(
     () => ({
       additionalLeftSpace,
       dateSetup,

@@ -15,7 +15,8 @@ export const DEFAULT_THEME: GanttTheme = {
     dividerColor: "#E0E0E0",
     primaryTextColor: "#555",
     secondaryTextColor: "#333",
-    hoverFilter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, .7))",
+    hoverFilter: "inherit",
+    // hoverFilter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, .7))",
 
     calendarTodayColor: "rgba(233, 30, 99, 0.2)",
     calendarHolidayColor: "rgba(233, 233, 233, 0.3)",
@@ -23,7 +24,7 @@ export const DEFAULT_THEME: GanttTheme = {
     scrollbarThumbColor: "#B0BEC5",
 
     tableResizeHoverColor: "#03A9F4",
-    tableActionColor: "#BDBDBD",
+    tableActionColor: "#9E9E9E",
     tableEvenBackgroundColor: "#f8f9fa",
     tableSelectedTaskBackgroundColor: "rgba(3, 169, 244, 0.2)",
     tableDragTaskBackgroundColor: "rgba(3, 169, 244, 0.5)",

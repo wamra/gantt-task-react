@@ -162,6 +162,7 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
         >
           {optionsForRender.map((option, index) => (
             <MenuOption
+              onClose={handleCloseContextMenu}
               distances={distances}
               handleAction={handleOptionAction}
               option={option}

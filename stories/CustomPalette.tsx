@@ -21,7 +21,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
   const customTheme = useMemo(() => {
     return {
       colors: {
-        arrowColor: "cian",
+        arrowColor: "#00CED1",
       },
       distances: {
         viewModeYearOffsetYears: 10

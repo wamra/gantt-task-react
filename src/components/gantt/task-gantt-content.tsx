@@ -226,7 +226,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         <svg
           id={task.id}
           className="TaskItemClassName"
-          x={containerX + (additionalLeftSpace || 0)}
+          x={Math.max(containerX + (additionalLeftSpace || 0), 0)}
           y={levelY}
           width={containerWidth}
           height={fullRowHeight}

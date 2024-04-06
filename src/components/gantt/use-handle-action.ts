@@ -77,6 +77,7 @@ type UseHandleActionParams = {
   cutTask: (task: TaskOrEmpty) => void;
   handleAddChilds: (parent: Task, descendants: readonly TaskOrEmpty[]) => void;
   handleDeleteTasks: (tasksForDelete: readonly TaskOrEmpty[]) => void;
+  handleEditTask: (taskForEdit: TaskOrEmpty) => void;
   handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
   makeCopies: (tasksForCopy: readonly TaskOrEmpty[]) => readonly TaskOrEmpty[];
   resetSelectedTasks: () => void;
@@ -99,6 +100,7 @@ export const useHandleAction = ({
   makeCopies,
   resetSelectedTasks,
   selectedIdsMirror,
+  handleEditTask,
   tasksMap,
 }: UseHandleActionParams) => {
   const handleAction = useCallback(
@@ -139,6 +141,7 @@ export const useHandleAction = ({
         handleMoveTasksInside,
         makeCopies,
         resetSelectedTasks,
+        handleEditTask,
         task,
       });
     },
@@ -153,6 +156,7 @@ export const useHandleAction = ({
       cutTask,
       handleAddChilds,
       handleDeleteTasks,
+      handleEditTask,
       handleMoveTasksInside,
       makeCopies,
       resetSelectedTasks,

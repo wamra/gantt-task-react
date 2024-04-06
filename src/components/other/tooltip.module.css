@@ -10,6 +10,9 @@
   font-size: 12px;
   margin-bottom: 6px;
   color: #666;
+  padding: 0;
+  padding-block: 0;
+  padding-inline: 0;
 }
 
 .tooltipDetailsContainer {

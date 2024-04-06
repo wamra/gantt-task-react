@@ -611,6 +611,7 @@ export interface GanttLocale {
     };
   };
   context: {
+    edit: string;
     copy: string;
     cut: string;
     paste: string;
@@ -1037,6 +1038,12 @@ export type ActionMetaType = {
    * @param tasksForDelete list of tasks for delete
    */
   handleDeleteTasks: (tasksForDelete: readonly TaskOrEmpty[]) => void;
+
+  /**
+   * Edit task
+   */
+  handleEditTask: (task: TaskOrEmpty) => void;
+
   /**
    * Move tasks to the container task
    * @param parent the container task
