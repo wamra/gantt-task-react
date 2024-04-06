@@ -13,7 +13,7 @@ describe("add to date", () => {
 });
 
 test("get week number", () => {
-  expect(getWeekNumberISO8601(new Date(2019, 11, 31))).toEqual("01");
-  expect(getWeekNumberISO8601(new Date(2021, 0, 1))).toEqual("53");
-  expect(getWeekNumberISO8601(new Date(2020, 6, 20))).toEqual("30");
+  expect(getWeekNumberISO8601(new Date(2019, 11, 31))).toEqual(1);
+  expect(getWeekNumberISO8601(new Date(2021, 0, 1))).toEqual(53);
+  expect(getWeekNumberISO8601(new Date(2020, 6, 20))).toEqual(30);
 });

@@ -34,7 +34,7 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
 
       {value !== null && (
         <text
-          y={yText}
+          y={yText - 4}
           x={xText}
           className={styles.calendarTopText}
         >

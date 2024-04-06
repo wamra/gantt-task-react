@@ -85,8 +85,10 @@ export const defaultRenderBottomHeader = (
       }
 
     case ViewMode.Week:
-      return `W${getWeekNumberISO8601(date)}`;
-
+      return dateSetup.dateFormats.weekBottomHeader(
+        date,
+        getWeekNumberISO8601(date)
+      );
     case ViewMode.Day:
       try {
         return format(date, dateSetup.dateFormats.dayBottomHeaderFormat, {

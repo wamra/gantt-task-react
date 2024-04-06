@@ -77,7 +77,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   ): ReactNode => {
     return (
       <g key={key} className={styles.calendarBottomText}>
-        <text y={y} x={x} fontFamily={"var(--gantt-font-family)"}>
+        <text y={y} x={x} fontFamily={"var(--gantt-font-family)"} fill={'var(--gantt-secondary-text-color)'}>
           {text}
         </text>
       </g>

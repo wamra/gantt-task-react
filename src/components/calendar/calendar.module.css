@@ -25,6 +25,7 @@
   -ms-user-select: none;
   user-select: none;
   pointer-events: none;
+  font-weight: bold;
 }
 
 .calendarHeader {

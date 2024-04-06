@@ -170,6 +170,7 @@ export interface DateFormats {
   hourBottomHeaderFormat: string;
   monthBottomHeaderFormat: string;
   monthTopHeaderFormat: string;
+  weekBottomHeader: (date: Date, weekNumber: number) => string;
 }
 
 export interface Distances {

@@ -24,8 +24,13 @@ export const CustomPalette: React.FC<AppProps> = props => {
         arrowColor: "#00CED1",
       },
       distances: {
-        viewModeYearOffsetYears: 10
-      }
+        viewModeYearOffsetYears: 10,
+      },
+      dateFormats: {
+        weekBottomHeader: (date, weekNumber) => {
+          return `НЕД${weekNumber}`;
+        },
+      },
     } as Partial<GanttTheme>;
   }, []);
 

@@ -118,5 +118,12 @@ export const DEFAULT_THEME: GanttTheme = {
     hourBottomHeaderFormat: "HH",
     monthBottomHeaderFormat: "LLL",
     monthTopHeaderFormat: "LLLL",
+    weekBottomHeader: (_, weekNumber) => {
+      if (weekNumber < 10) {
+        return `W0${weekNumber}`;
+      } else {
+        return `W${weekNumber.toString()}`;
+      }
+    }
   },
 };
