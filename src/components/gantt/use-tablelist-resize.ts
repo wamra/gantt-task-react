@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useEffect, useMemo, useState } from "react";
 
 import { Column, OnResizeColumn } from "../../types/public-types";
 import { useTaskListColumnsBuilder } from "../task-list/columns/use-task-list-columns-builder";
@@ -18,7 +18,7 @@ type ColumnResizeEvent = {
   initialTableWidth: number;
 };
 export const useTableListResize = (
-  defaultColumns: readonly Column[],
+  clientColumns: readonly Column[] | undefined | null,
   onResizeColumn: OnResizeColumn,
   ganttRef: RefObject<HTMLDivElement>
 ): [
@@ -39,11 +39,7 @@ export const useTableListResize = (
     actionColumnWidth,
   } = theme.distances;
 
-  const [columnsState, setColumns] = useState<readonly Column[]>(() => {
-    if (defaultColumns) {
-      return [...defaultColumns];
-    }
-
+  const defaultColumns = useMemo(()=> {
     return [
       columnsBuilder.createNameColumn(locale.table.columns.name, titleCellWidth),
       columnsBuilder.createStartDateColumn(locale.table.columns.startDate, dateCellWidth),
@@ -53,29 +49,31 @@ export const useTableListResize = (
       columnsBuilder.createEditActionColumn(actionColumnWidth),
       columnsBuilder.createAddActionColumn(actionColumnWidth),
     ];
-  });
+  }, [actionColumnWidth, columnsBuilder, dateCellWidth, dependenciesCellWidth, locale, titleCellWidth])
+
+  const [columnsState, setColumns] = useState<readonly Column[]>(clientColumns || defaultColumns);
 
   useEffect(() => {
-    if (defaultColumns) {
-      setColumns([...defaultColumns]);
-      const currentColumnIds = columnsState.map(col => col.id);
-      const newColumnIds = defaultColumns.map(col => col.id);
+    if (clientColumns) {
+      setColumns([...clientColumns]);
+      const currentColumnIds = clientColumns.map(col => col.id);
+      const newColumnIds = clientColumns.map(col => col.id);
 
-      const widthOfAddedColumns = defaultColumns
+      const widthOfAddedColumns = clientColumns
         .filter(col => !currentColumnIds.includes(col.id))
         .reduce((res, { width }) => res + width, 0);
-      const widthOfRemovedColumns = columnsState
+      const widthOfRemovedColumns = clientColumns
         .filter(col => !newColumnIds.includes(col.id))
         .reduce((res, { width }) => res + width, 0);
 
       setTableWidth(prev =>
         Math.min(
           prev + widthOfAddedColumns - widthOfRemovedColumns,
-          defaultColumns.reduce((res, { width }) => res + width, 0)
+          clientColumns.reduce((res, { width }) => res + width, 0)
         )
       );
     }
-  }, [defaultColumns, columnsState]);
+  }, [clientColumns]);
 
   const [tableResizeEvent, setTableResizeEvent] =
     useState<TableResizeEvent | null>(null);

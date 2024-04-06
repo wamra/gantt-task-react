@@ -6,13 +6,19 @@
   border-radius: var(--gantt-shape-border-radius);
 }
 
+.tooltipDefaultContainerTexts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .tooltipDefaultContainerParagraph {
   font-size: 12px;
-  margin-bottom: 6px;
-  color: #666;
+  /*noinspection CssUnresolvedCustomProperty*/
+  color: var(--gantt-secondary-text-color);
   padding: 0;
-  padding-block: 0;
-  padding-inline: 0;
+  margin: 0;
 }
 
 .tooltipDetailsContainer {

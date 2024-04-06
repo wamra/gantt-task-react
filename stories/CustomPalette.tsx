@@ -6,6 +6,7 @@ import {
   OnChangeTasks,
   Task,
   TaskOrEmpty,
+  useTaskListColumnsBuilder,
   ViewMode,
 } from "../src";
 
@@ -18,6 +19,7 @@ type AppProps = {
 export const CustomPalette: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
   const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
+  const columnsBuilder = useTaskListColumnsBuilder();
   const customTheme = useMemo(() => {
     return {
       colors: {
@@ -33,6 +35,14 @@ export const CustomPalette: React.FC<AppProps> = props => {
       },
     } as Partial<GanttTheme>;
   }, []);
+
+  const columns = useMemo(() => {
+    return [
+      columnsBuilder.createNameColumn("Name", 200),
+      columnsBuilder.createStartDateColumn("Start Date", 130),
+      columnsBuilder.createEndDateColumn("End Date", 130),
+    ];
+  }, [columnsBuilder]);
 
   const onChangeTasks = useCallback<OnChangeTasks>(
     (newTaskOrEmptys, action) => {
@@ -118,6 +128,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
   return (
     <Gantt
       {...props}
+      columns={columns}
       theme={customTheme}
       onAddTask={onAddTask}
       onChangeTasks={onChangeTasks}
