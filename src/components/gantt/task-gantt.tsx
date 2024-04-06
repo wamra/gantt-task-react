@@ -43,7 +43,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
       height: Math.max(ganttHeight, minimumRowDisplayed * rowHeight),
       width: fullSvgWidth,
     }),
-    [fullSvgWidth, ganttHeight, ganttFullHeight]
+    [ganttHeight, minimumRowDisplayed, rowHeight, fullSvgWidth]
   );
 
   const gridStyle = useMemo<CSSProperties>(
@@ -63,6 +63,8 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
       fullRowHeight,
       fullSvgWidth,
       ganttFullHeight,
+      minimumRowDisplayed,
+      rowHeight,
     ]
   );
 
@@ -77,7 +79,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         width={fullSvgWidth}
         height={calendarProps.distances.headerHeight}
-        fontFamily={'var(--gantt-font-family)'}
+        fontFamily={"var(--gantt-font-family)"}
       >
         <Calendar {...calendarProps} />
       </svg>
@@ -92,7 +94,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             xmlns="http://www.w3.org/2000/svg"
             width={fullSvgWidth}
             height={ganttFullHeight}
-            fontFamily={'var(--gantt-font-family)'}
+            fontFamily={"var(--gantt-font-family)"}
             ref={ganttSVGRef}
           >
             <Grid {...gridProps} />

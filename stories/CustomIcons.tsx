@@ -7,6 +7,7 @@ import {
   OnChangeTasks,
   Task,
   TaskOrEmpty,
+  ViewMode,
 } from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
@@ -79,6 +80,7 @@ export const CustomIcons: React.FC<AppProps> = props => {
       onEditTask={onEditTask}
       onClick={handleClick}
       tasks={tasks}
+      viewMode={ViewMode.Day}
     />
   );
 };

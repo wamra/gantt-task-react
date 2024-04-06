@@ -235,7 +235,7 @@ export const useTaskDrag = ({
     task: Task,
     clientX: number,
     taskRootNode: Element
-  ) => void
+  ) => void,
 ] => {
   const [changeInProgress, setChangeInProgress] =
     useState<ChangeInProgress | null>(null);
@@ -337,7 +337,7 @@ export const useTaskDrag = ({
         };
       });
     },
-    [changeInProgress, rtl, svgWidth]
+    [changeInProgress, rtl, timeStep, xStep]
   );
 
   useEffect(() => {
@@ -509,11 +509,14 @@ export const useTaskDrag = ({
     changeInProgress,
     isChangeInProgress,
     recountOnMove,
+    rtl,
     scrollToLeftStep,
     scrollToRightStep,
     scrollX,
     svgClientWidth,
     svgWidth,
+    timeStep,
+    xStep,
   ]);
 
   const additionalRightSpace = changeInProgress?.additionalRightSpace;

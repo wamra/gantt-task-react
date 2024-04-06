@@ -1,9 +1,9 @@
-import {GanttTheme} from "../../types/public-types";
+import { GanttTheme } from "../../types/public-types";
 
 export const DEFAULT_THEME: GanttTheme = {
   rtl: false,
   shape: {
-    borderRadius: '8px'
+    borderRadius: "8px",
   },
   colors: {
     backgroundColor: "white",
@@ -19,7 +19,7 @@ export const DEFAULT_THEME: GanttTheme = {
 
     calendarTodayColor: "rgba(233, 30, 99, 0.2)",
     calendarHolidayColor: "rgba(233, 233, 233, 0.3)",
-    calendarStrokeColor: '#e0e0e0',
+    calendarStrokeColor: "#e0e0e0",
     scrollbarThumbColor: "#B0BEC5",
 
     tableResizeHoverColor: "#03A9F4",
@@ -28,10 +28,12 @@ export const DEFAULT_THEME: GanttTheme = {
     tableSelectedTaskBackgroundColor: "rgba(3, 169, 244, 0.2)",
     tableDragTaskBackgroundColor: "rgba(3, 169, 244, 0.5)",
 
-    contextMenuBoxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
+    contextMenuBoxShadow:
+      "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
     contextMenuBgColor: "var(--gantt-background-color)",
     contextMenuTextColor: "inherit",
-    tooltipBoxShadow: "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
+    tooltipBoxShadow:
+      "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
 
     arrowCriticalColor: "#F44336",
     arrowWarningColor: "#FF9800",
@@ -72,8 +74,9 @@ export const DEFAULT_THEME: GanttTheme = {
     milestoneBackgroundSelectedCriticalColor: "#BF360C",
   },
   typography: {
-    fontSize: '14px',
-    fontFamily: "Roboto, Arial, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
+    fontSize: "14px",
+    fontFamily:
+      "Roboto, Arial, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue",
   },
   distances: {
     actionColumnWidth: 40,
@@ -100,6 +103,12 @@ export const DEFAULT_THEME: GanttTheme = {
     rowHeight: 50,
     taskWarningOffset: 35,
     titleCellWidth: 220,
+
+    viewModeYearOffsetYears: 2,
+    viewModeMonthOffsetMonths: 2,
+    viewModeWeekOffsetWeeks: 2,
+    viewModeDayOffsetDays: 2,
+    viewModeHourOffsetHours: 66,
   },
   dateFormats: {
     dateColumnFormat: "E, d MMMM yyyy",
@@ -108,5 +117,5 @@ export const DEFAULT_THEME: GanttTheme = {
     hourBottomHeaderFormat: "HH",
     monthBottomHeaderFormat: "LLL",
     monthTopHeaderFormat: "LLLL",
-  }
+  },
 };

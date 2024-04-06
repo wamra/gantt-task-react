@@ -131,18 +131,20 @@ export const useTableListResize = (
       return () => {};
     }
 
-    ganttRef.current.addEventListener("mousemove", handleMouseMove);
-    ganttRef.current.addEventListener("touchmove", handleTouchMove);
-    ganttRef.current.addEventListener("mouseup", handleUp);
-    ganttRef.current.addEventListener("touchend", handleUp);
+    const gantt = ganttRef.current;
+
+    gantt.addEventListener("mousemove", handleMouseMove);
+    gantt.addEventListener("touchmove", handleTouchMove);
+    gantt.addEventListener("mouseup", handleUp);
+    gantt.addEventListener("touchend", handleUp);
 
     return () => {
-      ganttRef.current.removeEventListener("mousemove", handleMouseMove);
-      ganttRef.current.removeEventListener("touchmove", handleTouchMove);
-      ganttRef.current.removeEventListener("mouseup", handleUp);
-      ganttRef.current.removeEventListener("touchend", handleUp);
+      gantt.removeEventListener("mousemove", handleMouseMove);
+      gantt.removeEventListener("touchmove", handleTouchMove);
+      gantt.removeEventListener("mouseup", handleUp);
+      gantt.removeEventListener("touchend", handleUp);
     };
-  }, [isResizeTableInProgress, tableWidthState, tableResizeEvent]);
+  }, [isResizeTableInProgress, tableWidthState, tableResizeEvent, ganttRef, taskListWidth]);
 
   useEffect(() => {
     if (!isResizeColumnInProgress) {
@@ -212,7 +214,7 @@ export const useTableListResize = (
       document.removeEventListener("mouseup", handleUp);
       document.removeEventListener("touchend", handleUp);
     };
-  }, [isResizeColumnInProgress, columnResizeEvent, columnsState]);
+  }, [isResizeColumnInProgress, columnResizeEvent, columnsState, taskListWidth, onResizeColumn]);
 
   return [
     columnsState,

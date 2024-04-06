@@ -202,6 +202,11 @@ export interface Distances {
   tableWidth?: number;
   taskWarningOffset: number;
   titleCellWidth: number;
+  viewModeYearOffsetYears?: number;
+  viewModeMonthOffsetMonths?: number;
+  viewModeWeekOffsetWeeks?: number;
+  viewModeDayOffsetDays?: number;
+  viewModeHourOffsetHours?: number;
 }
 
 export type TaskType = "task" | "milestone" | "project";
