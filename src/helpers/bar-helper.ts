@@ -26,7 +26,7 @@ export const progressWithByParams = (
   progress: number,
   rtl: boolean
 ): [number, number] => {
-  const progressWidth = (taskX2 - taskX1) * progress * 0.01;
+  const progressWidth = Math.max((taskX2 - taskX1) * progress * 0.01, 0);
   let progressX: number;
   if (rtl) {
     progressX = taskX2 - progressWidth;
@@ -57,7 +57,7 @@ const dateByX = (
   taskX: number,
   taskDate: Date,
   xStep: number,
-  timeStep: number,
+  timeStep: number
 ) => {
   let newDate = new Date(((x - taskX) / xStep) * timeStep + taskDate.getTime());
   newDate = new Date(
@@ -77,7 +77,7 @@ export const handleTaskBySVGMouseEvent = (
   coordinates: TaskCoordinates,
   xStep: number,
   timeStep: number,
-  rtl: boolean,
+  rtl: boolean
 ): { isChanged: boolean; changedTask: Task } => {
   let result: { isChanged: boolean; changedTask: Task };
   switch (selectedTask.type) {
@@ -88,7 +88,7 @@ export const handleTaskBySVGMouseEvent = (
         initialCoordinates,
         coordinates,
         xStep,
-        timeStep,
+        timeStep
       );
       break;
     default:
@@ -99,7 +99,7 @@ export const handleTaskBySVGMouseEvent = (
         coordinates,
         xStep,
         timeStep,
-        rtl,
+        rtl
       );
       break;
   }
@@ -120,11 +120,12 @@ const handleTaskBySVGMouseEventForBar = (
   let isChanged = false;
   switch (action) {
     case "progress":
-      isChanged = initialCoordinates.progressWidth !== coordinates.progressWidth;
+      isChanged =
+        initialCoordinates.progressWidth !== coordinates.progressWidth;
 
       if (isChanged) {
         changedTask.progress = Math.round(
-          (coordinates.progressWidth * 100) / (coordinates.x2 - coordinates.x1),
+          (coordinates.progressWidth * 100) / (coordinates.x2 - coordinates.x1)
         );
       }
 
@@ -140,7 +141,7 @@ const handleTaskBySVGMouseEventForBar = (
             initialCoordinates.x1,
             selectedTask.end,
             xStep,
-            timeStep,
+            timeStep
           );
         } else {
           changedTask.start = dateByX(
@@ -148,7 +149,7 @@ const handleTaskBySVGMouseEventForBar = (
             initialCoordinates.x1,
             selectedTask.start,
             xStep,
-            timeStep,
+            timeStep
           );
         }
       }
@@ -165,7 +166,7 @@ const handleTaskBySVGMouseEventForBar = (
             initialCoordinates.x2,
             selectedTask.start,
             xStep,
-            timeStep,
+            timeStep
           );
         } else {
           changedTask.end = dateByX(
@@ -173,7 +174,7 @@ const handleTaskBySVGMouseEventForBar = (
             initialCoordinates.x2,
             selectedTask.end,
             xStep,
-            timeStep,
+            timeStep
           );
         }
       }
@@ -190,14 +191,14 @@ const handleTaskBySVGMouseEventForBar = (
             initialCoordinates.x1,
             selectedTask.end,
             xStep,
-            timeStep,
+            timeStep
           );
           changedTask.start = dateByX(
             coordinates.x2,
             initialCoordinates.x2,
             selectedTask.start,
             xStep,
-            timeStep,
+            timeStep
           );
         } else {
           changedTask.start = dateByX(
@@ -205,14 +206,14 @@ const handleTaskBySVGMouseEventForBar = (
             initialCoordinates.x1,
             selectedTask.start,
             xStep,
-            timeStep,
+            timeStep
           );
           changedTask.end = dateByX(
             coordinates.x2,
             initialCoordinates.x2,
             selectedTask.end,
             xStep,
-            timeStep,
+            timeStep
           );
         }
       }
@@ -228,7 +229,7 @@ const handleTaskBySVGMouseEventForMilestone = (
   initialCoordinates: TaskCoordinates,
   coordinates: TaskCoordinates,
   xStep: number,
-  timeStep: number,
+  timeStep: number
 ): { isChanged: boolean; changedTask: Task } => {
   const changedTask: Task = { ...selectedTask };
 

@@ -35,9 +35,7 @@ const getNextCoordinates = (
     case "end": {
       const nextX2 = Math.max(nextX, initialCoordinates.x1);
       const x2Diff = nextX2 - initialCoordinates.x2;
-
-      const progressWidth =
-        (nextX2 - initialCoordinates.x1) * task.progress * 0.01;
+      const progressWidth = Math.max((nextX2 - initialCoordinates.x1) * task.progress * 0.01, 0);
 
       if (rtl) {
         return [
@@ -68,9 +66,7 @@ const getNextCoordinates = (
     case "start": {
       const nextX1 = Math.min(nextX, initialCoordinates.x2);
       const x1Diff = nextX1 - initialCoordinates.x1;
-
-      const progressWidth =
-        (initialCoordinates.x2 - nextX1) * task.progress * 0.01;
+      const progressWidth = Math.max((initialCoordinates.x2 - nextX1) * task.progress * 0.01, 0);
 
       if (rtl) {
         return [
