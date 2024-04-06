@@ -70,6 +70,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
   }, []);
 
   const handleWheel = (wheelEvent: WheelEvent) => {
+    // eslint-disable-next-line
     const deltaY = (wheelEvent as any).deltaY;
 
     if (deltaY < 0 && viewMode !== ViewMode.Hour) {

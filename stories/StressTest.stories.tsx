@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { StressTest } from "./StressTest";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <StressTest {...props} />;
 };

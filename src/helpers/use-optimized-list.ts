@@ -1,10 +1,5 @@
-import {
-  useEffect,
-  useState,
-} from 'react';
-import type {
-  RefObject,
-} from 'react';
+import { useEffect, useState } from "react";
+import type { RefObject } from "react";
 
 export type OptimizedListParams = [
   /**
@@ -33,20 +28,22 @@ const DELTA = 5;
 
 const getStartAndEnd = (
   containerEl: Element | null,
-  property: 'scrollTop' | 'scrollLeft',
-  cellSize: number,
+  property: "scrollTop" | "scrollLeft",
+  cellSize: number
 ): OptimizedListParams | null => {
   if (!containerEl) {
     return null;
   }
 
   const scrollValue = containerEl[property];
-  const maxScrollValue = property === 'scrollLeft'
-  ? containerEl.scrollWidth
-  : containerEl.scrollHeight;
-  const fullValue = property === 'scrollLeft'
-    ? containerEl.clientWidth
-    : containerEl.clientHeight;
+  const maxScrollValue =
+    property === "scrollLeft"
+      ? containerEl.scrollWidth
+      : containerEl.scrollHeight;
+  const fullValue =
+    property === "scrollLeft"
+      ? containerEl.clientWidth
+      : containerEl.clientHeight;
 
   const firstIndex = Math.floor(scrollValue / cellSize);
   const lastIndex = Math.ceil((scrollValue + fullValue) / cellSize) - 1;
@@ -54,22 +51,16 @@ const getStartAndEnd = (
   const isStartOfScroll = scrollValue < DELTA;
   const isEndOfScroll = scrollValue + fullValue > maxScrollValue - DELTA;
 
-  return [
-    firstIndex,
-    lastIndex,
-    isStartOfScroll,
-    isEndOfScroll,
-    fullValue,
-  ];
+  return [firstIndex, lastIndex, isStartOfScroll, isEndOfScroll, fullValue];
 };
 
 export const useOptimizedList = (
   containerRef: RefObject<Element>,
-  property: 'scrollTop' | 'scrollLeft',
-  cellSize: number,
+  property: "scrollTop" | "scrollLeft",
+  cellSize: number
 ) => {
-  const [indexes, setIndexes] = useState(
-    () => getStartAndEnd(containerRef.current, property, cellSize),
+  const [indexes, setIndexes] = useState(() =>
+    getStartAndEnd(containerRef.current, property, cellSize)
   );
 
   useEffect(() => {
@@ -78,11 +69,17 @@ export const useOptimizedList = (
     let prevIndexes = indexes;
 
     const handler = () => {
-      const nextIndexes = getStartAndEnd(containerRef.current, property, cellSize);
+      const nextIndexes = getStartAndEnd(
+        containerRef.current,
+        property,
+        cellSize
+      );
 
       const isChanged = prevIndexes
         ? nextIndexes
-          ? nextIndexes.some((value, index) => !prevIndexes || prevIndexes[index] !== value)
+          ? nextIndexes.some(
+              (value, index) => !prevIndexes || prevIndexes[index] !== value
+            )
           : true
         : Boolean(nextIndexes);
 
@@ -101,10 +98,7 @@ export const useOptimizedList = (
         cancelAnimationFrame(rafId);
       }
     };
-  }, [
-    containerRef,
-    cellSize,
-  ]);
+  }, [containerRef, cellSize, indexes, property]);
 
   return indexes;
 };

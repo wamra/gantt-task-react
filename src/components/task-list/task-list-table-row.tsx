@@ -50,6 +50,7 @@ type TaskListTableRowProps = {
   task: TaskOrEmpty;
   tasks: readonly TaskOrEmpty[];
   draggedTask: TaskOrEmpty;
+  // eslint-disable-next-line
   setDraggedTask: React.Dispatch<any>;
 };
 

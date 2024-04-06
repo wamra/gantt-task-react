@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { CustomPalette } from "./CustomPalette";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <CustomPalette {...props} />;
 };

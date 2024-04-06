@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { CustomColumns } from "./CustomColumns";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <CustomColumns {...props} />;
 };

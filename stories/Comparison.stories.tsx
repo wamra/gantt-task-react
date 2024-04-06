@@ -3,6 +3,7 @@ import { Gantt } from "../src";
 import { Comparison } from "./Comparison";
 import { Meta, StoryObj } from "@storybook/react";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <Comparison {...props} />;
 };

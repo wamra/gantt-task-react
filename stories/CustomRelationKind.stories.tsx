@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { CustomRelationKind } from "./CustomRelationKind";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <CustomRelationKind {...props} />;
 };

@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { Warnings } from "./Warnings";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <Warnings {...props} />;
 };

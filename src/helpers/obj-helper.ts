@@ -2,6 +2,7 @@ function isObject(item: object) {
   return item && typeof item === "object" && !Array.isArray(item);
 }
 
+// eslint-disable-next-line
 export function mergeDeepObj(target: any, ...sources: any[]) {
   if (!sources.length) return target;
   const source = sources.shift();

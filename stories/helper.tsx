@@ -184,11 +184,13 @@ export const getTaskFields = (initialValues: {
   start?: Date | null;
   end?: Date | null;
 }) => {
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const name = prompt("Name", initialValues.name);
 
   const startDateStr =
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     prompt(
       "Start date",
       initialValues.start ? format(initialValues.start, dateFormat) : ""
@@ -197,7 +199,8 @@ export const getTaskFields = (initialValues: {
   const startDate = startOfMinute(parse(startDateStr, dateFormat, new Date()));
 
   const endDateStr =
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     prompt(
       "End date",
       initialValues.end ? format(initialValues.end, dateFormat) : ""

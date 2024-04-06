@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { CustomIcons } from "./CustomIcons";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <CustomIcons {...props} />;
 };

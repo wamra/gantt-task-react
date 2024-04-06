@@ -2,6 +2,7 @@ import { Gantt } from "../src";
 
 import { CriticalPath } from "./CriticalPath";
 
+// eslint-disable-next-line
 const Template = (props: any) => {
   return <CriticalPath {...props} />;
 };
