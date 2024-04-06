@@ -40,6 +40,7 @@
   width: 6px;
   cursor: ew-resize;
   user-select: none;
+  z-index: 3;
 }
 
 /*noinspection CssUnresolvedCustomProperty*/

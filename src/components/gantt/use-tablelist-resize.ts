@@ -2,6 +2,8 @@ import { RefObject, useEffect, useState } from "react";
 
 import { Column, OnResizeColumn } from "../../types/public-types";
 import { useTaskListColumnsBuilder } from "../task-list/columns/use-task-list-columns-builder";
+import { useGanttLocale } from "../gantt-locale";
+import { useGanttTheme } from "../gantt-theme";
 
 type TableResizeEvent = {
   initialClientX: number;
@@ -16,7 +18,7 @@ type ColumnResizeEvent = {
   initialTableWidth: number;
 };
 export const useTableListResize = (
-  columnsProp: readonly Column[],
+  defaultColumns: readonly Column[],
   onResizeColumn: OnResizeColumn,
   ganttRef: RefObject<HTMLDivElement>
 ): [
@@ -28,29 +30,38 @@ export const useTableListResize = (
   onColumnResizeStart: (columnIndex: number, clientX: number) => void,
 ] => {
   const columnsBuilder = useTaskListColumnsBuilder();
+  const locale = useGanttLocale();
+  const theme = useGanttTheme();
+  const {
+    titleCellWidth,
+    dateCellWidth,
+    dependenciesCellWidth,
+    actionColumnWidth,
+  } = theme.distances;
+
   const [columnsState, setColumns] = useState<readonly Column[]>(() => {
-    if (columnsProp) {
-      return [...columnsProp];
+    if (defaultColumns) {
+      return [...defaultColumns];
     }
 
     return [
-      columnsBuilder.createNameColumn(),
-      columnsBuilder.createStartDateColumn(),
-      columnsBuilder.createEndDateColumn(),
-      columnsBuilder.createDependenciesColumn(),
-      columnsBuilder.createDeleteActionColumn(),
-      columnsBuilder.createEditActionColumn(),
-      columnsBuilder.createAddActionColumn(),
+      columnsBuilder.createNameColumn(locale.table.columns.name, titleCellWidth),
+      columnsBuilder.createStartDateColumn(locale.table.columns.startDate, dateCellWidth),
+      columnsBuilder.createEndDateColumn(locale.table.columns.endDate, dateCellWidth),
+      columnsBuilder.createDependenciesColumn(locale.table.columns.dependencies, dependenciesCellWidth),
+      columnsBuilder.createDeleteActionColumn(actionColumnWidth),
+      columnsBuilder.createEditActionColumn(actionColumnWidth),
+      columnsBuilder.createAddActionColumn(actionColumnWidth),
     ];
   });
 
   useEffect(() => {
-    if (columnsProp) {
-      setColumns([...columnsProp]);
+    if (defaultColumns) {
+      setColumns([...defaultColumns]);
       const currentColumnIds = columnsState.map(col => col.id);
-      const newColumnIds = columnsProp.map(col => col.id);
+      const newColumnIds = defaultColumns.map(col => col.id);
 
-      const widthOfAddedColumns = columnsProp
+      const widthOfAddedColumns = defaultColumns
         .filter(col => !currentColumnIds.includes(col.id))
         .reduce((res, { width }) => res + width, 0);
       const widthOfRemovedColumns = columnsState
@@ -60,11 +71,11 @@ export const useTableListResize = (
       setTableWidth(prev =>
         Math.min(
           prev + widthOfAddedColumns - widthOfRemovedColumns,
-          columnsProp.reduce((res, { width }) => res + width, 0)
+          defaultColumns.reduce((res, { width }) => res + width, 0)
         )
       );
     }
-  }, [columnsProp, columnsState]);
+  }, [defaultColumns, columnsState]);
 
   const [tableResizeEvent, setTableResizeEvent] =
     useState<TableResizeEvent | null>(null);
@@ -203,18 +214,20 @@ export const useTableListResize = (
       setColumnResizeEvent(null);
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("touchmove", handleTouchMove);
-    document.addEventListener("mouseup", handleUp);
-    document.addEventListener("touchend", handleUp);
+    const gantt = ganttRef.current;
+
+    gantt.addEventListener("mousemove", handleMouseMove);
+    gantt.addEventListener("touchmove", handleTouchMove);
+    gantt.addEventListener("mouseup", handleUp);
+    gantt.addEventListener("touchend", handleUp);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("touchmove", handleTouchMove);
-      document.removeEventListener("mouseup", handleUp);
-      document.removeEventListener("touchend", handleUp);
+      gantt.removeEventListener("mousemove", handleMouseMove);
+      gantt.removeEventListener("touchmove", handleTouchMove);
+      gantt.removeEventListener("mouseup", handleUp);
+      gantt.removeEventListener("touchend", handleUp);
     };
-  }, [isResizeColumnInProgress, columnResizeEvent, columnsState, taskListWidth, onResizeColumn]);
+  }, [isResizeColumnInProgress, columnResizeEvent, columnsState, taskListWidth, onResizeColumn, ganttRef]);
 
   return [
     columnsState,

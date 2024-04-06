@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import {
   Gantt,
+  GanttTheme,
   OnChangeTasks,
   Task,
   TaskOrEmpty,
@@ -17,6 +18,16 @@ type AppProps = {
 export const CustomPalette: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
   const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
+  const customTheme = useMemo(() => {
+    return {
+      colors: {
+        arrowColor: "cian",
+      },
+      distances: {
+        viewModeYearOffsetYears: 10
+      }
+    } as Partial<GanttTheme>;
+  }, []);
 
   const onChangeTasks = useCallback<OnChangeTasks>(
     (newTaskOrEmptys, action) => {
@@ -102,6 +113,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
   return (
     <Gantt
       {...props}
+      theme={customTheme}
       onAddTask={onAddTask}
       onChangeTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
