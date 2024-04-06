@@ -33,3 +33,12 @@
   stroke: var(--gantt-calendar-stroke-color);
   stroke-width: 1.4;
 }
+
+.calendar {
+  cursor: auto;
+  user-select: none;
+}
+
+.calendarDragging {
+  cursor: ew-resize;
+}

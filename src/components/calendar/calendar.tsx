@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { RefObject, useCallback, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 
 import {
@@ -16,6 +16,7 @@ import { defaultRenderTopHeader } from "./default-render-top-header";
 import styles from "./calendar.module.css";
 
 export type CalendarProps = {
+  scrollRef: RefObject<HTMLDivElement>;
   additionalLeftSpace: number;
   dateSetup: DateSetup;
   distances: Distances;
@@ -29,12 +30,18 @@ export type CalendarProps = {
   startColumnIndex: number;
 };
 
+interface MouseDragState {
+  scrollLeft: number;
+  scrollTop: number;
+  clientX: number;
+  clientY: number;
+}
+
 export const Calendar: React.FC<CalendarProps> = ({
   additionalLeftSpace,
   dateSetup,
-
+  scrollRef,
   distances: { columnWidth, headerHeight },
-
   endColumnIndex,
   getDate,
   isUnknownDates,
@@ -44,6 +51,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   rtl,
   startColumnIndex,
 }) => {
+  const calendarRef = React.useRef<SVGSVGElement>(null);
   const renderBottomHeaderByDate = useCallback(
     (date: Date, index: number) =>
       renderBottomHeader(
@@ -398,9 +406,63 @@ export const Calendar: React.FC<CalendarProps> = ({
     case ViewMode.Hour:
       [topValues, bottomValues] = getCalendarValuesForHour();
   }
+
+  const moveStateRef = useRef<MouseDragState | null>(null);
+
+  // https://stackoverflow.com/questions/40926181/react-scrolling-a-div-by-dragging-the-mouse
+  useEffect(() => {
+    if (!calendarRef.current) {
+      return () => {};
+    }
+
+    const calendarContainer = calendarRef.current;
+
+    const onScrollStart = (event: MouseEvent) => {
+      event.preventDefault();
+      moveStateRef.current = {
+        clientX: event.clientX,
+        clientY: event.clientY,
+        scrollLeft: scrollRef.current.scrollLeft,
+        scrollTop: scrollRef.current.scrollTop,
+      }
+      calendarContainer.classList.add(styles.calendarDragging);
+    };
+
+    const onScrollMove = (event: MouseEvent) => {
+      if (!moveStateRef.current) {
+        return;
+      }
+
+      event.preventDefault();
+      const {clientX, scrollLeft, scrollTop, clientY} = moveStateRef.current;
+      const scrollContainer = scrollRef.current;
+      scrollContainer.scrollLeft = scrollLeft + clientX - event.clientX;
+      scrollContainer.scrollTop = scrollTop + clientY - event.clientY;
+    };
+
+    const onScrollEnd = (event: MouseEvent) => {
+      event.preventDefault();
+      moveStateRef.current = null;
+      calendarContainer.classList.remove(styles.calendarDragging);
+    };
+
+    calendarContainer.addEventListener("mousemove", onScrollMove);
+    calendarContainer.addEventListener("mousedown", onScrollStart);
+    calendarContainer.addEventListener("mouseup", onScrollEnd);
+    calendarContainer.addEventListener("mouseout", onScrollEnd);
+
+    return () => {
+      calendarContainer.removeEventListener("mousemove", onScrollMove);
+      calendarContainer.removeEventListener("mousedown", onScrollStart);
+      calendarContainer.removeEventListener("mouseup", onScrollEnd);
+      calendarContainer.removeEventListener("mouseout", onScrollEnd);
+    };
+  }, [scrollRef]);
+
   return (
     <g
-      className="calendar"
+      ref={calendarRef}
+      className={`${styles.calendar} calendar`}
       fontSize={"var(--gantt-font-size)"}
       fontFamily={"var(--gantt-font-family)"}
     >

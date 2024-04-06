@@ -8,7 +8,7 @@ import styles from "./gantt.module.css";
 
 export type TaskGanttProps = {
   barProps: TaskGanttContentProps;
-  calendarProps: CalendarProps;
+  calendarProps: Omit<CalendarProps, 'scrollRef'>;
   fullRowHeight: number;
   fullSvgWidth: number;
   ganttFullHeight: number;
@@ -81,7 +81,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
         height={calendarProps.distances.headerHeight}
         fontFamily={"var(--gantt-font-family)"}
       >
-        <Calendar {...calendarProps} />
+        <Calendar scrollRef={verticalGanttContainerRef} {...calendarProps} />
       </svg>
 
       <div

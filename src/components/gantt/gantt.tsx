@@ -1657,7 +1657,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     ]
   );
 
-  const calendarProps: CalendarProps = useMemo(
+  const calendarProps: Omit<CalendarProps, 'scrollRef'> = useMemo(
     () => ({
       additionalLeftSpace,
       dateSetup,
