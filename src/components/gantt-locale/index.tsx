@@ -3,7 +3,7 @@ import { GanttLocale } from "../../types/public-types";
 
 const GanttLocaleContext = createContext<GanttLocale>({} as GanttLocale);
 
-interface Props extends PropsWithChildren<any> {
+interface Props extends PropsWithChildren {
   locale: GanttLocale;
 }
 

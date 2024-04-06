@@ -12,7 +12,7 @@ export const collectParents = (
   const res: Task[] = [];
 
   let cur = task;
-  while (true && task.parent != cur.id) {
+  while (task.parent != cur.id) {
     const { comparisonLevel = 1, id, parent } = cur;
 
     if (checkedTasks.has(id)) {

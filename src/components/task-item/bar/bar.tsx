@@ -72,7 +72,7 @@ export const Bar: React.FC<
   );
   const handleHeight = taskHeight - 2;
 
-  let barDisplay = null;
+  let barDisplay: React.ReactNode | undefined;
   if (task.type === "project") {
     barDisplay = (
       <ProjectDisplay

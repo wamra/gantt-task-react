@@ -80,12 +80,12 @@ export const useTaskTooltip = (changeInProgress: ChangeInProgress | null) => {
       setHoverTooltipTask(nextTask);
       setHoverTooltipEl(element);
     },
-    [setReference]
+    []
   );
 
   useEffect(() => {
     setReference(tooltipEl);
-  }, [tooltipEl]);
+  }, [setReference, tooltipEl]);
 
   return {
     tooltipTask,

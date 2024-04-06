@@ -4,9 +4,7 @@ import {
   TaskOrEmpty,
 } from "../types/public-types";
 
-/**
- * @param tasks List of tasks
- */
+
 export const getChildsAndRoots = (
   tasks: readonly TaskOrEmpty[],
   checkIsRoot: ((task: TaskOrEmpty) => boolean) | null,

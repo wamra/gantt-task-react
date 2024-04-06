@@ -46,7 +46,7 @@ export const useCreateRelation = ({
   visibleTasks,
 }: UseCreateRelationParams): [
   GanttRelationEvent | null,
-  (target: RelationMoveTarget, task: Task) => void
+  (target: RelationMoveTarget, task: Task) => void,
 ] => {
   const [ganttRelationEvent, setGanttRelationEvent] =
     useState<GanttRelationEvent | null>(null);
@@ -245,6 +245,7 @@ export const useCreateRelation = ({
     relationCircleOffset,
     relationCircleRadius,
     onRelationChange,
+    mapTaskToGlobalIndex,
   ]);
 
   return [ganttRelationEvent, handleBarRelationStart];

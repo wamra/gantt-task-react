@@ -128,14 +128,33 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
       </>
     );
   }, [
-    columns,
-    cutIdsMirror,
-    fullRowHeight,
-    getTaskCurrentState,
     renderedIndexes,
+    fullRowHeight,
     renderedTasks,
-    selectTaskOnMouseDown,
+    mapTaskToNestedIndex,
+    canMoveTasks,
+    columns,
+    dateSetup,
+    dependencyMap,
+    distances,
+    getTaskCurrentState,
+    handleAddTask,
+    handleDeleteTasks,
+    handleEditTask,
+    handleMoveTaskBefore,
+    handleMoveTaskAfter,
+    handleMoveTasksInside,
+    handleOpenContextMenu,
+    childTasksMap,
+    icons,
+    cutIdsMirror,
     selectedIdsMirror,
+    isShowTaskNumbers,
+    onClick,
+    onExpanderClick,
+    scrollToTask,
+    selectTaskOnMouseDown,
+    tasks,
     draggedTask,
   ]);
 
@@ -143,8 +162,8 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
     <div
       className={styles.taskListWrapper}
       style={{
-        fontFamily: 'var(--gantt-font-family)',
-        fontSize: 'var(--gantt-font-size)',
+        fontFamily: "var(--gantt-font-family)",
+        fontSize: "var(--gantt-font-size)",
       }}
     >
       {renderedListWithOffset}

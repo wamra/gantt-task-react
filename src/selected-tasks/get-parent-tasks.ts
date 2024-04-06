@@ -12,7 +12,7 @@ export const getParentTasks = (
   const res: TaskOrEmpty[] = [];
 
   selectedTasks.forEach((maybeDescendant) => {
-    let isDescendant = selectedTasks.some((maybeParent) => {
+    const isDescendant = selectedTasks.some((maybeParent) => {
       if (maybeParent === maybeDescendant || maybeParent.type === 'empty') {
         return false;
       }

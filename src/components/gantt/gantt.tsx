@@ -83,7 +83,7 @@ import {
 import { useHolidays } from "./use-holidays";
 
 import styles from "./gantt.module.css";
-import { GanttThemeProvider, buildGanttTheme } from "../gantt-theme";
+import { buildGanttTheme, GanttThemeProvider } from "../gantt-theme";
 import { GanttLocaleProvider } from "../gantt-locale";
 import { GANTT_EN_LOCALE } from "../../locales";
 
@@ -592,6 +592,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     rtl,
     wrapperRef,
     onWheel,
+    horizontalContainerRef,
   ]);
 
   /**
@@ -869,14 +870,7 @@ export const Gantt: React.FC<GanttProps> = props => {
         });
       }
     },
-    [
-      handleAddChilds,
-      onAddTask,
-      onAddTaskClick,
-      onChangeTasks,
-      getMetadata,
-      prepareSuggestions,
-    ]
+    [handleAddChilds, onAddTask, onAddTaskClick, onChangeTasks, getMetadata]
   );
 
   const xStep = useMemo(() => {
@@ -888,9 +882,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       secondDate.getTimezoneOffset() * 60 * 1000 +
       startDate.getTimezoneOffset() * 60 * 1000;
 
-    const newXStep = (timeStep * distances.columnWidth) / dateDelta;
-
-    return newXStep;
+    return (timeStep * distances.columnWidth) / dateDelta;
   }, [distances, startDate, timeStep, viewMode]);
 
   const onDateChange = useCallback(
@@ -967,7 +959,7 @@ export const Gantt: React.FC<GanttProps> = props => {
         });
       }
     },
-    [getMetadata, onChangeTasks, onProgressChangeProp, childTasksMap]
+    [getMetadata, onProgressChangeProp, onChangeTasks, tasks]
   );
 
   const [changeInProgress, handleTaskDragStart] = useTaskDrag({
@@ -1587,7 +1579,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       createPasteOption(locale),
       createDeleteOption(locale),
     ];
-  }, [contextMenuOptionsProp]);
+  }, [contextMenuOptionsProp, locale]);
 
   /**
    * Prevent crash after task delete
@@ -1694,12 +1686,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     ]
   );
 
-  const onClickTask = (task: TaskOrEmpty) => {
-    if (onClick) {
-      onClick(task);
-    }
-  };
-
   const barProps: TaskGanttContentProps = useMemo(
     () => ({
       authorizedRelations,
@@ -1728,7 +1714,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       isShowDependencyWarnings,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
-      onClick: onClickTask,
+      onClick: onClick,
       onDoubleClick,
       onFixDependencyPosition,
       onProgressChange,
@@ -1750,6 +1736,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     [
       additionalLeftSpace,
       additionalRightSpace,
+      authorizedRelations,
       checkIsHoliday,
       childOutOfParentWarnings,
       childTasksMap,
@@ -1768,10 +1755,10 @@ export const Gantt: React.FC<GanttProps> = props => {
       getTaskGlobalIndexByRef,
       handleBarRelationStart,
       handleDeleteTasks,
+      handleFixDependency,
       handleTaskDragStart,
       isShowDependencyWarnings,
       mapGlobalRowIndexToTask,
-      mapTaskToCoordinates,
       onArrowDoubleClick,
       onChangeTooltipTask,
       onClick,
@@ -1790,7 +1777,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       taskToRowIndexMap,
       taskYOffset,
       timeStep,
-      visibleTasks,
       visibleTasksMirror,
     ]
   );
@@ -1820,7 +1806,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     icons,
     isShowTaskNumbers,
     mapTaskToNestedIndex,
-    onClick: onClickTask,
+    onClick: onClick,
     onExpanderClick: handleExpanderClick,
     scrollToBottomStep,
     scrollToTopStep,

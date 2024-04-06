@@ -64,7 +64,7 @@ export const useTableListResize = (
         )
       );
     }
-  }, [columnsProp]);
+  }, [columnsProp, columnsState]);
 
   const [tableResizeEvent, setTableResizeEvent] =
     useState<TableResizeEvent | null>(null);

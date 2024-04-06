@@ -1,6 +1,6 @@
 import { FC, SVGProps } from "react";
 
-export const PasteIcon: FC<SVGProps<any>> = props => (
+export const PasteIcon: FC<SVGProps<never>> = props => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height="24"

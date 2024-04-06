@@ -104,7 +104,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
       selectTaskOnMouseDown(task.id, event);
       onClick(task);
     },
-    [scrollToTask, selectTaskOnMouseDown, task]
+    [onClick, scrollToTask, selectTaskOnMouseDown, task]
   );
 
   const onContextMenu = useCallback(
@@ -120,9 +120,9 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
 
   const isDraggedTaskAncestorOfDropTarget = (draggedItem: TaskOrEmpty) => {
     // check that the being drooped element is not a parent (direct or indirect of the target)
-    let idToTaskIndex = new Map(tasks.map((task, index) => [task.id, index]));
+    const idToTaskIndex = new Map(tasks.map((task, index) => [task.id, index]));
     let parentId = task.parent;
-    const parentsId: String[] = [];
+    const parentsId: string[] = [];
     while (parentId) {
       parentsId.push(parentId);
       parentId = tasks[idToTaskIndex.get(parentId)].parent;

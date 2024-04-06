@@ -89,7 +89,8 @@ export const CriticalPath: React.FC<AppProps> = props => {
     switch (action.type) {
       case "delete_relation":
         if (
-          // @ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
           window.confirm(
             `Do yo want to remove relation between ${action.payload.taskFrom.name} and ${action.payload.taskTo.name}?`
           )
@@ -99,7 +100,8 @@ export const CriticalPath: React.FC<AppProps> = props => {
         break;
 
       case "delete_task":
-        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         if (window.confirm("Are you sure?")) {
           setTasks(nextTasks);
         }
@@ -112,7 +114,8 @@ export const CriticalPath: React.FC<AppProps> = props => {
   }, []);
 
   const handleDblClick = useCallback((task: Task) => {
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     alert("On Double Click event Id:" + task.id);
   }, []);
 

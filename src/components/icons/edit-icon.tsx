@@ -1,6 +1,6 @@
 import { FC, SVGProps } from "react";
 
-export const EditIcon: FC<SVGProps<any>> = props => (
+export const EditIcon: FC<SVGProps<never>> = props => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height="24"

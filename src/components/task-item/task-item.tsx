@@ -62,7 +62,7 @@ export type TaskItemProps = {
     selectedTask: Task,
     clientX: number,
     taskRootNode: Element
-  ) => any;
+  ) => void;
   onRelationStart: (target: RelationMoveTarget, selectedTask: Task) => void;
   fixStartPosition?: FixPosition;
   fixEndPosition?: FixPosition;
@@ -86,7 +86,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     hasDependencyWarning,
     isDateChangeable,
     isDelete,
-    isSelected,
     onClick = undefined,
     onDoubleClick = undefined,
     onEventStart,
@@ -215,7 +214,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       (ganttRelationEvent?.target === "endOfTask" &&
         authorizedRelations.includes("endToEnd"));
 
-    let displayLeftRelationHandle: boolean = false;
+    let displayLeftRelationHandle: boolean;
     if (ganttRelationEvent && task !== ganttRelationEvent.task) {
       displayLeftRelationHandle = rtl
         ? isToEndRelationAuthorized
@@ -225,7 +224,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         ? isFromEndRelationAuthorized
         : isFromStartRelationAuthorized;
     }
-    let displayRightRelationHandle: boolean = false;
+    let displayRightRelationHandle: boolean;
     if (ganttRelationEvent && task !== ganttRelationEvent.task) {
       displayRightRelationHandle = rtl
         ? isToStartRelationAuthorized
@@ -274,12 +273,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         </Milestone>
       );
     } else if (width < handleWidth * 2) {
-      return (
-        <BarSmall
-          {...props}
-          onTaskEventStart={onTaskEventStart}
-        />
-      );
+      return <BarSmall {...props} onTaskEventStart={onTaskEventStart} />;
     } else
       return (
         <Bar
@@ -292,12 +286,23 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         </Bar>
       );
   }, [
+    authorizedRelations,
+    ganttRelationEvent,
     handleWidth,
-    isSelected,
-    outOfParentWarnings,
+    isRelationChangeable,
+    onLeftRelationTriggerMouseDown,
+    onRightRelationTriggerMouseDown,
+    onTaskEventStart,
     props,
+    relationCircleOffset,
+    relationCircleRadius,
+    rtl,
     task,
+    taskHalfHeight,
+    taskYOffset,
     width,
+    x1,
+    x2,
   ]);
 
   useEffect(() => {
@@ -393,7 +398,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
               height={16}
               width={10}
               isLeft={outOfParentWarnings.start.isOutside !== rtl}
-              color={'var(--gantt-arrow-fix-color)'}
+              color={"var(--gantt-arrow-fix-color)"}
               handleFixWidth={handleFixStartPosition}
             />
           )}
@@ -405,7 +410,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
               height={16}
               width={10}
               isLeft={outOfParentWarnings.end.isOutside === rtl}
-              color={'var(--gantt-arrow-fix-color)'}
+              color={"var(--gantt-arrow-fix-color)"}
               handleFixWidth={handleFixEndPosition}
             />
           )}

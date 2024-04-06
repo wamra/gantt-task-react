@@ -7,7 +7,7 @@ export const taskXCoordinate = (
   xDate: Date,
   startDate: Date,
   viewMode: ViewMode,
-  columnWidth: number,
+  columnWidth: number
 ) => {
   const index = getDatesDiff(xDate, startDate, viewMode);
 
@@ -17,8 +17,7 @@ export const taskXCoordinate = (
   const remainderMillis = xDate.getTime() - currentDate.getTime();
   const percentOfInterval =
     remainderMillis / (nextDate.getTime() - currentDate.getTime());
-  const x = index * columnWidth + percentOfInterval * columnWidth;
-  return x;
+  return index * columnWidth + percentOfInterval * columnWidth;
 };
 
 export const progressWithByParams = (
@@ -234,7 +233,7 @@ const handleTaskBySVGMouseEventForMilestone = (
   const changedTask: Task = { ...selectedTask };
 
   const isChanged = coordinates.x1 !== initialCoordinates.x1;
- 
+
   if (isChanged) {
     switch (action) {
       case "move": {

@@ -4,7 +4,7 @@ import type {
 } from "../types/public-types";
 
 const checkTaskHasWarning = (dependencyMarginsForTask: Map<string, number>) => {
-  for (let value of dependencyMarginsForTask.values()) {
+  for (const value of dependencyMarginsForTask.values()) {
     if (value < 0) {
       return true;
     }

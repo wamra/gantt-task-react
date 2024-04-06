@@ -144,6 +144,7 @@ export const useHandleAction = ({
     },
     [
       checkTaskIdExists,
+      childTasksMap,
       copyIdsMirror,
       copySelectedTasks,
       copyTask,

@@ -78,7 +78,6 @@ export type TaskGanttContentProps = {
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   authorizedRelations,
   additionalLeftSpace,
-  additionalRightSpace,
   checkIsHoliday,
   childOutOfParentWarnings,
   childTasksMap,
@@ -131,7 +130,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             width={columnWidth}
             x={additionalLeftSpace + i * columnWidth}
             y={0}
-            fill={'var(--gantt-calendar-holiday-color)'}
+            fill={"var(--gantt-calendar-holiday-color)"}
             key={i}
           />
         );
@@ -187,7 +186,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             y={Math.floor(index / comparisonLevels) * fullRowHeight}
             width="100%"
             height={fullRowHeight}
-            fill={'var(--gantt-table-selected-task-background-color)'}
+            fill={"var(--gantt-table-selected-task-background-color)"}
             key={taskId}
           />
         );
@@ -451,16 +450,38 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     return [tasksRes, arrowsRes, selectedTasksRes];
   }, [
     additionalLeftSpace,
-    additionalRightSpace,
+    authorizedRelations,
+    childOutOfParentWarnings,
+    childTasksMap,
+    comparisonLevels,
+    criticalPaths,
     dependencyMap,
     dependentMap,
+    distances,
+    fixEndPosition,
+    fixStartPosition,
     fullRowHeight,
     ganttRelationEvent,
     getTaskCoordinates,
+    getTaskGlobalIndexByRef,
+    handleBarRelationStart,
+    handleDeleteTasks,
+    handleFixDependency,
+    handleTaskDragStart,
+    isShowDependencyWarnings,
     mapGlobalRowIndexToTask,
+    onArrowDoubleClick,
+    onClick,
+    onDoubleClick,
     renderedRowIndexes,
+    rtl,
     selectTaskOnMouseDown,
     selectedIdsMirror,
+    setTooltipTask,
+    taskHalfHeight,
+    taskHeight,
+    taskToHasDependencyWarningMap,
+    taskYOffset,
     visibleTasksMirror,
   ]);
 
@@ -472,13 +493,17 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
       <g
         className="arrows"
-        fill={'var(--gantt-arrow-color)'}
-        stroke={'var(--gantt-arrow-color)'}
+        fill={"var(--gantt-arrow-color)"}
+        stroke={"var(--gantt-arrow-color)"}
       >
         {renderedArrows}
       </g>
 
-      <g className="bar" fontFamily={'var(--gantt-font-family)'} fontSize={'var(--gantt-font-size)'}>
+      <g
+        className="bar"
+        fontFamily={"var(--gantt-font-family)"}
+        fontSize={"var(--gantt-font-size)"}
+      >
         {renderedTasks}
       </g>
 

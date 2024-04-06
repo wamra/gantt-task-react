@@ -29,6 +29,7 @@ export const checkIsDescendant = (
   }
 
   let cur = maybeDescendant;
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     const {
       id,

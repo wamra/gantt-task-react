@@ -103,9 +103,6 @@ export const countTaskCoordinates = (
   };
 };
 
-/**
- * @param tasks List of tasks
- */
 export const getMapTaskToCoordinates = (
   tasks: readonly TaskOrEmpty[],
   visibleTasksMirror: Readonly<Record<string, true>>,

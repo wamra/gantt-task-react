@@ -6,7 +6,7 @@ import type {
 } from "../types/public-types";
 
 /**
- * @param sortedTasks Sorted list of visible tasks
+ * @param visibleTasks
  * @param comparisonLevels Number of comparison levels
  */
 export const getMapTaskToRowIndex = (
