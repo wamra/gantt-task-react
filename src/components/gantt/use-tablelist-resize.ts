@@ -1,14 +1,7 @@
 import { RefObject, useEffect, useState } from "react";
 
-import { Column, Distances, OnResizeColumn } from "../../types/public-types";
-import { AddColumn } from "../task-list/columns/add-column";
-import { TitleColumn } from "../task-list/columns/title-column";
-import { DateStartColumn } from "../task-list/columns/date-start-column";
-import { DateEndColumn } from "../task-list/columns/date-end-column";
-import { DependenciesColumn } from "../task-list/columns/dependencies-column";
-import { DeleteColumn } from "../task-list/columns/delete-column";
-import { EditColumn } from "../task-list/columns/edit-column";
-import { useGanttLocale } from "../gantt-locale";
+import { Column, OnResizeColumn } from "../../types/public-types";
+import { useTaskListColumnsBuilder } from "../task-list/columns/use-task-list-columns-builder";
 
 type TableResizeEvent = {
   initialClientX: number;
@@ -24,7 +17,6 @@ type ColumnResizeEvent = {
 };
 export const useTableListResize = (
   columnsProp: readonly Column[],
-  distances: Distances,
   onResizeColumn: OnResizeColumn,
   ganttRef: RefObject<HTMLDivElement>
 ): [
@@ -33,70 +25,22 @@ export const useTableListResize = (
   tableWidth: number,
 
   onTableResizeStart: (clientX: number) => void,
-  onColumnResizeStart: (columnIndex: number, clientX: number) => void
+  onColumnResizeStart: (columnIndex: number, clientX: number) => void,
 ] => {
-  const locale = useGanttLocale();
+  const columnsBuilder = useTaskListColumnsBuilder();
   const [columnsState, setColumns] = useState<readonly Column[]>(() => {
     if (columnsProp) {
       return [...columnsProp];
     }
 
-    const {
-      titleCellWidth,
-      dateCellWidth,
-      dependenciesCellWidth,
-      actionColumnWidth,
-    } = distances;
-
     return [
-      {
-        id: "TitleColumn",
-        component: TitleColumn,
-        width: titleCellWidth,
-        title: locale.table.columns.name,
-      },
-
-      {
-        id: "DateStartColumn",
-        component: DateStartColumn,
-        width: dateCellWidth,
-        title: locale.table.columns.startDate,
-      },
-
-      {
-        id: "DateEndColumn",
-        component: DateEndColumn,
-        width: dateCellWidth,
-        title: locale.table.columns.endDate,
-      },
-
-      {
-        id: "DependenciesColumn",
-        component: DependenciesColumn,
-        width: dependenciesCellWidth,
-        title: locale.table.columns.dependencies,
-      },
-
-      {
-        id: "DeleteColumn",
-        component: DeleteColumn,
-        width: actionColumnWidth,
-        canResize: false,
-      },
-
-      {
-        id: "EditColumn",
-        component: EditColumn,
-        width: actionColumnWidth,
-        canResize: false,
-      },
-
-      {
-        id: "AddColumn",
-        component: AddColumn,
-        width: actionColumnWidth,
-        canResize: false,
-      },
+      columnsBuilder.createNameColumn(),
+      columnsBuilder.createStartDateColumn(),
+      columnsBuilder.createEndDateColumn(),
+      columnsBuilder.createDependenciesColumn(),
+      columnsBuilder.createDeleteActionColumn(),
+      columnsBuilder.createEditActionColumn(),
+      columnsBuilder.createAddActionColumn(),
     ];
   });
 
@@ -193,14 +137,8 @@ export const useTableListResize = (
     ganttRef.current.addEventListener("touchend", handleUp);
 
     return () => {
-      ganttRef.current.removeEventListener(
-        "mousemove",
-        handleMouseMove
-      );
-      ganttRef.current.removeEventListener(
-        "touchmove",
-        handleTouchMove
-      );
+      ganttRef.current.removeEventListener("mousemove", handleMouseMove);
+      ganttRef.current.removeEventListener("touchmove", handleTouchMove);
       ganttRef.current.removeEventListener("mouseup", handleUp);
       ganttRef.current.removeEventListener("touchend", handleUp);
     };

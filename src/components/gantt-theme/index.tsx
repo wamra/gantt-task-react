@@ -1,15 +1,18 @@
-import React, { PropsWithChildren, useMemo } from "react";
+import React, { createContext, CSSProperties, useContext, useMemo } from "react";
 import { GanttTheme } from "../../types/public-types";
 
-export interface GanttThemeProps extends PropsWithChildren<any> {
+const GanttThemeContext = createContext<GanttTheme>({} as GanttTheme);
+
+export interface GanttThemeProps {
   theme: GanttTheme;
+  children: (cssVars: CSSProperties) => React.ReactNode;
 }
 
 export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
   children,
   theme,
 }) => {
-  const ganttVariables = useMemo(() => {
+  const ganttCssVariables = useMemo(() => {
     const { colors, typography, shape } = theme;
     return {
       "--gantt-background-color": colors.backgroundColor,
@@ -71,8 +74,6 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
         colors.milestoneBackgroundSelectedColor,
       "--gantt-milestone-background-color": colors.milestoneBackgroundColor,
 
-
-
       "--gantt-context-menu-bg-color": colors.contextMenuBgColor,
       "--gantt-context-menu-text-color": colors.contextMenuTextColor,
       "--gantt-context-menu-box-shadow": colors.contextMenuBoxShadow,
@@ -81,11 +82,13 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
 
       "--gantt-divider-color": colors.dividerColor,
 
-      "--gantt-table-selected-task-background-color": colors.tableSelectedTaskBackgroundColor,
+      "--gantt-table-selected-task-background-color":
+        colors.tableSelectedTaskBackgroundColor,
       "--gantt-table-resize-hover-color": colors.tableResizeHoverColor,
       "--gantt-table-action-color": colors.tableActionColor,
       "--gantt-table-even-background-color": colors.tableEvenBackgroundColor,
-      "--gantt-table-drag-task-background-color": colors.tableDragTaskBackgroundColor,
+      "--gantt-table-drag-task-background-color":
+        colors.tableDragTaskBackgroundColor,
 
       "--gantt-scrollbar-thumb-color": colors.scrollbarThumbColor,
       "--gantt-calendar-stroke-color": colors.calendarStrokeColor,
@@ -99,17 +102,15 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-font-size": typography.fontSize,
 
       "--gantt-shape-border-radius": shape.borderRadius,
-
-
-    };
+    } as CSSProperties;
   }, [theme]);
 
   return (
-    // @ts-ignore
-    <div className={"gantt-theme"} style={ganttVariables}>
-      {children}
-    </div>
+    <GanttThemeContext.Provider value={theme}>
+      {children(ganttCssVariables)}
+    </GanttThemeContext.Provider>
   );
 };
 
 export * from "./gantt-theme-builder";
+export const useGanttTheme = () => useContext(GanttThemeContext);

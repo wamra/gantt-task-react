@@ -8,6 +8,7 @@ export { DateStartColumn } from "./components/task-list/columns/date-start-colum
 export { DeleteColumn } from "./components/task-list/columns/delete-column";
 export { DependenciesColumn } from "./components/task-list/columns/dependencies-column";
 export { TitleColumn } from "./components/task-list/columns/title-column";
+export { useTaskListColumnsBuilder } from "./components/task-list/columns/use-task-list-columns-builder";
 
 export * from "./components/context-menu-options";
 

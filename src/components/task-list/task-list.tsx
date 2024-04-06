@@ -109,7 +109,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     tableWidth,
     onTableResizeStart,
     onColumnResizeStart,
-  ] = useTableListResize(columnsProp, distances, onResizeColumn, ganttRef);
+  ] = useTableListResize(columnsProp, onResizeColumn, ganttRef);
 
   const renderedIndexes = useOptimizedList(
     taskListContainerRef,
