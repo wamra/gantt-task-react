@@ -87,7 +87,8 @@ export const defaultRenderBottomHeader = (
     case ViewMode.Week:
       return dateSetup.dateFormats.weekBottomHeader(
         date,
-        getWeekNumberISO8601(date)
+        getWeekNumberISO8601(date),
+        dateSetup.dateLocale
       );
     case ViewMode.Day:
       try {
