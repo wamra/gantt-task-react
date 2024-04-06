@@ -1,5 +1,5 @@
-import React, {memo, useCallback, useMemo, useState} from "react";
-import type {CSSProperties, MouseEvent} from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 
 import {
   Column,
@@ -54,7 +54,7 @@ type TaskListTableRowProps = {
   setDraggedTask: React.Dispatch<any>;
 };
 
-const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
+const TaskListTableRowInner: React.FC<TaskListTableRowProps> = props => {
   const {
     canMoveTasks,
     columns,
@@ -89,7 +89,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
     draggedTask,
     setDraggedTask,
   } = props;
-  const {id, comparisonLevel = 1} = task;
+  const { id, comparisonLevel = 1 } = task;
 
   const onRootMouseDown = useCallback(
     (event: MouseEvent) => {
@@ -103,7 +103,9 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
       }
 
       selectTaskOnMouseDown(task.id, event);
-      onClick(task);
+      if (onClick) {
+        onClick(task);
+      }
     },
     [onClick, scrollToTask, selectTaskOnMouseDown, task]
   );
@@ -144,7 +146,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
       return [];
     }
 
-    return dependenciesByTask.map(({source}) => source);
+    return dependenciesByTask.map(({ source }) => source);
   }, [comparisonLevel, dependencyMap, id]);
 
   const columnData: ColumnData = useMemo(
@@ -194,16 +196,16 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
   });
 
   let backgroundColor = isSelected
-    ? 'var(--gantt-table-selected-task-background-color)'
+    ? "var(--gantt-table-selected-task-background-color)"
     : isEven && !hoveringState.hoveringInside
-      ? 'var(--gantt-table-even-background-color)'
+      ? "var(--gantt-table-even-background-color)"
       : undefined;
   if (
     hoveringState.hoveringInside &&
     !hoveringState.hoveringAfter &&
     !hoveringState.hoveringBefore
   ) {
-    backgroundColor = 'var(--gantt-table-drag-task-background-color)';
+    backgroundColor = "var(--gantt-table-drag-task-background-color)";
   }
 
   const handleDragStart: React.DragEventHandler<HTMLDivElement> = (
@@ -228,7 +230,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
       const hoveringOnBrother =
         draggedTask.parent === task.parent &&
         tasks.findIndex(t => t.id === draggedTask.id) ===
-        tasks.findIndex(t => t.id === task.id) - 1;
+          tasks.findIndex(t => t.id === task.id) - 1;
       if (!hoveringOnBrother && draggedTask.id !== task.id) {
         canDropBefore = !isDraggedTaskAncestorOfDropTarget(draggedTask);
       }
@@ -254,7 +256,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
       const hoveringOnBrother =
         draggedTask.parent === task.parent &&
         tasks.findIndex(t => t.id === draggedTask.id) ===
-        tasks.findIndex(t => t.id === task.id) + 1;
+          tasks.findIndex(t => t.id === task.id) + 1;
       if (!hoveringOnBrother && draggedTask.id !== task.id) {
         canDropAfter = !isDraggedTaskAncestorOfDropTarget(draggedTask);
       }
@@ -313,7 +315,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      {columns.map(({component: Component, width}, index) => {
+      {columns.map(({ component: Component, width }, index) => {
         return (
           <div
             className={styles.taskListCell}
@@ -334,7 +336,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
               }}
               onDragLeave={() => {
                 setHoveringState(prevState => {
-                  return {...prevState, hoveringInside: false};
+                  return { ...prevState, hoveringInside: false };
                 });
               }}
               onDragOver={event => {
@@ -353,7 +355,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
                   pointerEvents: hoveringState.hoveringInside ? "none" : "auto",
                 }}
               >
-                <Component data={columnData}/>
+                <Component data={columnData} />
               </div>
             </div>
           </div>
@@ -368,10 +370,10 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         style={{
           left: dropPreviewOffset,
           backgroundColor: hoveringState.hoveringBefore
-            ? 'var(--gantt-table-drag-task-background-color)'
+            ? "var(--gantt-table-drag-task-background-color)"
             : undefined,
           color: hoveringState.hoveringBefore
-            ? 'var(--gantt-table-drag-task-background-color)'
+            ? "var(--gantt-table-drag-task-background-color)"
             : undefined,
         }}
         onDragEnter={event => {
@@ -384,7 +386,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         }}
         onDragLeave={() => {
           setHoveringState(prevState => {
-            return {...prevState, hoveringBefore: false};
+            return { ...prevState, hoveringBefore: false };
           });
         }}
         onDragOver={event => {
@@ -401,9 +403,11 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         style={{
           left: dropPreviewOffset,
           backgroundColor: hoveringState.hoveringAfter
-            ? 'var(--gantt-table-drag-task-background-color)'
+            ? "var(--gantt-table-drag-task-background-color)"
             : undefined,
-          color: hoveringState.hoveringAfter ? 'var(--gantt-table-drag-task-background-color)' : undefined,
+          color: hoveringState.hoveringAfter
+            ? "var(--gantt-table-drag-task-background-color)"
+            : undefined,
         }}
         onDragEnter={() =>
           setHoveringState({
@@ -414,7 +418,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = (props) => {
         }
         onDragLeave={() =>
           setHoveringState(prevState => {
-            return {...prevState, hoveringAfter: false};
+            return { ...prevState, hoveringAfter: false };
           })
         }
         onDragOver={event => {
