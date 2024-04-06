@@ -27,7 +27,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
         viewModeYearOffsetYears: 10,
       },
       dateFormats: {
-        weekBottomHeader: (date, weekNumber) => {
+        weekBottomHeader: (_, weekNumber) => {
           return `НЕД${weekNumber}`;
         },
       },
