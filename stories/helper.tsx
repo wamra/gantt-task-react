@@ -159,6 +159,7 @@ export function initTasks() {
       id: "party",
       progress: 0,
       isDisabled: true,
+      isRelationDisabled: true,
       type: "task",
     },
   ];

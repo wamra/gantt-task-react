@@ -167,6 +167,7 @@ export interface Task {
   assignees?: string[];
   styles?: Partial<ColorStyles>;
   isDisabled?: boolean;
+  isRelationDisabled?: boolean;
   /**
    * Project or task
    */
