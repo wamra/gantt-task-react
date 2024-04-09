@@ -20,6 +20,7 @@ import {
   TaskOrEmpty,
   Distances,
   RelationKind,
+  GanttActionsOption,
 } from "../../types/public-types";
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
@@ -29,7 +30,7 @@ import style from "./task-list.module.css";
 import { BarFixWidth, fixWidthContainerClass } from "../other/bar-fix-width";
 import { BarRelationHandle } from "./bar/bar-relation-handle";
 
-export type TaskItemProps = {
+export interface TaskItemProps extends GanttActionsOption {
   getTaskGlobalIndexByRef: (task: Task) => number;
   hasChildren: boolean;
   hasDependencyWarning: boolean;
@@ -45,7 +46,7 @@ export type TaskItemProps = {
   distances: Distances;
   taskHeight: number;
   taskHalfHeight: number;
-  isProgressChangeable: boolean;
+  isProgressChangeable: (task: Task) => boolean;
   isDateChangeable: boolean;
   authorizedRelations: RelationKind[];
   isRelationChangeable: boolean;
@@ -67,7 +68,7 @@ export type TaskItemProps = {
   fixStartPosition?: FixPosition;
   fixEndPosition?: FixPosition;
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
-};
+}
 
 const TaskItemInner: React.FC<TaskItemProps> = props => {
   const {
@@ -103,6 +104,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     width,
     x1,
     x2,
+    allowMoveTaskBar,
   } = props;
 
   const taskRootRef = useRef<SVGGElement>(null);
@@ -176,13 +178,17 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         return;
       }
 
+      if (allowMoveTaskBar && !allowMoveTaskBar(action, task)) {
+        return;
+      }
+
       const taskRootNode = taskRootRef.current;
 
       if (taskRootNode) {
         onEventStart(action, task, clientX, taskRootNode);
       }
     },
-    [isDateChangeable, onEventStart, task]
+    [isDateChangeable, onEventStart, task, allowMoveTaskBar]
   );
 
   const onLeftRelationTriggerMouseDown = useCallback(() => {

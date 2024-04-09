@@ -43,11 +43,7 @@ export const createPasteOption = (
       return false;
     }
 
-    if (!checkHasCopyTasks() && !checkHasCutTasks()) {
-      return false;
-    }
-
-    return true;
+    return checkHasCopyTasks() || checkHasCutTasks();
   },
   icon: <PasteIcon />,
   label: locale.context.paste,

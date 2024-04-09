@@ -6,7 +6,6 @@ import { Task } from "../../types/public-types";
 
 export const useContextMenu = (
   wrapperRef: RefObject<HTMLDivElement>,
-  toggleTask: (taskId: string, singleMode: boolean) => void,
   scrollToTask: (task: Task) => void
 ) => {
   const [contextMenu, setContextMenu] = useState<ContextMenuType>({
@@ -31,12 +30,11 @@ export const useContextMenu = (
         y: clientY - top,
       });
 
-      toggleTask(task.id, true);
       if (task.type !== "empty") {
         scrollToTask(task);
       }
     },
-    [wrapperRef, toggleTask, scrollToTask]
+    [wrapperRef, scrollToTask]
   );
 
   const handleCloseContextMenu = useCallback(() => {
@@ -45,8 +43,7 @@ export const useContextMenu = (
       x: 0,
       y: 0,
     });
-    toggleTask(null, true);
-  }, [toggleTask]);
+  }, []);
 
   return {
     contextMenu,

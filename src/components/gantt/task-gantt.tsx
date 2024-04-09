@@ -5,8 +5,9 @@ import { GridProps, Grid } from "../grid/grid";
 import { CalendarProps, Calendar } from "../calendar/calendar";
 import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
 import styles from "./gantt.module.css";
+import { GanttActionsOption, Task } from "../../types/public-types";
 
-export type TaskGanttProps = {
+export interface TaskGanttProps extends GanttActionsOption {
   barProps: TaskGanttContentProps;
   calendarProps: Omit<CalendarProps, 'scrollRef'>;
   fullRowHeight: number;
@@ -18,12 +19,12 @@ export type TaskGanttProps = {
   horizontalContainerRef: RefObject<HTMLDivElement>;
   onVerticalScrollbarScrollX: (event: SyntheticEvent<HTMLDivElement>) => void;
   verticalGanttContainerRef: RefObject<HTMLDivElement>;
-};
+  isProgressChangeable?: (task: Task) => boolean;
+}
 
 const TaskGanttInner: React.FC<TaskGanttProps> = ({
   barProps,
   barProps: { additionalLeftSpace },
-
   calendarProps,
   fullRowHeight,
   fullSvgWidth,

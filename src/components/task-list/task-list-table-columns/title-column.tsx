@@ -9,6 +9,7 @@ import { ExpandLessIcon } from "../../icons/expand-less-icon";
 const getExpanderSymbol = (
   hasChildren: boolean,
   isClosed: boolean,
+  iconWidth: number,
   icons: Partial<Icons> | undefined
 ) => {
   if (!hasChildren) {
@@ -19,14 +20,14 @@ const getExpanderSymbol = (
     return icons?.renderClosedIcon ? (
       icons.renderClosedIcon()
     ) : (
-      <ExpandMoreIcon />
+      <ExpandMoreIcon width={iconWidth} style={{ verticalAlign: "middle" }} />
     );
   }
 
   return icons?.renderOpenedIcon ? (
     icons.renderOpenedIcon()
   ) : (
-    <ExpandLessIcon />
+    <ExpandLessIcon width={iconWidth} style={{ verticalAlign: "middle" }} />
   );
 };
 
@@ -46,8 +47,8 @@ export const TitleColumn: React.FC<ColumnProps> = ({
   const { name } = task;
 
   const expanderSymbol = useMemo(
-    () => getExpanderSymbol(hasChildren, isClosed, icons),
-    [hasChildren, isClosed, icons]
+    () => getExpanderSymbol(hasChildren, isClosed, expandIconWidth, icons),
+    [hasChildren, isClosed, expandIconWidth, icons]
   );
 
   const title = isShowTaskNumbers ? `${indexStr} ${name}` : name;
@@ -68,13 +69,10 @@ export const TitleColumn: React.FC<ColumnProps> = ({
       title={title}
     >
       <div
-        className={`${styles.taskListExpander} ${
+        className={`gantt-expander ${styles.taskListExpander} ${
           !hasChildren ? styles.taskListEmptyExpander : ""
         }`}
         onClick={onClick}
-        style={{
-          width: expandIconWidth,
-        }}
       >
         {expanderSymbol}
       </div>

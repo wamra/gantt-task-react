@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 
 import {
+  ColumnProps,
   Gantt,
   GanttTheme,
   OnChangeTasks,
@@ -10,14 +11,31 @@ import {
   ViewMode,
 } from "../src";
 
-import { initTasks, onAddTask, onEditTask } from "./helper";
+import { initTasksWithoutProject, onAddTask, onEditTask } from "./helper";
 
 type AppProps = {
   ganttHeight?: number;
 };
 
+const DescriptionColumn: FC<ColumnProps> = ({ data }) => {
+  if (data.task.type === "task") {
+    return data.task.payload?.description;
+  }
+
+  return null;
+};
+
 export const CustomPalette: React.FC<AppProps> = props => {
-  const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
+  const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(() => {
+    const initTasks = initTasksWithoutProject();
+    const firstTask = initTasks[0];
+    if (firstTask.type === "task") {
+      firstTask.payload = {
+        description: "First Description 1",
+      };
+    }
+    return initTasks;
+  });
   const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
   const columnsBuilder = useTaskListColumnsBuilder();
   const customTheme = useMemo(() => {
@@ -39,6 +57,12 @@ export const CustomPalette: React.FC<AppProps> = props => {
   const columns = useMemo(() => {
     return [
       columnsBuilder.createNameColumn("Name", 200),
+      {
+        id: "Description",
+        title: "Description",
+        width: 60,
+        component: DescriptionColumn,
+      },
       columnsBuilder.createStartDateColumn("Start Date", 130),
       columnsBuilder.createEndDateColumn("End Date", 130),
     ];
@@ -69,6 +93,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
           break;
 
         default:
+          console.debug("action", action);
           // eslint-disable-next-line no-case-declarations
           const taskWithChildrenIds = newTasks.map((task: Task) => task.parent);
           newTasks.map((task: Task) => {
@@ -142,6 +167,10 @@ export const CustomPalette: React.FC<AppProps> = props => {
       onWheel={handleWheel}
       onChangeExpandState={onChangeExpandState}
       enableTableListContextMenu={1}
+      isProgressChangeable={() => false}
+      allowMoveTask={(_, method) => {
+        return method !== "inside";
+      }}
     />
   );
 };

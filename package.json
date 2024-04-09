@@ -1,6 +1,6 @@
 {
   "name": "kvandake-gantt-task-react",
-  "version": "0.0.8",
+  "version": "0.1.6",
   "description": "Interactive Gantt Chart for React with TypeScript.",
   "author": "kvandake@gmail.com>",
   "homepage": "https://github.com/kvandake/gantt-task-react",
@@ -37,6 +37,9 @@
     "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/modifiers": "^7.0.0",
+    "@dnd-kit/sortable": "^8.0.0",
     "@floating-ui/dom": "1.6.3",
     "@floating-ui/react": "0.26.11",
     "date-fns": "3.6.0"

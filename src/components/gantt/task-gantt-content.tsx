@@ -9,6 +9,7 @@ import {
   DependentMap,
   Distances,
   FixPosition,
+  GanttActionsOption,
   GlobalRowIndexToTaskMap,
   RelationKind,
   Task,
@@ -28,7 +29,7 @@ import { checkHasChildren } from "../../helpers/check-has-children";
 import { checkTaskHasDependencyWarning } from "../../helpers/check-task-has-dependency-warning";
 import type { OptimizedListParams } from "../../helpers/use-optimized-list";
 
-export type TaskGanttContentProps = {
+export interface TaskGanttContentProps extends GanttActionsOption {
   authorizedRelations: RelationKind[];
   additionalLeftSpace: number;
   additionalRightSpace: number;
@@ -73,7 +74,8 @@ export type TaskGanttContentProps = {
   visibleTasksMirror: Readonly<Record<string, true>>;
   taskHeight: number;
   taskHalfHeight: number;
-};
+  isProgressChangeable?: (task: Task) => boolean;
+}
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   authorizedRelations,
@@ -114,6 +116,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   taskHeight,
   taskHalfHeight,
   visibleTasksMirror,
+  isProgressChangeable = task => !task.isDisabled,
+  allowMoveTaskBar,
 }) => {
   const renderedHolidays = useMemo(() => {
     const { columnWidth } = distances;
@@ -233,6 +237,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
           key={key}
         >
           <TaskItem
+            allowMoveTaskBar={allowMoveTaskBar}
             getTaskGlobalIndexByRef={getTaskGlobalIndexByRef}
             hasChildren={checkHasChildren(task, childTasksMap)}
             hasDependencyWarning={
@@ -255,7 +260,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             distances={distances}
             taskHeight={taskHeight}
             taskHalfHeight={taskHalfHeight}
-            isProgressChangeable={!task.isDisabled}
+            isProgressChangeable={isProgressChangeable}
             isDateChangeable={!task.isDisabled}
             isRelationChangeable={!task.isDisabled}
             authorizedRelations={authorizedRelations}
@@ -451,6 +456,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   }, [
     additionalLeftSpace,
     authorizedRelations,
+    allowMoveTaskBar,
     childOutOfParentWarnings,
     childTasksMap,
     comparisonLevels,
@@ -468,6 +474,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     handleDeleteTasks,
     handleFixDependency,
     handleTaskDragStart,
+    isProgressChangeable,
     isShowDependencyWarnings,
     mapGlobalRowIndexToTask,
     onArrowDoubleClick,

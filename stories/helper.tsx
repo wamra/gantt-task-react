@@ -11,6 +11,132 @@ import { Task, TaskOrEmpty } from "../src";
 
 const dateFormat = "dd/MM/yyyy HH:mm";
 
+export function initTasksWithoutProject() {
+  const currentDate = new Date();
+  const tasks: TaskOrEmpty[] = [
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+      end: new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        2,
+        12,
+        28
+      ),
+      name: "Idea",
+      id: "Idea",
+      progress: 45,
+      type: "task",
+    },
+    {
+      id: "taskWithoutDateId",
+      type: "empty",
+      name: "TaskWithoutDate",
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 2),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4, 0, 0),
+      name: "Research",
+      id: "Research",
+      progress: 25,
+      dependencies: [
+        {
+          sourceId: "Idea",
+          sourceTarget: "endOfTask",
+          ownTarget: "startOfTask",
+        },
+      ],
+      type: "task",
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8, 0, 0),
+      name: "Discussion with team",
+      id: "Discussion",
+      progress: 10,
+      dependencies: [
+        {
+          sourceId: "Research",
+          sourceTarget: "endOfTask",
+          ownTarget: "startOfTask",
+        },
+      ],
+      type: "task",
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 9),
+      name: "Code",
+      id: "code",
+      type: "task",
+      progress: 40,
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 9),
+      name: "Frontend",
+      id: "frontend",
+      type: "task",
+      progress: 40,
+      assignees: ["Bob", "Peter"],
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 9),
+      name: "Backend",
+      id: "backend",
+      type: "task",
+      progress: 40,
+      assignees: ["Marc"],
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 10),
+      name: "Review",
+      id: "review",
+      type: "task",
+      progress: 70,
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
+      name: "Release",
+      id: "release",
+      progress: currentDate.getMonth(),
+      type: "milestone",
+      dependencies: [
+        {
+          sourceId: "review",
+          sourceTarget: "endOfTask",
+          ownTarget: "startOfTask",
+        },
+      ],
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 18),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 19),
+      name: "Party Time",
+      id: "party",
+      progress: 0,
+      isDisabled: true,
+      type: "task",
+    },
+  ];
+
+  return tasks.map(taskOrEmpty => {
+    const task = taskOrEmpty as Task;
+    if (task) {
+      return {
+        ...task,
+        end: endOfDay(task.end),
+        start: startOfDay(task.start),
+      };
+    } else {
+      return taskOrEmpty;
+    }
+  });
+}
+
 export function initTasks() {
   const currentDate = new Date();
   const tasks: TaskOrEmpty[] = [

@@ -25,11 +25,9 @@ import { GridProps } from "../grid/grid";
 import { ganttDateRange } from "../../helpers/date-helper";
 import { CalendarProps } from "../calendar/calendar";
 import { TaskGanttContentProps } from "./task-gantt-content";
-import { TaskListHeaderDefault } from "../task-list/task-list-header";
-import { TaskListTableDefault } from "../task-list/task-list-table";
 import { StandardTooltipContent, Tooltip } from "../other/tooltip";
 import { VerticalScroll } from "../other/vertical-scroll";
-import { TaskList, TaskListProps } from "../task-list/task-list";
+import { TaskList, TaskListProps } from "../task-list";
 import { TaskGantt } from "./task-gantt";
 import { sortTasks } from "../../helpers/sort-tasks";
 import { getChildsAndRoots } from "../../helpers/get-childs-and-roots";
@@ -91,8 +89,6 @@ import { GANTT_EN_LOCALE } from "../../locales";
 export const Gantt: React.FC<GanttProps> = props => {
   const {
     theme: clientTheme,
-    TaskListHeader = TaskListHeaderDefault,
-    TaskListTable = TaskListTableDefault,
     TooltipContent = StandardTooltipContent,
     authorizedRelations = [
       "startToStart",
@@ -101,6 +97,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       "endToEnd",
     ],
     canMoveTasks = true,
+    allowMoveTask = () => true,
     canResizeColumns = true,
     checkIsHoliday: checkIsHolidayProp = defaultCheckIsHoliday,
     columns: columnsProp = undefined,
@@ -149,6 +146,8 @@ export const Gantt: React.FC<GanttProps> = props => {
     viewDate,
     viewMode = ViewMode.Day,
     locale: clientLocale,
+    isProgressChangeable,
+    allowMoveTaskBar,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -353,7 +352,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     resetSelectedTasks,
     selectTaskOnMouseDown,
     selectedIdsMirror,
-    toggleTask,
   } = useSelection(taskToRowIndexMap, rowIndexToTaskMap, checkTaskIdExists);
 
   const [startDate, minTaskDate, datesLength] = useMemo(
@@ -464,7 +462,7 @@ export const Gantt: React.FC<GanttProps> = props => {
   );
 
   const { contextMenu, handleCloseContextMenu, handleOpenContextMenu } =
-    useContextMenu(wrapperRef, toggleTask, scrollToTask);
+    useContextMenu(wrapperRef, scrollToTask);
 
   const [dependencyMap, dependentMap, dependencyMarginsMap] = useMemo(
     () =>
@@ -837,6 +835,10 @@ export const Gantt: React.FC<GanttProps> = props => {
 
       onChangeTasks(withSuggestions, {
         type: "add_tasks",
+        payload: {
+          parent,
+          descendants,
+        },
       });
     },
     [onChangeTasks, getMetadata, prepareSuggestions]
@@ -927,6 +929,12 @@ export const Gantt: React.FC<GanttProps> = props => {
         withSuggestions[taskIndex] = adjustedTask;
         onChangeTasks(withSuggestions, {
           type: "date_change",
+          payload: {
+            taskId: adjustedTask.id,
+            taskIndex: taskIndex,
+            start: adjustedTask.start,
+            end: adjustedTask.end,
+          },
         });
       }
     },
@@ -1142,10 +1150,6 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const handleMoveTaskBefore = useCallback(
     (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => {
-      if (!onMoveTaskBefore && !onChangeTasks) {
-        return;
-      }
-
       onChangeTooltipTask(null, null);
 
       const [dependentTasks, taskIndexes, parents, suggestions] = getMetadata({
@@ -1691,6 +1695,7 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const barProps: TaskGanttContentProps = useMemo(
     () => ({
+      allowMoveTaskBar: allowMoveTaskBar,
       authorizedRelations,
       additionalLeftSpace,
       additionalRightSpace,
@@ -1735,11 +1740,13 @@ export const Gantt: React.FC<GanttProps> = props => {
       taskYOffset,
       timeStep,
       visibleTasksMirror,
+      isProgressChangeable,
     }),
     [
+      allowMoveTaskBar,
+      authorizedRelations,
       additionalLeftSpace,
       additionalRightSpace,
-      authorizedRelations,
       checkIsHoliday,
       childOutOfParentWarnings,
       childTasksMap,
@@ -1763,7 +1770,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       isShowDependencyWarnings,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
-      onChangeTooltipTask,
       onClick,
       onDoubleClick,
       onFixDependencyPosition,
@@ -1773,6 +1779,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       rtl,
       selectTaskOnMouseDown,
       selectedIdsMirror,
+      onChangeTooltipTask,
       startColumnIndex,
       taskHalfHeight,
       taskHeight,
@@ -1781,13 +1788,13 @@ export const Gantt: React.FC<GanttProps> = props => {
       taskYOffset,
       timeStep,
       visibleTasksMirror,
+      isProgressChangeable,
     ]
   );
 
   const tableProps: TaskListProps = {
-    TaskListHeader,
-    TaskListTable,
     canMoveTasks,
+    allowMoveTask,
     canResizeColumns,
     childTasksMap,
     columnsProp,
@@ -1835,12 +1842,13 @@ export const Gantt: React.FC<GanttProps> = props => {
             ref={wrapperRef}
             data-testid={`gantt-main`}
           >
-            {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
+            {/* {task-list-table-columns.length > 0 && <TaskList {...tableProps} />} */}
             {(!columnsProp || columnsProp.length > 0) && (
               <TaskList {...tableProps} />
             )}
 
             <TaskGantt
+              allowMoveTaskBar={allowMoveTaskBar}
               barProps={barProps}
               calendarProps={calendarProps}
               fullRowHeight={fullRowHeight}

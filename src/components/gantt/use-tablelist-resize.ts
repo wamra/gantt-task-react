@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useMemo, useState } from "react";
 
 import { Column, OnResizeColumn } from "../../types/public-types";
-import { useTaskListColumnsBuilder } from "../task-list/columns/use-task-list-columns-builder";
+import { useTaskListColumnsBuilder } from "../task-list/task-list-table-columns/use-task-list-columns-builder";
 import { useGanttLocale } from "../gantt-locale";
 import { useGanttTheme } from "../gantt-theme";
 
@@ -19,6 +19,7 @@ type ColumnResizeEvent = {
 };
 export const useTableListResize = (
   clientColumns: readonly Column[] | undefined | null,
+  canMoveTasks: boolean,
   onResizeColumn: OnResizeColumn,
   ganttRef: RefObject<HTMLDivElement>
 ): [
@@ -51,6 +52,7 @@ export const useTableListResize = (
     ];
   }, [actionColumnWidth, columnsBuilder, dateCellWidth, dependenciesCellWidth, locale, titleCellWidth])
 
+  const extraWidth = useMemo(() => canMoveTasks ? 26 : 0, [canMoveTasks])
   const [columnsState, setColumns] = useState<readonly Column[]>(clientColumns || defaultColumns);
 
   useEffect(() => {
@@ -69,11 +71,11 @@ export const useTableListResize = (
       setTableWidth(prev =>
         Math.min(
           prev + widthOfAddedColumns - widthOfRemovedColumns,
-          clientColumns.reduce((res, { width }) => res + width, 0)
+          clientColumns.reduce((res, { width }) => res + width, 0) + extraWidth
         )
       );
     }
-  }, [clientColumns]);
+  }, [clientColumns, extraWidth]);
 
   const [tableResizeEvent, setTableResizeEvent] =
     useState<TableResizeEvent | null>(null);
@@ -81,7 +83,7 @@ export const useTableListResize = (
     useState<ColumnResizeEvent | null>(null);
 
   const [tableWidthState, setTableWidth] = useState(() =>
-    columnsState.reduce((res, { width }) => res + width, 0)
+    columnsState.reduce((res, { width }) => res + width, 0) + extraWidth
   );
 
   const onTableResizeStart = (clientX: number) => {
@@ -104,7 +106,7 @@ export const useTableListResize = (
 
   const isResizeTableInProgress = Boolean(tableResizeEvent);
   const isResizeColumnInProgress = Boolean(columnResizeEvent);
-  const taskListWidth = columnsState.reduce((res, { width }) => res + width, 0);
+  const taskListWidth = columnsState.reduce((res, { width }) => res + width, 0) + extraWidth;
   useEffect(() => {
     if (!isResizeTableInProgress) {
       return undefined;
@@ -162,7 +164,7 @@ export const useTableListResize = (
 
     const handleMove = (clientX: number) => {
       const moveDelta = clientX - columnResizeEvent.startX;
-      const newColumnwidth = Math.max(
+      const newColumnWidth = Math.max(
         10,
         columnResizeEvent.initialColumnWidth + moveDelta
       );
@@ -171,14 +173,14 @@ export const useTableListResize = (
         const newColumns = prevColumns.map((column, index) => {
           if (index === columnResizeEvent.columnIndex) {
             previousColumnWidth = column.width;
-            return { ...column, width: newColumnwidth };
+            return { ...column, width: newColumnWidth };
           }
           return column;
         });
         return newColumns;
       });
 
-      if (previousColumnWidth !== newColumnwidth) {
+      if (previousColumnWidth !== newColumnWidth) {
         setTableWidth(() =>
           Math.min(
             Math.max(columnResizeEvent.initialTableWidth + moveDelta, 50),

@@ -1,0 +1,6 @@
+/*noinspection CssUnresolvedCustomProperty*/
+.taskListWrapper {
+  display: table;
+  border-bottom: 1px solid var(--gantt-divider-color);
+  table-layout: fixed;
+}

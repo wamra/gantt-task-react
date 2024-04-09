@@ -68,7 +68,6 @@ export const useSelection = (
   const selectTasksFromLastSelected = useCallback(
     (taskId: string) => {
       const lastSelectedId = lastSelectedIdRef.current;
-
       if (lastSelectedId === null) {
         toggleTask(taskId);
         return;

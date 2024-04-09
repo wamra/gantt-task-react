@@ -1,7 +1,8 @@
-import React, { memo } from "react";
-import type { ComponentType, MouseEvent, RefObject } from "react";
+import type { MouseEvent, RefObject } from "react";
+import React, { memo, useCallback } from "react";
 
 import {
+  AllowMoveTask,
   ChildByLevelMap,
   Column,
   DateSetup,
@@ -11,20 +12,21 @@ import {
   MapTaskToNestedIndex,
   OnResizeColumn,
   Task,
-  TaskListHeaderProps,
-  TaskListTableProps,
+  TaskListTableRowProps,
   TaskOrEmpty,
 } from "../../types/public-types";
 
 import { useOptimizedList } from "../../helpers/use-optimized-list";
-
-import styles from "./task-list.module.css";
 import { useTableListResize } from "../gantt/use-tablelist-resize";
-
-// const SCROLL_DELAY = 25;
+import { TaskListTableHeaders } from "./task-list-table-headers";
+import { TaskListSortableTable } from "./task-list-sortable-table";
+import { TaskListTable } from "./task-list-table";
+import styles from "./task-list.module.css";
+import { checkHasChildren } from "../../helpers/check-has-children";
 
 export type TaskListProps = {
   ganttRef: RefObject<HTMLDivElement>;
+  allowMoveTask: AllowMoveTask;
   canMoveTasks: boolean;
   canResizeColumns: boolean;
   childTasksMap: ChildByLevelMap;
@@ -61,13 +63,11 @@ export type TaskListProps = {
   taskListContainerRef: RefObject<HTMLDivElement>;
   taskListRef: RefObject<HTMLDivElement>;
   tasks: readonly TaskOrEmpty[];
-  TaskListHeader: ComponentType<TaskListHeaderProps>;
-  TaskListTable: ComponentType<TaskListTableProps>;
   onResizeColumn?: OnResizeColumn;
 };
 
 const TaskListInner: React.FC<TaskListProps> = ({
-  canMoveTasks,
+  allowMoveTask,
   canResizeColumns,
   childTasksMap,
   columnsProp,
@@ -98,9 +98,8 @@ const TaskListInner: React.FC<TaskListProps> = ({
   taskListContainerRef,
   taskListRef,
   tasks,
-  TaskListHeader,
-  TaskListTable,
   onResizeColumn,
+  canMoveTasks,
 }) => {
   // Manage the column and list table resizing
   const [
@@ -109,7 +108,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     tableWidth,
     onTableResizeStart,
     onColumnResizeStart,
-  ] = useTableListResize(columnsProp, onResizeColumn, ganttRef);
+  ] = useTableListResize(columnsProp, canMoveTasks, onResizeColumn, ganttRef);
 
   const renderedIndexes = useOptimizedList(
     taskListContainerRef,
@@ -117,60 +116,76 @@ const TaskListInner: React.FC<TaskListProps> = ({
     fullRowHeight
   );
 
-  // const [{ isScrollingToTop }, scrollToTopRef] = useDrop(
-  //   {
-  //     accept: ROW_DRAG_TYPE,
+  const getTableRowProps = useCallback(
+    (task: TaskOrEmpty, index: number) => {
+      const { id, comparisonLevel = 1 } = task;
+      const indexesOnLevel = mapTaskToNestedIndex.get(comparisonLevel);
+      if (!indexesOnLevel) {
+        throw new Error(`Indexes are not found for level ${comparisonLevel}`);
+      }
 
-  //     collect: monitor => ({
-  //       isScrollingToTop: monitor.isOver(),
-  //     }),
+      const taskIndex = indexesOnLevel.get(id);
 
-  //     canDrop: () => false,
-  //   },
-  //   []
-  // );
+      if (!taskIndex) {
+        throw new Error(`Index is not found for task ${id}`);
+      }
 
-  // const [{ isScrollingToBottom }, scrollToBottomRef] = useDrop(
-  //   {
-  //     accept: ROW_DRAG_TYPE,
+      const [depth, indexStr] = taskIndex;
 
-  //     collect: monitor => ({
-  //       isScrollingToBottom: monitor.isOver(),
-  //     }),
+      return {
+        columns: columns,
+        dateSetup: dateSetup,
+        dependencyMap: dependencyMap,
+        distances: distances,
+        fullRowHeight: fullRowHeight,
+        getTaskCurrentState: getTaskCurrentState,
+        handleAddTask: handleAddTask,
+        handleDeleteTasks: handleDeleteTasks,
+        handleEditTask: handleEditTask,
+        handleOpenContextMenu: handleOpenContextMenu,
+        hasChildren: checkHasChildren(task, childTasksMap),
+        icons: icons,
+        indexStr: indexStr,
+        isClosed: Boolean((task as Task)?.hideChildren),
+        isCut: cutIdsMirror[id],
+        isEven: index % 2 === 1,
+        isSelected: selectedIdsMirror[id],
+        isShowTaskNumbers: isShowTaskNumbers,
+        onClick: onClick,
+        onExpanderClick: onExpanderClick,
+        scrollToTask: scrollToTask,
+        selectTaskOnMouseDown: selectTaskOnMouseDown,
+        task: task,
+        depth: depth,
+      } as TaskListTableRowProps;
+    },
+    [
+      childTasksMap,
+      columns,
+      cutIdsMirror,
+      dateSetup,
+      dependencyMap,
+      distances,
+      fullRowHeight,
+      getTaskCurrentState,
+      handleAddTask,
+      handleDeleteTasks,
+      handleEditTask,
+      handleOpenContextMenu,
+      icons,
+      isShowTaskNumbers,
+      mapTaskToNestedIndex,
+      onClick,
+      onExpanderClick,
+      scrollToTask,
+      selectTaskOnMouseDown,
+      selectedIdsMirror,
+    ]
+  );
 
-  //     canDrop: () => false,
-  //   },
-  //   [scrollToBottomStep]
-  // );
-  // const isScrollingToTop = false;
-  // const isScrollingToBottom = false;
-  // useEffect(() => {
-  //   if (!isScrollingToTop) {
-  //     return undefined;
-  //   }
-
-  //   const intervalId = setInterval(() => {
-  //     scrollToTopStep();
-  //   }, SCROLL_DELAY);
-
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [isScrollingToTop, scrollToTopStep]);
-
-  // useEffect(() => {
-  //   if (!isScrollingToBottom) {
-  //     return undefined;
-  //   }
-
-  //   const intervalId = setInterval(() => {
-  //     scrollToBottomStep();
-  //   }, SCROLL_DELAY);
-
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [isScrollingToBottom, scrollToBottomStep]);
+  const RenderTaskListTable = canMoveTasks
+    ? TaskListSortableTable
+    : TaskListTable;
 
   return (
     <div className={styles.taskListRoot} ref={taskListRef}>
@@ -180,7 +195,8 @@ const TaskListInner: React.FC<TaskListProps> = ({
           width: tableWidth,
         }}
       >
-        <TaskListHeader
+        <TaskListTableHeaders
+          canMoveTasks={canMoveTasks}
           headerHeight={distances.headerHeight}
           columns={columns}
           onColumnResizeStart={onColumnResizeStart}
@@ -209,8 +225,11 @@ const TaskListInner: React.FC<TaskListProps> = ({
                 backgroundImage: `linear-gradient(to bottom, transparent ${fullRowHeight}px, #f5f5f5 ${fullRowHeight}px)`,
               }}
             >
-              <TaskListTable
+              <RenderTaskListTable
+                ganttRef={ganttRef}
+                getTableRowProps={getTableRowProps}
                 canMoveTasks={canMoveTasks}
+                allowMoveTask={allowMoveTask}
                 childTasksMap={childTasksMap}
                 columns={columns}
                 cutIdsMirror={cutIdsMirror}

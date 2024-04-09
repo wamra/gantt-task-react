@@ -10,6 +10,13 @@
   list-style: none;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
+.ganttTable_HeaderMoveTask {
+  display: table-cell;
+  min-width: var(--gantt-table-drag-column-width);
+  width: var(--gantt-table-drag-column-width);
+}
+
 .ganttTable_HeaderSeparator {
   /*noinspection CssUnresolvedCustomProperty*/
   border-right: 1px solid var(--gantt-table-divider-color, var(--gantt-divider-color));
@@ -46,6 +53,6 @@
 
 /*noinspection CssUnresolvedCustomProperty*/
 .resizer:hover {
-  background-color: var(--gantt-table-resize-hover-color);
+  background-color: var(--gantt-table-hover-action-color);
 }
 

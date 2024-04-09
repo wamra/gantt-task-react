@@ -45,12 +45,13 @@ const createGetters = (
   };
 
   const getTasksWithDescendantsWithCache = () => {
+
     if (tasksWithDescendants) {
+
       return tasksWithDescendants;
     }
 
     const parentTasksRes = getParentTasksWithCache();
-
     tasksWithDescendants = getTasksWithDescendants(
       parentTasksRes,
       childTasksMap

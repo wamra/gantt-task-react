@@ -66,7 +66,7 @@ export const BarSmall: React.FC<
       />
 
       <g className="handleGroup">
-        {isProgressChangeable && (
+        {isProgressChangeable(task) && (
           <BarProgressHandle
             taskName={task.name}
             progressPoint={progressPoint}

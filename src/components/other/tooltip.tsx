@@ -35,6 +35,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
         left: tooltipX ?? 0,
         width: "max-content",
         fontFamily: "var(--gantt-font-family)",
+        zIndex: 11,
       }}
       {...getFloatingProps()}
     >

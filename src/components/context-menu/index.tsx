@@ -156,7 +156,7 @@ export function ContextMenu(props: ContextMenuProps): ReactElement {
             flexDirection: "column",
             overflow: "hidden",
             gap: 6,
-            zIndex: 1,
+            zIndex: 10,
           }}
           {...getFloatingProps()}
         >

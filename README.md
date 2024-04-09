@@ -2,7 +2,7 @@
 
 ## Interactive Gantt Chart for React with TypeScript.
 
-## [Live Demo In Storybook](https://661071b076b50cb537c16c19-fzycyfgbid.chromatic.com/)
+## [Live Demo In Storybook](https://661071b076b50cb537c16c19-yrsukdfefs.chromatic.com/)
 
 ## Install
 

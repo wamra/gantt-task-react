@@ -1,7 +1,7 @@
 .taskListNameWrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .dragging {
@@ -9,8 +9,8 @@
 }
 
 .taskListExpander {
-  opacity: 0.9;
-  font-size: 18px;
+  vertical-align: middle;
+  text-align: center;
   user-select: none;
   cursor: pointer;
   /*noinspection CssUnresolvedCustomProperty*/

@@ -23,11 +23,12 @@ export const DEFAULT_THEME: GanttTheme = {
     calendarStrokeColor: "#e0e0e0",
     scrollbarThumbColor: "#B0BEC5",
 
-    tableResizeHoverColor: "#03A9F4",
+    tableHoverActionColor: "#03A9F4",
     tableActionColor: "#9E9E9E",
+    tableDragIndicatorColor: "#9E9E9E",
     tableEvenBackgroundColor: "#f8f9fa",
     tableSelectedTaskBackgroundColor: "rgba(3, 169, 244, 0.2)",
-    tableDragTaskBackgroundColor: "rgba(3, 169, 244, 0.5)",
+    tableDragTaskBackgroundColor: "#fff",
 
     contextMenuBoxShadow:
       "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",

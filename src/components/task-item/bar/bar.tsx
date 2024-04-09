@@ -148,7 +148,7 @@ export const Bar: React.FC<
 
       {relationHandles}
 
-      {isProgressChangeable && (
+      {isProgressChangeable(task) && (
         <BarProgressHandle
           taskName={task.name}
           progressPoint={progressPoint}

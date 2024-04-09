@@ -1,21 +1,22 @@
 import React, { Fragment, memo } from "react";
 
-import { TaskListHeaderProps } from "../../types/public-types";
+import { TaskListHeaderProps } from "../../../types/public-types";
 
 import styles from "./task-list-header.module.css";
 
-const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
+const TaskListTableHeadersDefaultInner: React.FC<TaskListHeaderProps> = ({
   headerHeight,
   columns,
   canResizeColumns,
+  canMoveTasks,
   onColumnResizeStart,
 }) => {
   return (
     <div
       className={styles.ganttTable}
       style={{
-        fontFamily: 'var(--gantt-font-family)',
-        fontSize: 'var(--gantt-font-size)',
+        fontFamily: "var(--gantt-font-family)",
+        fontSize: "var(--gantt-font-size)",
       }}
     >
       <div
@@ -24,6 +25,8 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
           height: headerHeight - 2,
         }}
       >
+        {canMoveTasks && <div className={styles.ganttTable_HeaderMoveTask} />}
+
         {columns.map(({ title, width, canResize }, index) => {
           return (
             <Fragment key={index}>
@@ -47,7 +50,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
               >
                 {title}
 
-                {canResizeColumns && canResize !== false && (
+                {canResizeColumns && canResize !== false && !!title && (
                   <div
                     data-testid={`table-column-header-resize-handle-${title}`}
                     className={styles.resizer}
@@ -72,4 +75,4 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
   );
 };
 
-export const TaskListHeaderDefault = memo(TaskListHeaderDefaultInner);
+export const TaskListTableHeaders = memo(TaskListTableHeadersDefaultInner);

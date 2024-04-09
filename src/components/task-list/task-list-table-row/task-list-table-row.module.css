@@ -1,0 +1,90 @@
+.taskListTableRow {
+  position: relative;
+  display: table-row;
+  text-overflow: ellipsis;
+}
+
+.isAfter {
+  /*noinspection CssUnresolvedCustomProperty*/
+
+  &:after {
+    content: '';
+    position: absolute;
+    background-color: var(--gantt-table-hover-action-color);
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+  }
+}
+
+.isBefore {
+  /*noinspection CssUnresolvedCustomProperty*/
+
+  &:after {
+    content: '';
+    position: absolute;
+    background-color: var(--gantt-table-hover-action-color);
+    width: 100%;
+    height: 2px;
+    top: 0;
+    left: 0;
+  }
+}
+
+.isOverlay {
+  /*noinspection CssUnresolvedCustomProperty*/
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: 1px solid var(--gantt-divider-color);
+  }
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.dragIndicator {
+  cursor: grab;
+  color: var(--gantt-table-drag-indicator-color, var(--gantt-table-action-color));
+  fill: var(--gantt-table-drag-indicator-color, var(--gantt-table-action-color));
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  min-width: var(--gantt-table-drag-column-width);
+}
+
+.dragIndicatorIcon {
+  width: 18px;
+  height: 18px;
+  color: inherit;
+  fill: currentColor;
+  vertical-align: middle;
+}
+
+.isCut {
+  /*noinspection CssUnresolvedCustomProperty*/
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px dashed var(--gantt-table-hover-action-color);
+    z-index: 2;
+  }
+}
+
+.taskListCell {
+  display: table-cell;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

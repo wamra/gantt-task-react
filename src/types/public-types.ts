@@ -9,6 +9,7 @@ import type { Locale as DateLocale } from "date-fns";
 
 import type { BarMoveAction, RelationMoveTarget } from "./gantt-task-actions";
 import { OptimizedListParams } from "../helpers/use-optimized-list";
+import { RefObject } from "react";
 
 export enum ViewMode {
   Hour = "Hour",
@@ -136,23 +137,21 @@ export interface ColorStyles {
   milestoneBackgroundCriticalColor: string;
   milestoneBackgroundSelectedColor: string;
   milestoneBackgroundSelectedCriticalColor: string;
-  tableEvenBackgroundColor: string;
   calendarHolidayColor: string;
-  tableDragTaskBackgroundColor: string;
   arrowHoverColor: string;
 
+  tableDragTaskBackgroundColor: string;
   tableSelectedTaskBackgroundColor: string;
+  tableActionColor: string;
+  tableDragIndicatorColor: string;
+  tableHoverActionColor: string;
+  tableEvenBackgroundColor: string;
+
   calendarTodayColor: string;
-
-
   contextMenuBoxShadow: string;
   contextMenuBgColor: string;
   contextMenuTextColor: string;
   tooltipBoxShadow: string;
-
-
-  tableActionColor: string;
-  tableResizeHoverColor: string;
   scrollbarThumbColor: string;
 
   calendarStrokeColor: string;
@@ -170,7 +169,11 @@ export interface DateFormats {
   hourBottomHeaderFormat: string;
   monthBottomHeaderFormat: string;
   monthTopHeaderFormat: string;
-  weekBottomHeader: (date: Date, weekNumber: number, locale?: DateLocale) => string;
+  weekBottomHeader: (
+    date: Date,
+    weekNumber: number,
+    locale?: DateLocale
+  ) => string;
 }
 
 export interface Distances {
@@ -233,6 +236,7 @@ export interface Task {
   hideChildren?: boolean;
   displayOrder?: number;
   comparisonLevel?: number;
+  payload?: Record<string, string>;
 }
 
 export interface EmptyTask {
@@ -342,9 +346,19 @@ export type FixPosition = (
 export type OnChangeTasksAction =
   | {
       type: "add_tasks";
+      payload: {
+        parent: TaskOrEmpty;
+        descendants: readonly TaskOrEmpty[];
+      }
     }
   | {
       type: "date_change";
+      payload: {
+        taskId: string;
+        taskIndex: number;
+        start: Date;
+        end: Date;
+      };
     }
   | {
       type: "delete_relation";
@@ -512,6 +526,7 @@ export interface EventOption {
 
 export interface DisplayOption {
   viewMode?: ViewMode;
+  isProgressChangeable?: (task: Task) => boolean;
   isDeleteDependencyOnDoubleClick?: boolean;
   /**
    * Display offsets from start on timeline instead of dates
@@ -544,6 +559,7 @@ export interface DisplayOption {
 
 export interface Icons {
   renderAddIcon: () => ReactNode;
+  renderDragIndicatorIcon: () => ReactNode;
   renderClosedIcon: () => ReactNode;
   renderDeleteIcon: () => ReactNode;
   renderEditIcon: () => ReactNode;
@@ -551,10 +567,17 @@ export interface Icons {
   renderNoChildrenIcon: () => ReactNode;
 }
 
+export type InsertTaskPosition = "before" | "inside" | "after";
+export type AllowMoveTask = (
+  task: TaskOrEmpty,
+  method: InsertTaskPosition
+) => boolean;
+
 export interface StylingOption {
   /**
    * Allow drag-n-drop of tasks in the table
    */
+  allowMoveTask?: AllowMoveTask;
   canMoveTasks?: boolean;
   canResizeColumns?: boolean;
   theme?: GanttPartialTheme;
@@ -563,8 +586,6 @@ export interface StylingOption {
   columns?: readonly Column[];
   onResizeColumn?: OnResizeColumn;
   TooltipContent?: ComponentType<{ task: Task }>;
-  TaskListHeader?: ComponentType<TaskListHeaderProps>;
-  TaskListTable?: ComponentType<TaskListTableProps>;
 
   /**
    * Render function of bottom part of header above chart
@@ -620,7 +641,7 @@ export interface GanttLocale {
   };
 }
 
-export interface GanttProps extends EventOption, DisplayOption, StylingOption {
+export interface GanttProps extends EventOption, DisplayOption, StylingOption, GanttActionsOption {
   /**
    * Check is current date holiday
    * @param date the date
@@ -650,8 +671,15 @@ export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   tasks: readonly TaskOrEmpty[];
 }
 
+export interface GanttActionsOption {
+  allowMoveTaskBar?: (action: BarMoveAction, task: TaskOrEmpty) => boolean;
+}
+
 export interface TaskListTableProps {
+  ganttRef: RefObject<HTMLDivElement>;
+  getTableRowProps: (task: TaskOrEmpty, index: number) => TaskListTableRowProps;
   canMoveTasks: boolean;
+  allowMoveTask: AllowMoveTask;
   childTasksMap: ChildByLevelMap;
   columns: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
@@ -685,9 +713,47 @@ export interface TaskListTableProps {
   tasks: readonly TaskOrEmpty[];
 }
 
+export type TaskListTableRowProps = {
+  columns: readonly Column[];
+  dateSetup: DateSetup;
+  dependencyMap: DependencyMap;
+  depth: number;
+  distances: Distances;
+  fullRowHeight: number;
+  getTaskCurrentState: (task: Task) => Task;
+  handleAddTask: (task: Task) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
+  handleEditTask: (task: TaskOrEmpty) => void;
+  // eslint-disable-next-line
+  moveHandleProps?: any;
+  moveOverPosition?: InsertTaskPosition;
+  handleOpenContextMenu: (
+    task: TaskOrEmpty,
+    clientX: number,
+    clientY: number
+  ) => void;
+  hasChildren: boolean;
+  icons?: Partial<Icons>;
+  indexStr: string;
+  isDragging?: boolean;
+  isOverlay?: boolean;
+  isClosed: boolean;
+  isCut: boolean;
+  isEven: boolean;
+  isSelected: boolean;
+  isShowTaskNumbers: boolean;
+  onClick: (task: TaskOrEmpty) => void;
+  onExpanderClick: (task: Task) => void;
+  scrollToTask: (task: Task) => void;
+  selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
+  style?: CSSProperties;
+  task: TaskOrEmpty;
+};
+
 export interface TaskListHeaderProps {
   headerHeight: number;
   columns: readonly Column[];
+  canMoveTasks: boolean;
   canResizeColumns: boolean;
   onColumnResizeStart: (columnIndex: number, clientX: number) => void;
 }
@@ -867,7 +933,6 @@ export type ChangeInProgress = {
 export type GetMetadata = (task: TaskOrEmpty) => ChangeMetadata;
 
 export type ColumnData = {
-  canMoveTasks: boolean;
   dateSetup: DateSetup;
   depth: number;
   dependencies: Task[];
