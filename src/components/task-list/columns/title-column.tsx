@@ -1,23 +1,24 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 
-import { ColumnProps, Icons } from "../../../types/public-types";
+import { ColumnProps, Icons, TaskOrEmpty } from "../../../types/public-types";
 
 import styles from "./title-column.module.css";
 
 const getExpanderSymbol = (
+  task: TaskOrEmpty,
   hasChildren: boolean,
   isClosed: boolean,
   icons: Partial<Icons> | undefined
 ) => {
   if (!hasChildren) {
-    return icons?.renderNoChildrenIcon ? icons.renderNoChildrenIcon() : "";
+    return icons?.renderNoChildrenIcon ? icons.renderNoChildrenIcon(task) : "";
   }
 
   if (isClosed) {
-    return icons?.renderClosedIcon ? icons.renderClosedIcon() : "⊞";
+    return icons?.renderClosedIcon ? icons.renderClosedIcon(task) : "⊞";
   }
 
-  return icons?.renderOpenedIcon ? icons.renderOpenedIcon() : "⊟";
+  return icons?.renderOpenedIcon ? icons.renderOpenedIcon(task) : "⊟";
 };
 
 export const TitleColumn: React.FC<ColumnProps> = ({
@@ -35,10 +36,7 @@ export const TitleColumn: React.FC<ColumnProps> = ({
 }) => {
   const { name } = task;
 
-  const expanderSymbol = useMemo(
-    () => getExpanderSymbol(hasChildren, isClosed, icons),
-    [hasChildren, isClosed, icons]
-  );
+  const expanderSymbol = getExpanderSymbol(task, hasChildren, isClosed, icons);
 
   const title = isShowTaskNumbers ? `${indexStr} ${name}` : name;
 

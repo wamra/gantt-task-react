@@ -492,12 +492,12 @@ export interface DisplayOption {
 }
 
 export interface Icons {
-  renderAddIcon: () => ReactNode;
-  renderClosedIcon: () => ReactNode;
-  renderDeleteIcon: () => ReactNode;
-  renderEditIcon: () => ReactNode;
-  renderOpenedIcon: () => ReactNode;
-  renderNoChildrenIcon: () => ReactNode;
+  renderAddIcon: (task: TaskOrEmpty) => ReactNode;
+  renderClosedIcon: (task: TaskOrEmpty) => ReactNode;
+  renderDeleteIcon: (task: TaskOrEmpty) => ReactNode;
+  renderEditIcon: (task: TaskOrEmpty) => ReactNode;
+  renderOpenedIcon: (task: TaskOrEmpty) => ReactNode;
+  renderNoChildrenIcon: (task: TaskOrEmpty) => ReactNode;
 }
 
 export interface StylingOption {

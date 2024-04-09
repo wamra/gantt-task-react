@@ -12,6 +12,7 @@
   font-size: 18px;
   user-select: none;
   cursor: pointer;
+  display: flex;
 }
 
 .taskListEmptyExpander {

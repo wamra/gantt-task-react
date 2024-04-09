@@ -13,7 +13,7 @@ export const DeleteColumn: React.FC<ColumnProps> = ({
 
   return (
     <button type="button" onClick={onClick} className={styles.button}>
-      {icons?.renderDeleteIcon ? icons.renderDeleteIcon() : "-"}
+      {icons?.renderDeleteIcon ? icons.renderDeleteIcon(task) : "-"}
     </button>
   );
 };
