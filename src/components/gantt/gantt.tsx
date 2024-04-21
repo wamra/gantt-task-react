@@ -15,6 +15,7 @@ import {
   GanttProps,
   GanttTaskBarProps,
   GanttTaskListProps,
+  OnChangeTasksAction,
   OnDateChangeSuggestionType,
   OnRelationChange,
   Task,
@@ -364,7 +365,10 @@ export const Gantt: React.FC<GanttProps> = props => {
     distances.columnWidth
   );
 
-  const svgClientWidth = renderedColumnIndexes && renderedColumnIndexes[4];
+  const svgClientWidth = useMemo(
+    () => renderedColumnIndexes && renderedColumnIndexes[4],
+    [renderedColumnIndexes]
+  );
 
   const countTaskCoordinates = useCallback(
     (task: Task) =>
@@ -476,6 +480,29 @@ export const Gantt: React.FC<GanttProps> = props => {
     dependencyMap,
   ]);
 
+  const handleCommitInternal = useCallback(
+    (
+      prevTasks: TaskOrEmpty[],
+      nextTasks: TaskOrEmpty[],
+      action: OnChangeTasksAction
+    ) => {
+      if (!onCommitTasks) {
+        setSortedTasks(nextTasks);
+      } else {
+        Promise.resolve(onCommitTasks(nextTasks, action))
+          .then(result => {
+            if (result === false) {
+              setSortedTasks(prevTasks);
+            }
+          })
+          .catch(() => {
+            setSortedTasks(prevTasks);
+          });
+      }
+    },
+    [onCommitTasks]
+  );
+
   useEffect(() => {
     if (rtl) {
       setScrollXProgrammatically(datesLength * distances.columnWidth);
@@ -530,7 +557,7 @@ export const Gantt: React.FC<GanttProps> = props => {
 
     const wrapperNode = wrapperRef.current;
 
-    // subscribe if scrol necessary
+    // subscribe if scroll necessary
     if (wrapperNode) {
       wrapperNode.addEventListener("wheel", handleWheel, {
         passive: false,
@@ -658,7 +685,7 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const handleEditTask = useCallback(
     (task: TaskOrEmpty) => {
-      if (!onEditTaskAction && !onCommitTasks) {
+      if (!onEditTaskAction) {
         return;
       }
 
@@ -676,7 +703,7 @@ export const Gantt: React.FC<GanttProps> = props => {
         throw new Error(`Index is not found for task ${id}`);
       }
 
-      if (onEditTaskAction && onCommitTasks) {
+      if (onEditTaskAction) {
         onEditTaskAction(task).then(nextTask => {
           if (!nextTask) {
             return;
@@ -688,17 +715,18 @@ export const Gantt: React.FC<GanttProps> = props => {
           });
 
           const withSuggestions = prepareSuggestions(suggestions);
+          const prevTasks = [...withSuggestions];
 
           withSuggestions[taskIndex] = nextTask;
 
-          onCommitTasks(withSuggestions, {
+          handleCommitInternal(prevTasks, withSuggestions, {
             type: "edit_task",
           });
         });
       }
     },
     [
-      onCommitTasks,
+      handleCommitInternal,
       onEditTaskAction,
       getMetadata,
       mapTaskToGlobalIndex,
@@ -708,10 +736,6 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const handleAddChilds = useCallback(
     (parent: Task, descendants: readonly TaskOrEmpty[]) => {
-      if (!onCommitTasks) {
-        return;
-      }
-
       const addedIdsMap = new Map<number, Set<string>>();
 
       descendants.forEach(descendant => {
@@ -754,6 +778,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       });
 
       const withSuggestions = prepareSuggestions(suggestions);
+      const prevTasks = [...withSuggestions];
 
       descendants.forEach((descendant, index) => {
         const { parent: parentId, comparisonLevel = 1 } = descendant;
@@ -775,7 +800,7 @@ export const Gantt: React.FC<GanttProps> = props => {
         withSuggestions.splice(taskIndex + 1 + index, 0, nextTask);
       });
 
-      onCommitTasks(withSuggestions, {
+      handleCommitInternal(prevTasks, withSuggestions, {
         type: "add_tasks",
         payload: {
           parent,
@@ -783,12 +808,12 @@ export const Gantt: React.FC<GanttProps> = props => {
         },
       });
     },
-    [onCommitTasks, getMetadata, prepareSuggestions]
+    [handleCommitInternal, getMetadata, prepareSuggestions]
   );
 
   const handleAddTask = useCallback(
     (task: Task | null) => {
-      if (onAddTaskAction && onCommitTasks) {
+      if (onAddTaskAction) {
         onAddTaskAction(task).then(nextTask => {
           if (!nextTask) {
             return;
@@ -797,7 +822,7 @@ export const Gantt: React.FC<GanttProps> = props => {
         });
       }
     },
-    [handleAddChilds, onAddTaskAction, onCommitTasks]
+    [handleAddChilds, onAddTaskAction]
   );
 
   const xStep = useMemo(() => {
@@ -836,21 +861,27 @@ export const Gantt: React.FC<GanttProps> = props => {
       const [, taskIndexes, , suggestions] = getMetadata(changeAction);
 
       const taskIndex = taskIndexes[0].index;
-      if (onCommitTasks) {
-        const withSuggestions = prepareSuggestions(suggestions);
-        withSuggestions[taskIndex] = adjustedTask;
-        onCommitTasks(withSuggestions, {
-          type: "date_change",
-          payload: {
-            taskId: adjustedTask.id,
-            taskIndex: taskIndex,
-            start: adjustedTask.start,
-            end: adjustedTask.end,
-          },
-        });
-      }
+
+      const withSuggestions = prepareSuggestions(suggestions);
+      const prevTasks = [...withSuggestions];
+      withSuggestions[taskIndex] = adjustedTask;
+      setSortedTasks(withSuggestions);
+      handleCommitInternal(prevTasks, withSuggestions, {
+        type: "date_change",
+        payload: {
+          taskId: adjustedTask.id,
+          taskIndex: taskIndex,
+          start: adjustedTask.start,
+          end: adjustedTask.end,
+        },
+      });
     },
-    [adjustTaskToWorkingDates, getMetadata, prepareSuggestions, onCommitTasks]
+    [
+      adjustTaskToWorkingDates,
+      getMetadata,
+      prepareSuggestions,
+      handleCommitInternal,
+    ]
   );
 
   const onProgressChange = useCallback(
@@ -861,18 +892,17 @@ export const Gantt: React.FC<GanttProps> = props => {
       });
 
       const taskIndex = taskIndexes[0].index;
-      if (onCommitTasks) {
-        const nextTasks = [...tasks];
-        nextTasks[taskIndex] = task;
-        onCommitTasks(nextTasks, {
-          type: "progress_change",
-          payload: {
-            task,
-          },
-        });
-      }
+      const prevTasks = [...tasks];
+      const nextTasks = [...tasks];
+      nextTasks[taskIndex] = task;
+      handleCommitInternal(prevTasks, nextTasks, {
+        type: "progress_change",
+        payload: {
+          task,
+        },
+      });
     },
-    [getMetadata, onCommitTasks, tasks]
+    [getMetadata, handleCommitInternal, tasks]
   );
 
   const [changeInProgress, handleTaskDragStart] = useTaskDrag({
@@ -928,36 +958,31 @@ export const Gantt: React.FC<GanttProps> = props => {
         tasks: tasksForDelete,
         deletedIdsMap,
       });
+      let withSuggestions = prepareSuggestions(suggestions);
+      const prevTasks = [...withSuggestions];
+      suggestions.forEach(([start, end, task, index]) => {
+        withSuggestions[index] = {
+          ...task,
+          start,
+          end,
+        };
+      });
 
-      if (onCommitTasks) {
-        let withSuggestions = prepareSuggestions(suggestions);
+      const deletedIndexesSet = new Set(taskIndexes.map(({ index }) => index));
 
-        suggestions.forEach(([start, end, task, index]) => {
-          withSuggestions[index] = {
-            ...task,
-            start,
-            end,
-          };
-        });
+      withSuggestions = withSuggestions.filter(
+        (_, index) => !deletedIndexesSet.has(index)
+      );
 
-        const deletedIndexesSet = new Set(
-          taskIndexes.map(({ index }) => index)
-        );
-
-        withSuggestions = withSuggestions.filter(
-          (_, index) => !deletedIndexesSet.has(index)
-        );
-
-        onCommitTasks(withSuggestions, {
-          type: "delete_task",
-          payload: {
-            tasks: tasksForDelete,
-            taskIndexes: [...deletedIndexesSet],
-          },
-        });
-      }
+      handleCommitInternal(prevTasks, withSuggestions, {
+        type: "delete_task",
+        payload: {
+          tasks: tasksForDelete,
+          taskIndexes: [...deletedIndexesSet],
+        },
+      });
     },
-    [getMetadata, onCommitTasks, prepareSuggestions, onChangeTooltipTask]
+    [getMetadata, handleCommitInternal, prepareSuggestions, onChangeTooltipTask]
   );
 
   const handleMoveTaskAfter = useCallback(
@@ -970,7 +995,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       });
 
       const taskIndex = taskIndexes[0].index;
-
       const { id, comparisonLevel = 1 } = taskForMove;
 
       const indexesOnLevel = mapTaskToGlobalIndex.get(comparisonLevel);
@@ -985,35 +1009,29 @@ export const Gantt: React.FC<GanttProps> = props => {
         throw new Error(`Index is not found for task ${id}`);
       }
 
-      if (onCommitTasks) {
-        const withSuggestions = prepareSuggestions(suggestions);
+      const withSuggestions = prepareSuggestions(suggestions);
+      const prevTasks = [...withSuggestions];
+      const isMovedTaskBefore = taskForMoveIndex < taskIndex;
 
-        const isMovedTaskBefore = taskForMoveIndex < taskIndex;
+      withSuggestions.splice(taskForMoveIndex, 1);
+      withSuggestions.splice(isMovedTaskBefore ? taskIndex : taskIndex + 1, 0, {
+        ...taskForMove,
+        parent: target.parent,
+      });
 
-        withSuggestions.splice(taskForMoveIndex, 1);
-        withSuggestions.splice(
-          isMovedTaskBefore ? taskIndex : taskIndex + 1,
-          0,
-          {
-            ...taskForMove,
-            parent: target.parent,
-          }
-        );
-
-        onCommitTasks(withSuggestions, {
-          type: "move_task_after",
-          payload: {
-            task: target,
-            taskForMove,
-            taskIndex,
-            taskForMoveIndex,
-          },
-        });
-      }
+      handleCommitInternal(prevTasks, withSuggestions, {
+        type: "move_task_after",
+        payload: {
+          task: target,
+          taskForMove,
+          taskIndex,
+          taskForMoveIndex,
+        },
+      });
     },
     [
       getMetadata,
-      onCommitTasks,
+      handleCommitInternal,
       mapTaskToGlobalIndex,
       prepareSuggestions,
       onChangeTooltipTask,
@@ -1031,7 +1049,7 @@ export const Gantt: React.FC<GanttProps> = props => {
       });
 
       const taskIndex = taskIndexes[0].index;
-
+      const prevTasks = [...tasks];
       const { id, comparisonLevel = 1 } = taskForMove;
 
       const indexesOnLevel = mapTaskToGlobalIndex.get(comparisonLevel);
@@ -1046,38 +1064,33 @@ export const Gantt: React.FC<GanttProps> = props => {
         throw new Error(`Index is not found for task ${id}`);
       }
 
-      if (onCommitTasks) {
-        const withSuggestions = prepareSuggestions(suggestions);
+      const withSuggestions = prepareSuggestions(suggestions);
 
-        const isMovedTaskBefore = taskForMoveIndex < taskIndex;
+      const isMovedTaskBefore = taskForMoveIndex < taskIndex;
 
-        withSuggestions.splice(taskForMoveIndex, 1);
-        withSuggestions.splice(
-          isMovedTaskBefore ? taskIndex - 1 : taskIndex,
-          0,
-          {
-            ...taskForMove,
-            parent: target.parent,
-          }
-        );
+      withSuggestions.splice(taskForMoveIndex, 1);
+      withSuggestions.splice(isMovedTaskBefore ? taskIndex - 1 : taskIndex, 0, {
+        ...taskForMove,
+        parent: target.parent,
+      });
 
-        onCommitTasks(withSuggestions, {
-          type: "move_task_before",
-          payload: {
-            task: target,
-            taskForMove,
-            taskIndex,
-            taskForMoveIndex,
-          },
-        });
-      }
+      handleCommitInternal(prevTasks, withSuggestions, {
+        type: "move_task_before",
+        payload: {
+          task: target,
+          taskForMove,
+          taskIndex,
+          taskForMoveIndex,
+        },
+      });
     },
     [
+      onChangeTooltipTask,
       getMetadata,
-      onCommitTasks,
+      tasks,
       mapTaskToGlobalIndex,
       prepareSuggestions,
-      onChangeTooltipTask,
+      handleCommitInternal,
     ]
   );
 
@@ -1125,43 +1138,41 @@ export const Gantt: React.FC<GanttProps> = props => {
       });
 
       const parentIndex = parentIndexes[0].index;
+      let withSuggestions = prepareSuggestions(suggestions);
+      const prevTasks = [...withSuggestions];
 
-      if (onCommitTasks) {
-        let withSuggestions = prepareSuggestions(suggestions);
+      const parentDisplacement = childIndexes.filter(
+        childIndex => childIndex < parentIndex
+      ).length;
+      const childIndexesSet = new Set(childIndexes);
 
-        const parentDisplacement = childIndexes.filter(
-          childIndex => childIndex < parentIndex
-        ).length;
-        const childIndexesSet = new Set(childIndexes);
+      withSuggestions = withSuggestions.filter(
+        (_, index) => !childIndexesSet.has(index)
+      );
 
-        withSuggestions = withSuggestions.filter(
-          (_, index) => !childIndexesSet.has(index)
-        );
+      const startNewChildIndex = parentIndex - parentDisplacement + 1;
 
-        const startNewChildIndex = parentIndex - parentDisplacement + 1;
-
-        childs.forEach((child, indexInChildsArray) => {
-          withSuggestions.splice(startNewChildIndex + indexInChildsArray, 0, {
-            ...child,
-            parent: parent.id,
-          });
+      childs.forEach((child, indexInChildsArray) => {
+        withSuggestions.splice(startNewChildIndex + indexInChildsArray, 0, {
+          ...child,
+          parent: parent.id,
         });
+      });
 
-        onCommitTasks(withSuggestions, {
-          type: "move_task_inside",
-          payload: {
-            parent,
-            childs,
-            dependentTasks,
-            parentIndex,
-            childIndexes,
-          },
-        });
-      }
+      handleCommitInternal(prevTasks, withSuggestions, {
+        type: "move_task_inside",
+        payload: {
+          parent,
+          childs,
+          dependentTasks,
+          parentIndex,
+          childIndexes,
+        },
+      });
     },
     [
       getMetadata,
-      onCommitTasks,
+      handleCommitInternal,
       mapTaskToGlobalIndex,
       prepareSuggestions,
       onChangeTooltipTask,
@@ -1170,54 +1181,53 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const onRelationChange = useCallback<OnRelationChange>(
     (from, to, isOneDescendant) => {
-      if (onCommitTasks) {
-        if (isOneDescendant) {
-          return;
-        }
-
-        const nextTasks = [...tasks];
-
-        const [taskFrom, targetFrom, fromIndex] = from;
-        const [taskTo, targetTo, toIndex] = to;
-
-        const newDependency: Dependency = {
-          sourceId: taskFrom.id,
-          sourceTarget: targetFrom,
-          ownTarget: targetTo,
-        };
-
-        nextTasks[toIndex] = {
-          ...taskTo,
-          dependencies: taskTo.dependencies
-            ? [
-                ...taskTo.dependencies.filter(
-                  ({ sourceId }) => sourceId !== taskFrom.id
-                ),
-                newDependency,
-              ]
-            : [newDependency],
-        };
-
-        nextTasks[fromIndex] = {
-          ...taskFrom,
-          dependencies: taskFrom.dependencies
-            ? taskFrom.dependencies.filter(
-                ({ sourceId }) => sourceId !== taskTo.id
-              )
-            : undefined,
-        };
-
-        onCommitTasks(nextTasks, {
-          type: "relation_change",
-          payload: {
-            from,
-            to,
-            isOneDescendant,
-          },
-        });
+      if (isOneDescendant) {
+        return;
       }
+
+      const prevTasks = [...tasks];
+      const nextTasks = [...tasks];
+
+      const [taskFrom, targetFrom, fromIndex] = from;
+      const [taskTo, targetTo, toIndex] = to;
+
+      const newDependency: Dependency = {
+        sourceId: taskFrom.id,
+        sourceTarget: targetFrom,
+        ownTarget: targetTo,
+      };
+
+      nextTasks[toIndex] = {
+        ...taskTo,
+        dependencies: taskTo.dependencies
+          ? [
+              ...taskTo.dependencies.filter(
+                ({ sourceId }) => sourceId !== taskFrom.id
+              ),
+              newDependency,
+            ]
+          : [newDependency],
+      };
+
+      nextTasks[fromIndex] = {
+        ...taskFrom,
+        dependencies: taskFrom.dependencies
+          ? taskFrom.dependencies.filter(
+              ({ sourceId }) => sourceId !== taskTo.id
+            )
+          : undefined,
+      };
+
+      handleCommitInternal(prevTasks, nextTasks, {
+        type: "relation_change",
+        payload: {
+          from,
+          to,
+          isOneDescendant,
+        },
+      });
     },
-    [onCommitTasks, tasks]
+    [handleCommitInternal, tasks]
   );
 
   const onArrowDoubleClick = useCallback(
@@ -1249,7 +1259,8 @@ export const Gantt: React.FC<GanttProps> = props => {
           taskTo,
           taskToIndex
         );
-      } else if (onCommitTasks && taskBar.isDeleteDependencyOnDoubleClick) {
+      } else if (taskBar.isDeleteDependencyOnDoubleClick) {
+        const prevTasks = [...tasks];
         const nextTasks = [...tasks];
         nextTasks[taskToIndex] = {
           ...taskTo,
@@ -1260,7 +1271,7 @@ export const Gantt: React.FC<GanttProps> = props => {
             : undefined,
         };
 
-        onCommitTasks(nextTasks, {
+        handleCommitInternal(prevTasks, nextTasks, {
           type: "delete_relation",
           payload: {
             taskFrom,
@@ -1271,7 +1282,7 @@ export const Gantt: React.FC<GanttProps> = props => {
         });
       }
     },
-    [mapTaskToGlobalIndex, taskBar, onCommitTasks, tasks]
+    [mapTaskToGlobalIndex, taskBar, handleCommitInternal, tasks]
   );
 
   const handleAction = useHandleAction({

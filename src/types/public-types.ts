@@ -180,10 +180,12 @@ export type RelationKind =
   | "endToStart"
   | "endToEnd";
 
+export type OnCommitTasksResult = boolean | undefined | void;
+
 export type OnCommitTasks = (
   nextTasks: readonly TaskOrEmpty[],
   action: OnChangeTasksAction
-) => void;
+) => Promise<OnCommitTasksResult> | OnCommitTasksResult;
 
 export interface GanttTaskListProps {
   enableTableListContextMenu?: number;

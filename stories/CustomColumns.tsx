@@ -12,7 +12,7 @@ import {
   TaskCenterLabel,
   TaskOrEmpty,
   TitleColumn,
-  ViewMode,
+  ViewMode
 } from "../src";
 import { differenceInDays } from "date-fns";
 import { initTasks, onAddTask, onEditTask } from "./helper";
@@ -95,21 +95,19 @@ export const CustomColumns: React.FC<AppProps> = props => {
           )
         ) {
           setTasks(nextTasks);
+          break;
         }
         break;
-
       case "delete_task":
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         if (window.confirm("Are you sure?")) {
           setTasks(nextTasks);
+          break;
         }
-        break;
-
-      default:
-        setTasks(nextTasks);
-        break;
     }
+
+    setTasks(nextTasks);
   }, []);
 
   const handleDblClick = useCallback((task: Task) => {
@@ -197,7 +195,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
         onCommitTasks={onCommitTasks}
         onEditTaskAction={onEditTask}
         tasks={tasks}
-        isAdjustToWorkingDates={true}
+        isAdjustToWorkingDates={false}
       />
     </>
   );
