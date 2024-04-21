@@ -72,6 +72,9 @@ export const TitleColumn: React.FC<ColumnProps> = ({
         className={`gantt-expander ${styles.taskListExpander} ${
           !hasChildren ? styles.taskListEmptyExpander : ""
         }`}
+        style={{
+          left: (depth - 1) * nestedTaskNameOffset,
+        }}
         onClick={onClick}
       >
         {expanderSymbol}

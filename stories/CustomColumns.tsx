@@ -18,6 +18,10 @@ import { differenceInDays } from "date-fns";
 import { initTasks, onAddTask, onEditTask } from "./helper";
 import { TaskOutlineLabel } from "../src/components/task-item/task-label";
 
+function wait(ms: number) {
+  return new Promise((resolve, reject) => setTimeout(resolve, ms));
+}
+
 const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   if (task.type === "project" || task.type === "task") {
     return <>{task.progress}%</>;
@@ -84,8 +88,13 @@ export const getColumns = (
 export const CustomColumns: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
-  const onCommitTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
+  const onCommitTasks = useCallback<OnCommitTasks>(async (nextTasks, action): Promise<boolean | void> => {
     switch (action.type) {
+      case "date_change":
+        await wait(2000);
+        setTasks(nextTasks);
+        console.log('waiting 2 seconds ... Simulate update from server');
+        break;
       case "delete_relation":
         if (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -143,7 +152,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
     <>
       <Gantt
         {...props}
-        viewMode={ViewMode.Day}
+        viewMode={ViewMode.Month}
         columns={displayedColumns}
         taskBar={{
           onClick: handleClick,

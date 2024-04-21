@@ -6,6 +6,7 @@
   padding: 0;
   /*noinspection CssUnresolvedCustomProperty*/
   border-right: 1px solid var(--gantt-calendar-divider-color, var(--gantt-divider-color));
+  flex-grow: 1;
 }
 
 .ganttVerticalContainer::-webkit-scrollbar {

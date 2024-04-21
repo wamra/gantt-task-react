@@ -26,6 +26,8 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-arrow-hover-color": colors.arrowHoverColor,
       "--gantt-arrow-critical-color": colors.arrowCriticalColor,
       "--gantt-hover-filter": colors.hoverFilter,
+      "--gantt-loading-primary-color": colors.loadingPrimaryColor,
+      "--gantt-loading-secondary-color": colors.loadingSecondaryColor,
 
       "--gantt-bar-progress-color": colors.barProgressColor,
       "--gantt-bar-handle-color": colors.barHandleColor,

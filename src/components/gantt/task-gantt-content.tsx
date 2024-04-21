@@ -55,6 +55,7 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   onDoubleClick?: (task: Task) => void;
   renderedRowIndexes: OptimizedListParams | null;
   rtl: boolean;
+  waitCommitTasks?: boolean;
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   selectedIdsMirror: Readonly<Record<string, true>>;
   onTooltipTask: (task: Task | null, element: Element | null) => void;
@@ -108,6 +109,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
   allowMoveTaskBar,
   renderCustomLabel,
   taskBarMovingAction,
+  waitCommitTasks,
 }) => {
   const renderedHolidays = useMemo(() => {
     const { columnWidth } = distances;
@@ -241,12 +243,16 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
             distances={distances}
             taskHeight={taskHeight}
             taskHalfHeight={taskHalfHeight}
-            isProgressChangeable={isProgressChangeable}
-            isDateChangeable={isDateChangeable}
-            isRelationChangeable={isRelationChangeable}
+            isProgressChangeable={t =>
+              isProgressChangeable(t) && !waitCommitTasks
+            }
+            isDateChangeable={t => isDateChangeable(t) && !waitCommitTasks}
+            isRelationChangeable={t =>
+              isRelationChangeable(t) && !waitCommitTasks
+            }
             authorizedRelations={authorizedRelations}
             ganttRelationEvent={ganttRelationEvent}
-            canDelete={!task.isDisabled}
+            canDelete={!task.isDisabled && !waitCommitTasks}
             onDoubleClick={onDoubleClick}
             onClick={onClick}
             onEventStart={onTaskBarDragStart}
@@ -443,11 +449,9 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
     distances,
     taskHeight,
     taskHalfHeight,
-    isProgressChangeable,
-    isDateChangeable,
-    isRelationChangeable,
     authorizedRelations,
     ganttRelationEvent,
+    waitCommitTasks,
     onDoubleClick,
     onClick,
     onTaskBarDragStart,
@@ -457,6 +461,9 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
     renderCustomLabel,
     dependencyMap,
     dependentMap,
+    isProgressChangeable,
+    isDateChangeable,
+    isRelationChangeable,
     visibleTasksMirror,
     onArrowDoubleClick,
   ]);

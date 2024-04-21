@@ -10,6 +10,8 @@ export const DEFAULT_THEME: GanttTheme = {
     arrowColor: "#90A4AE",
     arrowRelationColor: "#90A4AE",
     arrowHoverColor: "#03A9F4",
+    loadingPrimaryColor: "rgba(233, 30, 99, 1)",
+    loadingSecondaryColor: "rgba(233, 30, 99, 0.3)",
 
     dividerColor: "#E0E0E0",
     primaryTextColor: "#555",

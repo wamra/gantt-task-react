@@ -33,6 +33,8 @@ export interface ColorStyles {
   arrowRelationColor: string;
   dividerColor: string;
   hoverFilter: string;
+  loadingPrimaryColor: string;
+  loadingSecondaryColor: string;
 
   arrowCriticalColor: string;
   barHandleColor: string;
