@@ -1,6 +1,7 @@
 import React, { CSSProperties, useMemo } from "react";
 
 import style from "./bar.module.css";
+import { TaskId } from "../../../types/internal-types";
 
 type BarDisplayProps = {
   barCornerRadius: number;
@@ -12,7 +13,7 @@ type BarDisplayProps = {
   /* progress start point */
   progressX: number;
   startMoveFullTask: (clientX: number) => void;
-  taskName: string;
+  taskId: TaskId;
   width: number;
   x: number;
   y: number;
@@ -20,7 +21,7 @@ type BarDisplayProps = {
 };
 
 export const BarDisplay: React.FC<BarDisplayProps> = ({
-  taskName,
+  taskId,
   barCornerRadius,
   isCritical,
   isSelected,
@@ -101,7 +102,7 @@ export const BarDisplay: React.FC<BarDisplayProps> = ({
   return (
     <g
       style={customStyle}
-      data-testid={`task-bar-${taskName}`}
+      data-testid={`task-bar-${taskId}`}
       onMouseDown={e => {
         startMoveFullTask(e.clientX);
       }}

@@ -10,6 +10,7 @@ import type { Locale as DateLocale } from "date-fns";
 import type { BarMoveAction, RelationMoveTarget } from "./gantt-task-actions";
 import { OptimizedListParams } from "../helpers/use-optimized-list";
 import { RefObject } from "react";
+import { TaskId } from "./internal-types";
 
 export enum ViewMode {
   Hour = "Hour",
@@ -210,7 +211,7 @@ export interface Distances {
 export type TaskType = "task" | "milestone" | "project";
 
 export interface Task {
-  id: string;
+  id: TaskId;
   type: TaskType;
   name: string;
   start: Date;

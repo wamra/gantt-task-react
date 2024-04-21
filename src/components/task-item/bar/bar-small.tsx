@@ -49,7 +49,7 @@ export const BarSmall: React.FC<
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
         customStyle={task.style}
-        taskName={task.name}
+        taskId={task.id}
         barCornerRadius={barCornerRadius}
         hasChildren={hasChildren}
         height={taskHeight}

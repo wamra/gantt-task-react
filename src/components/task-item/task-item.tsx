@@ -23,7 +23,7 @@ import {
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
 import { Milestone } from "./milestone/milestone";
-import style from "./task-list.module.css";
+import style from "./task-item.module.css";
 import { BarRelationHandle } from "./bar/bar-relation-handle";
 
 export interface TaskItemProps extends GanttActionsOption {

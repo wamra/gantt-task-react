@@ -11,8 +11,9 @@
   pointer-events: none;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .barLabelOutside {
-  fill: #555;
+  fill: var(--gantt-primary-text-color);
   text-anchor: start;
   -webkit-touch-callout: none;
   -webkit-user-select: none;

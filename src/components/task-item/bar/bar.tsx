@@ -97,7 +97,7 @@ export const Bar: React.FC<
     barDisplay = (
       <BarDisplay
         customStyle={task.style}
-        taskName={task.name}
+        taskId={task.id}
         x={x1}
         y={taskYOffset}
         width={width}
