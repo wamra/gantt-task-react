@@ -1,8 +1,4 @@
-import {
-  ChildByLevelMap,
-  RootMapByLevel,
-  TaskOrEmpty,
-} from "../types/public-types";
+import { ChildByLevelMap, RootMapByLevel, TaskOrEmpty } from "../types";
 
 const collectChildren = (
   arrayRes: TaskOrEmpty[],

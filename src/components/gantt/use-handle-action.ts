@@ -10,7 +10,7 @@ import type {
   Task,
   TaskMapByLevel,
   TaskOrEmpty,
-} from "../../types/public-types";
+} from "../../types";
 import { getTasksWithDescendants } from "../../selected-tasks/get-tasks-with-descendants";
 
 const createGetters = (
@@ -45,9 +45,7 @@ const createGetters = (
   };
 
   const getTasksWithDescendantsWithCache = () => {
-
     if (tasksWithDescendants) {
-
       return tasksWithDescendants;
     }
 

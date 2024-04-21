@@ -1,20 +1,18 @@
-import { TaskToGlobalIndexMap, TaskOrEmpty } from "../types/public-types";
+import { TaskOrEmpty, TaskToGlobalIndexMap } from "../types";
 
 /**
  * @param tasks List of tasks
  */
 export const getMapTaskToGlobalIndex = (
-  tasks: readonly TaskOrEmpty[],
+  tasks: readonly TaskOrEmpty[]
 ): TaskToGlobalIndexMap => {
   const res = new Map<number, Map<string, number>>();
 
   tasks.forEach((task, index) => {
-    const {
-      id,
-      comparisonLevel = 1,
-    } = task;
+    const { id, comparisonLevel = 1 } = task;
 
-    const indexesByLevel = res.get(comparisonLevel) || new Map<string, number>();
+    const indexesByLevel =
+      res.get(comparisonLevel) || new Map<string, number>();
 
     indexesByLevel.set(id, index);
     res.set(comparisonLevel, indexesByLevel);

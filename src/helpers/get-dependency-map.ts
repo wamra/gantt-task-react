@@ -7,8 +7,11 @@ import type {
   MapTaskToCoordinates,
   TaskMapByLevel,
   TaskOrEmpty,
-} from "../types/public-types";
-import { getCoordinatesOnLevel, getMapTaskToCoordinatesOnLevel } from "./get-task-coordinates";
+} from "../types";
+import {
+  getCoordinatesOnLevel,
+  getMapTaskToCoordinatesOnLevel,
+} from "./get-task-coordinates";
 
 export const getDependencyMap = (
   tasks: readonly TaskOrEmpty[],
@@ -16,7 +19,7 @@ export const getDependencyMap = (
   tasksMap: TaskMapByLevel,
   mapTaskToCoordinates: MapTaskToCoordinates,
   fullRowHeight: number,
-  isShowCriticalPath: boolean,
+  isShowCriticalPath: boolean
 ): [DependencyMap, DependentMap, DependencyMargins] => {
   const dependencyRes = new Map<number, Map<string, ExpandedDependency[]>>();
   const dependentRes = new Map<number, Map<string, ExpandedDependent[]>>();
@@ -24,16 +27,12 @@ export const getDependencyMap = (
 
   const isCollectMargins = isShowCriticalPath;
 
-  tasks.forEach((task) => {
-    if (task.type === 'empty') {
+  tasks.forEach(task => {
+    if (task.type === "empty") {
       return;
     }
 
-    const {
-      id,
-      dependencies,
-      comparisonLevel = 1,
-    } = task;
+    const { id, dependencies, comparisonLevel = 1 } = task;
 
     if (!visibleTasksMirror[id]) {
       return;
@@ -45,27 +44,26 @@ export const getDependencyMap = (
       return;
     }
 
-    const coordinatesOnLevelMap = getMapTaskToCoordinatesOnLevel(task, mapTaskToCoordinates);
+    const coordinatesOnLevelMap = getMapTaskToCoordinatesOnLevel(
+      task,
+      mapTaskToCoordinates
+    );
 
-    const dependenciesByLevel = dependencyRes.get(comparisonLevel)
-      || new Map<string, ExpandedDependency[]>();
-    const dependentsByLevel = dependentRes.get(comparisonLevel)
-      || new Map<string, ExpandedDependent[]>();
-    const marginsByLevel = marginsRes.get(comparisonLevel)
-      || new Map<string, Map<string, number>>();
+    const dependenciesByLevel =
+      dependencyRes.get(comparisonLevel) ||
+      new Map<string, ExpandedDependency[]>();
+    const dependentsByLevel =
+      dependentRes.get(comparisonLevel) ||
+      new Map<string, ExpandedDependent[]>();
+    const marginsByLevel =
+      marginsRes.get(comparisonLevel) || new Map<string, Map<string, number>>();
 
     const dependenciesByTask = dependenciesByLevel.get(id) || [];
     const marginsByTask = marginsByLevel.get(id) || new Map<string, number>();
 
-    const {
-      y: toY,
-    } = getCoordinatesOnLevel(id, coordinatesOnLevelMap);
+    const { y: toY } = getCoordinatesOnLevel(id, coordinatesOnLevelMap);
 
-    dependencies.forEach(({
-      sourceId,
-      sourceTarget,
-      ownTarget,
-    }) => {
+    dependencies.forEach(({ sourceId, sourceTarget, ownTarget }) => {
       if (!visibleTasksMirror[sourceId]) {
         return;
       }
@@ -77,13 +75,14 @@ export const getDependencyMap = (
         return;
       }
 
-      if (source.type === 'empty') {
+      if (source.type === "empty") {
         return;
       }
 
-      const {
-        y: fromY,
-      } = getCoordinatesOnLevel(sourceId, coordinatesOnLevelMap);
+      const { y: fromY } = getCoordinatesOnLevel(
+        sourceId,
+        coordinatesOnLevelMap
+      );
 
       const minY = Math.min(fromY, toY);
       const maxY = Math.max(fromY, toY);
@@ -93,13 +92,15 @@ export const getDependencyMap = (
       let marginBetweenTasks = null;
 
       if (isCollectMargins) {
-        const taskTime = ownTarget === "startOfTask"
-          ? task.start.getTime()
-          : task.end.getTime();
+        const taskTime =
+          ownTarget === "startOfTask"
+            ? task.start.getTime()
+            : task.end.getTime();
 
-        const sourceTime = sourceTarget === "startOfTask"
-          ? source.start.getTime()
-          : source.end.getTime();
+        const sourceTime =
+          sourceTarget === "startOfTask"
+            ? source.start.getTime()
+            : source.end.getTime();
 
         marginBetweenTasks = taskTime - sourceTime;
         marginsByTask.set(sourceId, marginBetweenTasks);

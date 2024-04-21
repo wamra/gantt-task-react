@@ -8,8 +8,9 @@
   opacity: 1;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .barHandle {
-  fill: #ddd;
+  fill: var(--gantt-bar-handle-color);
   cursor: ew-resize;
   opacity: 0;
   visibility: hidden;

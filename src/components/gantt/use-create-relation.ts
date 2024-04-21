@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import type { RefObject } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { checkIsDescendant } from "../../helpers/check-is-descendant";
 import { getRelationCircleByCoordinates } from "../../helpers/get-relation-circle-by-coordinates";
@@ -8,18 +8,16 @@ import {
   getTaskCoordinates,
 } from "../../helpers/get-task-coordinates";
 import {
-  GanttRelationEvent,
-  RelationMoveTarget,
-} from "../../types/gantt-task-actions";
-import {
   Distances,
+  GanttRelationEvent,
   MapTaskToCoordinates,
-  TaskToGlobalIndexMap,
   OnRelationChange,
+  RelationMoveTarget,
   Task,
   TaskMapByLevel,
   TaskOrEmpty,
-} from "../../types/public-types";
+  TaskToGlobalIndexMap,
+} from "../../types";
 
 type UseCreateRelationParams = {
   distances: Distances;

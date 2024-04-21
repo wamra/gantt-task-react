@@ -2,8 +2,8 @@ import {
   addDays,
   addHours,
   addMonths,
-  addYears,
   addWeeks,
+  addYears,
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
@@ -15,7 +15,7 @@ import {
   startOfYear,
 } from "date-fns";
 
-import { ViewMode } from "../../types/public-types";
+import { ViewMode } from "../../types";
 
 export const defaultRoundStartDate = (date: Date, viewMode: ViewMode) => {
   switch (viewMode) {

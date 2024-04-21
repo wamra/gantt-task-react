@@ -1,19 +1,16 @@
 import { checkIsDescendant } from "../helpers/check-is-descendant";
 
-import type {
-  TaskMapByLevel,
-  TaskOrEmpty,
-} from "../types/public-types";
+import type { TaskMapByLevel, TaskOrEmpty } from "../types";
 
 export const getParentTasks = (
   selectedTasks: TaskOrEmpty[],
-  tasksMap: TaskMapByLevel,
+  tasksMap: TaskMapByLevel
 ) => {
   const res: TaskOrEmpty[] = [];
 
-  selectedTasks.forEach((maybeDescendant) => {
-    const isDescendant = selectedTasks.some((maybeParent) => {
-      if (maybeParent === maybeDescendant || maybeParent.type === 'empty') {
+  selectedTasks.forEach(maybeDescendant => {
+    const isDescendant = selectedTasks.some(maybeParent => {
+      if (maybeParent === maybeDescendant || maybeParent.type === "empty") {
         return false;
       }
 

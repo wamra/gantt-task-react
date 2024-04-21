@@ -4,13 +4,15 @@ import type {
   MouseEvent,
   ReactNode,
 } from "react";
+import { RefObject } from "react";
 
 import type { Locale as DateLocale } from "date-fns";
 
 import type { BarMoveAction, RelationMoveTarget } from "./gantt-task-actions";
 import { OptimizedListParams } from "../helpers/use-optimized-list";
-import { RefObject } from "react";
 import { TaskId } from "./internal-types";
+import { GanttPartialTheme } from "./theme-types";
+import { GanttLocale } from "./theme-locale";
 
 export enum ViewMode {
   Hour = "Hour",
@@ -71,91 +73,6 @@ export interface ExpandedDependent {
   dependent: Task;
   dependentTarget: RelationMoveTarget;
   ownTarget: RelationMoveTarget;
-}
-
-export interface GanttPartialTheme {
-  rtl?: boolean;
-  colors?: Partial<ColorStyles>;
-  shape?: Partial<ShapeStyles>;
-  typography?: Partial<TypographyStyles>;
-  distances?: Partial<Distances>;
-  dateFormats?: Partial<DateFormats>;
-}
-
-export interface GanttTheme {
-  rtl?: boolean;
-  colors: ColorStyles;
-  shape: ShapeStyles;
-  typography: TypographyStyles;
-  distances: Distances;
-  dateFormats: DateFormats;
-}
-
-export interface TypographyStyles {
-  fontFamily: string;
-  fontSize: string;
-}
-
-export interface ShapeStyles {
-  borderRadius: string;
-}
-
-export interface ColorStyles {
-  backgroundColor: string;
-  arrowColor: string;
-  arrowRelationColor: string;
-  dividerColor: string;
-  hoverFilter: string;
-
-  arrowCriticalColor: string;
-  barProgressColor: string;
-  barProgressCriticalColor: string;
-  barProgressSelectedColor: string;
-  barProgressSelectedCriticalColor: string;
-  barBackgroundColor: string;
-  barBackgroundCriticalColor: string;
-  barBackgroundSelectedColor: string;
-  barBackgroundSelectedCriticalColor: string;
-  groupProgressColor: string;
-  groupProgressCriticalColor: string;
-  groupProgressSelectedColor: string;
-  groupProgressSelectedCriticalColor: string;
-  groupBackgroundColor: string;
-  groupBackgroundCriticalColor: string;
-  groupBackgroundSelectedColor: string;
-  groupBackgroundSelectedCriticalColor: string;
-  projectProgressColor: string;
-  projectProgressCriticalColor: string;
-  projectProgressSelectedColor: string;
-  projectProgressSelectedCriticalColor: string;
-  projectBackgroundColor: string;
-  projectBackgroundCriticalColor: string;
-  projectBackgroundSelectedColor: string;
-  projectBackgroundSelectedCriticalColor: string;
-  milestoneBackgroundColor: string;
-  milestoneBackgroundCriticalColor: string;
-  milestoneBackgroundSelectedColor: string;
-  milestoneBackgroundSelectedCriticalColor: string;
-  calendarHolidayColor: string;
-  arrowHoverColor: string;
-
-  tableDragTaskBackgroundColor: string;
-  tableSelectedTaskBackgroundColor: string;
-  tableActionColor: string;
-  tableDragIndicatorColor: string;
-  tableHoverActionColor: string;
-  tableEvenBackgroundColor: string;
-
-  calendarTodayColor: string;
-  contextMenuBoxShadow: string;
-  contextMenuBgColor: string;
-  contextMenuTextColor: string;
-  tooltipBoxShadow: string;
-  scrollbarThumbColor: string;
-
-  calendarStrokeColor: string;
-  primaryTextColor: string;
-  secondaryTextColor: string;
 }
 
 /**
@@ -335,7 +252,7 @@ export type OnChangeTasksAction =
       payload: {
         parent: TaskOrEmpty;
         descendants: readonly TaskOrEmpty[];
-      }
+      };
     }
   | {
       type: "date_change";
@@ -570,37 +487,11 @@ export interface StylingOption {
   roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
 }
 
-export interface GanttLocale {
-  /**
-   * Locale of date-fns
-   */
-  dateLocale?: DateLocale;
-  suffix: {
-    days: string;
-  };
-  tooltip: {
-    duration: string;
-    progress: string;
-  };
-  table: {
-    columns: {
-      name: string;
-      startDate: string;
-      endDate: string;
-      dependencies: string;
-      progress: string;
-    };
-  };
-  context: {
-    edit: string;
-    copy: string;
-    cut: string;
-    paste: string;
-    delete: string;
-  };
-}
-
-export interface GanttProps extends EventOption, DisplayOption, StylingOption, GanttActionsOption {
+export interface GanttProps
+  extends EventOption,
+    DisplayOption,
+    StylingOption,
+    GanttActionsOption {
   /**
    * Check is current date holiday
    * @param date the date
@@ -783,80 +674,6 @@ export type MinAndMaxChildsMap = Map<
   number,
   Map<string, MinAndMaxChildsOfTask>
 >;
-
-// comparison level -> critical path
-export type CriticalPaths = Map<number, CriticalPath>;
-
-export type TaskCoordinates = {
-  /**
-   * Width of inner svg wrapper
-   */
-  containerWidth: number;
-  /**
-   * Left border of inner svg wrapper relative to the root svg
-   */
-  containerX: number;
-  /**
-   * Left border relative to the wrapper svg
-   */
-  innerX1: number;
-  /**
-   * Right border relative to the wrapper svg
-   */
-  innerX2: number;
-  /**
-   * Top border of inner svg wrapper relative to the root svg
-   */
-  levelY: number;
-  /**
-   * Width of the progress bar
-   */
-  progressWidth: number;
-  /**
-   * Left border of the progress bar relative to the root svg
-   */
-  progressX: number;
-  /**
-   * Width of the task
-   */
-  width: number;
-  /**
-   * Left border of the task relative to the root svg
-   */
-  x1: number;
-  /**
-   * Right border of the task relative to the root svg
-   */
-  x2: number;
-  /**
-   * Top border of the task relative to the root svg
-   */
-  y: number;
-};
-
-/**
- * comparison level -> task id -> {
- *   x1: number;
- *   x2: number;
- *   y: number;
- * }
- */
-export type MapTaskToCoordinates = Map<number, Map<string, TaskCoordinates>>;
-
-export type ChangeInProgress = {
-  action: BarMoveAction;
-  additionalLeftSpace: number;
-  additionalRightSpace: number;
-  changedTask: Task;
-  coordinates: TaskCoordinates;
-  coordinatesDiff: number;
-  initialCoordinates: TaskCoordinates;
-  lastClientX: number;
-  startX: number;
-  task: Task;
-  taskRootNode: Element;
-  tsDiff: number;
-};
 
 export type GetMetadata = (task: TaskOrEmpty) => ChangeMetadata;
 

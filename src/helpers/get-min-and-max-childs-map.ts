@@ -7,7 +7,7 @@ import {
   RootMapByLevel,
   Task,
   TaskOrEmpty,
-} from "../types/public-types";
+} from "../types";
 
 const fillMinAndMaxChildsMap = (
   resOnLevel: Map<string, MinAndMaxChildsOfTask>,

@@ -1,4 +1,4 @@
-import type { ChildByLevelMap, TaskOrEmpty } from "../types/public-types";
+import type { ChildByLevelMap, TaskOrEmpty } from "../types";
 
 const fillDescendants = (
   res: TaskOrEmpty[],

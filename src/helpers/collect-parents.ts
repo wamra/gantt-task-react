@@ -1,4 +1,4 @@
-import { Task, TaskMapByLevel, TaskOrEmpty } from "../types/public-types";
+import { Task, TaskMapByLevel, TaskOrEmpty } from "../types";
 
 export const collectParents = (
   task: TaskOrEmpty,

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 
-import { ColumnProps, Icons } from "../../../types/public-types";
+import { ColumnProps, Icons } from "../../../types";
 
 import styles from "./title-column.module.css";
 import { ExpandMoreIcon } from "../../icons/expand-more-icon";

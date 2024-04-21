@@ -1,17 +1,15 @@
-import type {
-  ChildByLevelMap,
-  Task,
-  TaskOrEmpty,
-} from "../types/public-types";
+import type { ChildByLevelMap, Task, TaskOrEmpty } from "../types";
 
 const fillDescendantsForTask = <
-IsCollectEmpty extends boolean,
-ResultItem extends Task | TaskOrEmpty = (IsCollectEmpty extends true ? TaskOrEmpty : Task),
+  IsCollectEmpty extends boolean,
+  ResultItem extends Task | TaskOrEmpty = IsCollectEmpty extends true
+    ? TaskOrEmpty
+    : Task,
 >(
   res: ResultItem[],
   task: Task,
   childTasksAtLevelMap: Map<string, TaskOrEmpty[]>,
-  isCollectEmpty: IsCollectEmpty,
+  isCollectEmpty: IsCollectEmpty
 ) => {
   const childs = childTasksAtLevelMap.get(task.id);
 
@@ -19,7 +17,7 @@ ResultItem extends Task | TaskOrEmpty = (IsCollectEmpty extends true ? TaskOrEmp
     return;
   }
 
-  childs.forEach((child) => {
+  childs.forEach(child => {
     if (child.type === "empty") {
       if (isCollectEmpty) {
         res.push(child as ResultItem);
@@ -35,16 +33,16 @@ ResultItem extends Task | TaskOrEmpty = (IsCollectEmpty extends true ? TaskOrEmp
 };
 
 export const getAllDescendants = <
-IsCollectEmpty extends boolean,
-ResultItem extends Task | TaskOrEmpty = (IsCollectEmpty extends true ? TaskOrEmpty : Task),
+  IsCollectEmpty extends boolean,
+  ResultItem extends Task | TaskOrEmpty = IsCollectEmpty extends true
+    ? TaskOrEmpty
+    : Task,
 >(
   task: Task,
   childTasksMap: ChildByLevelMap,
-  isCollectEmpty: IsCollectEmpty,
+  isCollectEmpty: IsCollectEmpty
 ): readonly ResultItem[] => {
-  const {
-    comparisonLevel = 1,
-  } = task;
+  const { comparisonLevel = 1 } = task;
 
   const childTasksAtLevelMap = childTasksMap.get(comparisonLevel);
 

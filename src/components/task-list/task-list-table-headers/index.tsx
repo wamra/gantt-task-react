@@ -1,6 +1,6 @@
 import React, { Fragment, memo } from "react";
 
-import { TaskListHeaderProps } from "../../../types/public-types";
+import { TaskListHeaderProps } from "../../../types";
 
 import styles from "./task-list-header.module.css";
 

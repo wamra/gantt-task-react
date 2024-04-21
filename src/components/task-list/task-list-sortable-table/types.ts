@@ -1,5 +1,5 @@
 import type { MutableRefObject } from "react";
-import { TaskOrEmpty } from "../../../types/public-types";
+import { TaskOrEmpty } from "../../../types";
 
 export type SensorContext = MutableRefObject<{
   items: TaskOrEmpty[];

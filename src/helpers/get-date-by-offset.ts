@@ -1,6 +1,6 @@
 import { addDays, addHours, addMonths, addWeeks, addYears } from "date-fns";
 
-import { ViewMode } from "../types/public-types";
+import { ViewMode } from "../types";
 
 export const getDateByOffset = (
   startDate: Date,

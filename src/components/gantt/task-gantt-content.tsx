@@ -1,27 +1,26 @@
-import React, { memo, useMemo } from "react";
 import type { MouseEvent, ReactNode } from "react";
+import React, { memo, useMemo } from "react";
 
 import {
+  BarMoveAction,
   ChildByLevelMap,
   CriticalPaths,
   DependencyMap,
   DependentMap,
   Distances,
   GanttActionsOption,
+  GanttRelationEvent,
   GlobalRowIndexToTaskMap,
   RelationKind,
+  RelationMoveTarget,
   Task,
   TaskCoordinates,
   TaskOrEmpty,
-} from "../../types/public-types";
+} from "../../types";
 import { Arrow } from "../other/arrow";
 import { RelationLine } from "../other/relation-line";
 import { TaskItem } from "../task-item/task-item";
-import {
-  BarMoveAction,
-  GanttRelationEvent,
-  RelationMoveTarget,
-} from "../../types/gantt-task-actions";
+import styles from "./task-gantt-content.module.css";
 import { checkHasChildren } from "../../helpers/check-has-children";
 import type { OptimizedListParams } from "../../helpers/use-optimized-list";
 
@@ -216,7 +215,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
       tasksRes.push(
         <svg
           id={task.id}
-          className="TaskItemWrapper"
+          className={`${styles.TaskItemWrapper} TaskItemWrapper`}
           x={Math.max(containerX + (additionalLeftSpace || 0), 0)}
           y={levelY}
           width={containerWidth}
@@ -488,4 +487,4 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
   );
 };
 
-export const TaskGanttContent = memo(TaskGanttContentInner)
+export const TaskGanttContent = memo(TaskGanttContentInner);

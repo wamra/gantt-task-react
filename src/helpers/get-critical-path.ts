@@ -1,4 +1,3 @@
-import { RelationMoveTarget } from "../types/gantt-task-actions";
 import {
   ChildByLevelMap,
   CriticalPath,
@@ -6,11 +5,12 @@ import {
   DependencyMap,
   DependencyMargins,
   ExpandedDependency,
+  RelationMoveTarget,
   RootMapByLevel,
   Task,
   TaskMapByLevel,
   TaskOrEmpty,
-} from "../types/public-types";
+} from "../types";
 import { collectParents } from "./collect-parents";
 
 const getLatestTasks = (
@@ -18,16 +18,14 @@ const getLatestTasks = (
   childsOnLevel: Map<string, TaskOrEmpty[]>,
   endTs: number,
   /**
- * Avoid the circle of dependencies
- */
-  checkedTasks: Set<string>,
+   * Avoid the circle of dependencies
+   */
+  checkedTasks: Set<string>
 ): Task[] => {
-  const {
-    id: taskId,
-  } = task;
+  const { id: taskId } = task;
 
   if (checkedTasks.has(taskId)) {
-    console.error('Warning: circle of dependencies');
+    console.error("Warning: circle of dependencies");
     return [];
   }
 
@@ -48,12 +46,7 @@ const getLatestTasks = (
       return res;
     }
 
-    const childRes = getLatestTasks(
-      child,
-      childsOnLevel,
-      endTs,
-      checkedTasks,
-    );
+    const childRes = getLatestTasks(child, childsOnLevel, endTs, checkedTasks);
 
     return [...res, ...childRes];
   }, []);
@@ -68,11 +61,9 @@ const collectCriticalPath = (
   tasksMap: TaskMapByLevel,
   childsOnLevel: Map<string, TaskOrEmpty[]>,
   dependenciesOnLevel: Map<string, ExpandedDependency[]>,
-  dependencyMarginsOnLevel: Map<string, Map<string, number>>,
+  dependencyMarginsOnLevel: Map<string, Map<string, number>>
 ) => {
-  const {
-    id: taskId,
-  } = task;
+  const { id: taskId } = task;
 
   const taskChilds = childsOnLevel.get(taskId);
 
@@ -84,17 +75,20 @@ const collectCriticalPath = (
       tasksMap,
       childsOnLevel,
       dependenciesOnLevel,
-      dependencyMarginsOnLevel,
+      dependencyMarginsOnLevel
     );
     return;
   }
 
-  taskChilds.forEach((childTask) => {
+  taskChilds.forEach(childTask => {
     if (childTask.type === "empty") {
       return;
     }
 
-    const taskTs = target === "startOfTask" ? childTask.start.getTime() : childTask.end.getTime();
+    const taskTs =
+      target === "startOfTask"
+        ? childTask.start.getTime()
+        : childTask.end.getTime();
 
     if (taskTs >= criticalTs) {
       collectCriticalPath(
@@ -106,7 +100,7 @@ const collectCriticalPath = (
         tasksMap,
         childsOnLevel,
         dependenciesOnLevel,
-        dependencyMarginsOnLevel,
+        dependencyMarginsOnLevel
       );
     }
   });
@@ -119,13 +113,9 @@ const collectCriticalPathForTask = (
   tasksMap: TaskMapByLevel,
   childsOnLevel: Map<string, TaskOrEmpty[]>,
   dependenciesOnLevel: Map<string, ExpandedDependency[]>,
-  dependencyMarginsOnLevel: Map<string, Map<string, number>>,
+  dependencyMarginsOnLevel: Map<string, Map<string, number>>
 ) => {
-  const {
-    end,
-    id: taskId,
-    start,
-  } = task;
+  const { end, id: taskId, start } = task;
 
   if (criticalPathTasks.has(taskId)) {
     return;
@@ -136,19 +126,15 @@ const collectCriticalPathForTask = (
   const startTs = start.getTime();
   const endTs = end.getTime();
 
-  const criticalPathDependenciesForTask = criticalPathDependencies.get(taskId)
-    || new Set<string>();
+  const criticalPathDependenciesForTask =
+    criticalPathDependencies.get(taskId) || new Set<string>();
 
   const marginsForTask = dependencyMarginsOnLevel.get(taskId);
 
   const dependencies = dependenciesOnLevel.get(taskId);
 
   if (dependencies && marginsForTask) {
-    dependencies.forEach(({
-      ownTarget,
-      source,
-      sourceTarget,
-    }) => {
+    dependencies.forEach(({ ownTarget, source, sourceTarget }) => {
       const margin = marginsForTask.get(source.id);
 
       if (typeof margin !== "number") {
@@ -175,20 +161,15 @@ const collectCriticalPathForTask = (
         tasksMap,
         childsOnLevel,
         dependenciesOnLevel,
-        dependencyMarginsOnLevel,
+        dependencyMarginsOnLevel
       );
     });
   }
 
-  const parents = collectParents(
-    task,
-    tasksMap,
-  );
+  const parents = collectParents(task, tasksMap);
 
-  parents.forEach((parentTask) => {
-    const {
-      id: parentId,
-    } = parentTask;
+  parents.forEach(parentTask => {
+    const { id: parentId } = parentTask;
 
     const parentDependencies = dependenciesOnLevel.get(parentId);
 
@@ -196,20 +177,14 @@ const collectCriticalPathForTask = (
       return;
     }
 
-    const criticalPathDependenciesForParent = criticalPathDependencies.get(parentId)
-      || new Set<string>();
+    const criticalPathDependenciesForParent =
+      criticalPathDependencies.get(parentId) || new Set<string>();
 
     const isCheckStart = parentTask.start.getTime() >= startTs;
     const isCheckEnd = parentTask.end.getTime() <= endTs;
 
-    parentDependencies.forEach(({
-      ownTarget,
-      sourceTarget,
-      source,
-    }) => {
-      const isCheck = ownTarget === "startOfTask"
-        ? isCheckStart
-        : isCheckEnd;
+    parentDependencies.forEach(({ ownTarget, sourceTarget, source }) => {
+      const isCheck = ownTarget === "startOfTask" ? isCheckStart : isCheckEnd;
 
       if (!isCheck) {
         return;
@@ -222,9 +197,10 @@ const collectCriticalPathForTask = (
       criticalPathDependenciesForTask.add(source.id);
       criticalPathDependencies.set(parentId, criticalPathDependenciesForParent);
 
-      const targetTs = ownTarget === "startOfTask"
-        ? parentTask.start.getTime()
-        : parentTask.end.getTime();
+      const targetTs =
+        ownTarget === "startOfTask"
+          ? parentTask.start.getTime()
+          : parentTask.end.getTime();
 
       collectCriticalPath(
         criticalPathTasks,
@@ -235,7 +211,7 @@ const collectCriticalPathForTask = (
         tasksMap,
         childsOnLevel,
         dependenciesOnLevel,
-        dependencyMarginsOnLevel,
+        dependencyMarginsOnLevel
       );
     });
   });
@@ -246,7 +222,7 @@ export const getCriticalPath = (
   childTasksMap: ChildByLevelMap,
   tasksMap: TaskMapByLevel,
   dependencyMarginsMap: DependencyMargins,
-  dependencyMap: DependencyMap,
+  dependencyMap: DependencyMap
 ): CriticalPaths => {
   const res = new Map<number, CriticalPath>();
 
@@ -257,9 +233,10 @@ export const getCriticalPath = (
     const childsOnLevel = childTasksMap.get(comparisonLevel);
     if (childsOnLevel) {
       const dependenciesOnLevel = dependencyMap.get(comparisonLevel);
-      const dependencyMarginsOnLevel = dependencyMarginsMap.get(comparisonLevel);
+      const dependencyMarginsOnLevel =
+        dependencyMarginsMap.get(comparisonLevel);
 
-      rootTasks.forEach((task) => {
+      rootTasks.forEach(task => {
         if (task.type === "empty") {
           return;
         }
@@ -270,7 +247,7 @@ export const getCriticalPath = (
           task,
           childsOnLevel,
           endTs,
-          new Set<string>(),
+          new Set<string>()
         );
 
         if (!dependenciesOnLevel || !dependencyMarginsOnLevel) {
@@ -280,7 +257,7 @@ export const getCriticalPath = (
           return;
         }
 
-        latestTasks.forEach((task) => {
+        latestTasks.forEach(task => {
           collectCriticalPathForTask(
             criticalPathTasks,
             criticalPathDependencies,
@@ -288,7 +265,7 @@ export const getCriticalPath = (
             tasksMap,
             childsOnLevel,
             dependenciesOnLevel,
-            dependencyMarginsOnLevel,
+            dependencyMarginsOnLevel
           );
         });
       });

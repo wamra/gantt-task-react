@@ -15,7 +15,7 @@ import {
   subYears,
 } from "date-fns";
 
-import { ViewMode } from "../../types/public-types";
+import { ViewMode } from "../../types";
 
 export const defaultRoundEndDate = (date: Date, viewMode: ViewMode) => {
   switch (viewMode) {

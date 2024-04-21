@@ -12,7 +12,7 @@ import type {
   TaskMapByLevel,
   TaskOrEmpty,
   TaskToGlobalIndexMap,
-} from "../types/public-types";
+} from "../types";
 import { collectParents } from "./collect-parents";
 import { getAllDescendants } from "./get-all-descendants";
 

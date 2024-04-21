@@ -1,4 +1,4 @@
-import { GanttPartialTheme, GanttTheme } from "../../types/public-types";
+import { GanttPartialTheme, GanttTheme } from "../../types";
 import { DEFAULT_THEME } from "./default-theme";
 import { mergeDeepObj } from "../../helpers/obj-helper";
 

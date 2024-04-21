@@ -4,7 +4,7 @@ import { format } from "date-fns";
 
 import { getWeekNumberISO8601 } from "../../helpers/date-helper";
 
-import { DateSetup, ViewMode } from "../../types/public-types";
+import { DateSetup, ViewMode } from "../../types";
 
 export const defaultRenderBottomHeader = (
   date: Date,

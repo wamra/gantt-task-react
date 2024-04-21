@@ -1,5 +1,5 @@
 import { isBefore } from "date-fns";
-import { ViewMode } from "../types/public-types";
+import { ViewMode } from "../types";
 import { getDateByOffset } from "./get-date-by-offset";
 
 export const countHolidays = (

@@ -6,7 +6,7 @@ import {
   differenceInYears,
 } from "date-fns";
 
-import { ViewMode } from "../types/public-types";
+import { ViewMode } from "../types";
 
 export const getDatesDiff = (
   dateFrom: Date,

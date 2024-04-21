@@ -1,10 +1,7 @@
-import { MouseEvent, useCallback } from "react";
 import type { ReactElement } from "react";
+import { MouseEvent, useCallback } from "react";
 
-import type {
-  ContextMenuOptionType,
-  Distances,
-} from "../../types/public-types";
+import type { ContextMenuOptionType, Distances } from "../../types";
 
 import styles from "./menu-option.module.css";
 

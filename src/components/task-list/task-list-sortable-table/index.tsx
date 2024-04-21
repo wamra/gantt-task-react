@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
-import { TaskListTableProps, TaskOrEmpty } from "../../../types/public-types";
+import { TaskListTableProps, TaskOrEmpty } from "../../../types";
 import {
   Announcements,
   closestCenter,
@@ -32,8 +32,8 @@ import { createPortal } from "react-dom";
 import { CSS } from "@dnd-kit/utilities";
 import { TaskListSortableTableRow } from "../task-list-sortable-table-row";
 import {
-  restrictToVerticalAxis,
   restrictToFirstScrollableAncestor,
+  restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 
 const indentationWidth = 50;
@@ -93,15 +93,18 @@ const TaskListSortableTableDefaultInner: React.FC<
     offset: offsetLeft,
   });
 
-  const getTaskDepth = useCallback((taskId: string | UniqueIdentifier): number => {
-    const activeTask = renderedTasks.find(task => task.id === taskId);
-    const activeTaskComparisonLevel = activeTask.comparisonLevel || 1;
-    const [activeTaskDepth] = mapTaskToNestedIndex
-      .get(activeTaskComparisonLevel)
-      .get(activeId.toString());
+  const getTaskDepth = useCallback(
+    (taskId: string | UniqueIdentifier): number => {
+      const activeTask = renderedTasks.find(task => task.id === taskId);
+      const activeTaskComparisonLevel = activeTask.comparisonLevel || 1;
+      const [activeTaskDepth] = mapTaskToNestedIndex
+        .get(activeTaskComparisonLevel)
+        .get(activeId.toString());
 
-    return activeTaskDepth || 1;
-  }, [activeId, mapTaskToNestedIndex, renderedTasks]);
+      return activeTaskDepth || 1;
+    },
+    [activeId, mapTaskToNestedIndex, renderedTasks]
+  );
 
   const getProjected = () => {
     if (!activeId || !overId) {
@@ -162,64 +165,67 @@ const TaskListSortableTableDefaultInner: React.FC<
     );
   }, [renderedIndexes, fullRowHeight, renderedTasks, getTableRowProps]);
 
-  const getMovementAnnouncement = useCallback((
-    eventName: string,
-    activeId: UniqueIdentifier,
-    overId?: UniqueIdentifier
-  ) => {
-    if (overId && projected) {
-      if (eventName !== "onDragEnd") {
-        if (
-          currentPosition &&
-          projected.parent === currentPosition.parent &&
-          overId === currentPosition.overId
-        ) {
-          return null;
-        } else {
-          setCurrentPosition({
-            parent: projected.parent,
-            overId,
-          });
-        }
-      }
-
-      const clonedItems = [...renderedTasks];
-      const overIndex = clonedItems.findIndex(({ id }) => id === overId);
-      const activeIndex = clonedItems.findIndex(({ id }) => id === activeId);
-      const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
-
-      const previousItem = sortedItems[overIndex - 1];
-
-      let announcement;
-      const movedVerb = eventName === "onDragEnd" ? "dropped" : "moved";
-      const nestedVerb = eventName === "onDragEnd" ? "dropped" : "nested";
-
-      if (!previousItem) {
-        const nextItem = sortedItems[overIndex + 1];
-        announcement = `${activeId} was ${movedVerb} before ${nextItem.id}.`;
-      } else {
-        const previousDepth = getTaskDepth(previousItem.id);
-        if (projected.depth > previousDepth) {
-          announcement = `${activeId} was ${nestedVerb} under ${previousItem.id}.`;
-        } else {
-          let previousSibling: TaskOrEmpty | undefined = previousItem;
-          const previousSiblingDepth = getTaskDepth(previousSibling.id);
-          while (previousSibling && projected.depth < previousSiblingDepth) {
-            const parentId: UniqueIdentifier | null = previousSibling.parent;
-            previousSibling = sortedItems.find(({ id }) => id === parentId);
-          }
-
-          if (previousSibling) {
-            announcement = `${activeId} was ${movedVerb} after ${previousSibling.id}.`;
+  const getMovementAnnouncement = useCallback(
+    (
+      eventName: string,
+      activeId: UniqueIdentifier,
+      overId?: UniqueIdentifier
+    ) => {
+      if (overId && projected) {
+        if (eventName !== "onDragEnd") {
+          if (
+            currentPosition &&
+            projected.parent === currentPosition.parent &&
+            overId === currentPosition.overId
+          ) {
+            return null;
+          } else {
+            setCurrentPosition({
+              parent: projected.parent,
+              overId,
+            });
           }
         }
+
+        const clonedItems = [...renderedTasks];
+        const overIndex = clonedItems.findIndex(({ id }) => id === overId);
+        const activeIndex = clonedItems.findIndex(({ id }) => id === activeId);
+        const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
+
+        const previousItem = sortedItems[overIndex - 1];
+
+        let announcement;
+        const movedVerb = eventName === "onDragEnd" ? "dropped" : "moved";
+        const nestedVerb = eventName === "onDragEnd" ? "dropped" : "nested";
+
+        if (!previousItem) {
+          const nextItem = sortedItems[overIndex + 1];
+          announcement = `${activeId} was ${movedVerb} before ${nextItem.id}.`;
+        } else {
+          const previousDepth = getTaskDepth(previousItem.id);
+          if (projected.depth > previousDepth) {
+            announcement = `${activeId} was ${nestedVerb} under ${previousItem.id}.`;
+          } else {
+            let previousSibling: TaskOrEmpty | undefined = previousItem;
+            const previousSiblingDepth = getTaskDepth(previousSibling.id);
+            while (previousSibling && projected.depth < previousSiblingDepth) {
+              const parentId: UniqueIdentifier | null = previousSibling.parent;
+              previousSibling = sortedItems.find(({ id }) => id === parentId);
+            }
+
+            if (previousSibling) {
+              announcement = `${activeId} was ${movedVerb} after ${previousSibling.id}.`;
+            }
+          }
+        }
+
+        return announcement;
       }
 
-      return announcement;
-    }
-
-    return null;
-  }, [currentPosition, getTaskDepth, projected, renderedTasks]);
+      return null;
+    },
+    [currentPosition, getTaskDepth, projected, renderedTasks]
+  );
 
   const announcements: Announcements = useMemo(
     () => ({

@@ -2,7 +2,7 @@ import type { CSSProperties, FC } from "react";
 import { TaskListTableRow } from "../task-list-table-row";
 import { AnimateLayoutChanges, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TaskListTableRowProps } from "../../../types/public-types";
+import { TaskListTableRowProps } from "../../../types";
 
 const animateLayoutChanges: AnimateLayoutChanges = () => true;
 

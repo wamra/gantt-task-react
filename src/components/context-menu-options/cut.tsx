@@ -1,7 +1,7 @@
 import type {
   ContextMenuOptionType,
   GanttLocale,
-} from "../../types/public-types";
+} from "../../types";
 import { CutIcon } from "../icons/cut-icon";
 
 export const createCutOption = (

@@ -1,5 +1,4 @@
-import { BarMoveAction } from "../types/gantt-task-actions";
-import { Task, ViewMode } from "../types/public-types";
+import { BarMoveAction, Task, ViewMode } from "../types";
 import { countHolidays } from "./count-holidays";
 
 type AdjustTaskToWorkingDatesParams = {

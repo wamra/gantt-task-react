@@ -2,7 +2,7 @@ import type {
   ChangeAction,
   TaskOrEmpty,
   TaskToGlobalIndexMap,
-} from "../types/public-types";
+} from "../types";
 
 export const getTaskIndex = (
   task: TaskOrEmpty,

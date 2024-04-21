@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { RefObject } from "react";
+import { RefObject, useCallback, useEffect, useState } from "react";
 
 import { SCROLL_STEP } from "../../constants";
 
@@ -7,18 +6,17 @@ import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
 
 import { getTaskCoordinates } from "../../helpers/get-task-coordinates";
 import { roundTaskDates } from "../../helpers/round-task-dates";
-import { BarMoveAction } from "../../types/gantt-task-actions";
-
 import {
+  BarMoveAction,
   ChangeInProgress,
   ChildByLevelMap,
   DependentMap,
   MapTaskToCoordinates,
-  TaskToGlobalIndexMap,
   Task,
   TaskCoordinates,
   TaskMapByLevel,
-} from "../../types/public-types";
+  TaskToGlobalIndexMap,
+} from "../../types";
 
 const SCROLL_DELAY = 25;
 const SIDE_SCROLL_AREA_WIDTH = 70;
@@ -35,7 +33,10 @@ const getNextCoordinates = (
     case "end": {
       const nextX2 = Math.max(nextX, initialCoordinates.x1);
       const x2Diff = nextX2 - initialCoordinates.x2;
-      const progressWidth = Math.max((nextX2 - initialCoordinates.x1) * task.progress * 0.01, 0);
+      const progressWidth = Math.max(
+        (nextX2 - initialCoordinates.x1) * task.progress * 0.01,
+        0
+      );
 
       if (rtl) {
         return [
@@ -66,7 +67,10 @@ const getNextCoordinates = (
     case "start": {
       const nextX1 = Math.min(nextX, initialCoordinates.x2);
       const x1Diff = nextX1 - initialCoordinates.x1;
-      const progressWidth = Math.max((initialCoordinates.x2 - nextX1) * task.progress * 0.01, 0);
+      const progressWidth = Math.max(
+        (initialCoordinates.x2 - nextX1) * task.progress * 0.01,
+        0
+      );
 
       if (rtl) {
         return [

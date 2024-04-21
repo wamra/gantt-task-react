@@ -1,17 +1,14 @@
 import {
   Distances,
   MapTaskToCoordinates,
-  TaskToRowIndexMap,
+  Task,
   TaskCoordinates,
   TaskOrEmpty,
+  TaskToRowIndexMap,
   ViewMode,
-  Task,
-} from "../types/public-types";
+} from "../types";
 
-import {
-  progressWithByParams,
-  taskXCoordinate,
-} from "./bar-helper";
+import { progressWithByParams, taskXCoordinate } from "./bar-helper";
 
 export const countTaskCoordinates = (
   task: Task,
@@ -23,19 +20,11 @@ export const countTaskCoordinates = (
   taskHeight: number,
   taskYOffset: number,
   distances: Distances,
-  svgWidth: number,
+  svgWidth: number
 ): TaskCoordinates => {
-  const {
-    columnWidth,
-    rowHeight,
-  } = distances;
+  const { columnWidth, rowHeight } = distances;
 
-  const {
-    id,
-    comparisonLevel = 1,
-    progress,
-    type,
-  } = task;
+  const { id, comparisonLevel = 1, progress, type } = task;
 
   const indexesAtLevel = taskToRowIndexMap.get(comparisonLevel);
 
@@ -45,7 +34,7 @@ export const countTaskCoordinates = (
 
   const rowIndex = indexesAtLevel.get(id);
 
-  if (typeof rowIndex !== 'number') {
+  if (typeof rowIndex !== "number") {
     throw new Error(`Row index for task ${id} is not found`);
   }
 
@@ -61,26 +50,16 @@ export const countTaskCoordinates = (
 
   const y = levelY + taskYOffset;
 
-  const [progressWidth, progressX] = type === 'milestone'
-    ? [0, x1]
-    : progressWithByParams(
-      x1,
-      x2,
-      progress,
-      rtl,
-    );
+  const [progressWidth, progressX] =
+    type === "milestone"
+      ? [0, x1]
+      : progressWithByParams(x1, x2, progress, rtl);
 
-  const taskX1 = type === 'milestone'
-    ? x1 - taskHeight * 0.5
-    : x1;
+  const taskX1 = type === "milestone" ? x1 - taskHeight * 0.5 : x1;
 
-  const taskX2 = type === 'milestone'
-    ? x2 + taskHeight * 0.5
-    : x2;
+  const taskX2 = type === "milestone" ? x2 + taskHeight * 0.5 : x2;
 
-  const taskWidth = type === 'milestone'
-    ? taskHeight
-    : taskX2 - taskX1;
+  const taskWidth = type === "milestone" ? taskHeight : taskX2 - taskX1;
 
   const containerX = taskX1 - columnWidth;
   const containerWidth = svgWidth - containerX;
@@ -114,19 +93,16 @@ export const getMapTaskToCoordinates = (
   taskHeight: number,
   taskYOffset: number,
   distances: Distances,
-  svgWidth: number,
+  svgWidth: number
 ): MapTaskToCoordinates => {
   const res = new Map<number, Map<string, TaskCoordinates>>();
 
-  tasks.forEach((task) => {
+  tasks.forEach(task => {
     if (task.type === "empty") {
       return;
     }
 
-    const {
-      id,
-      comparisonLevel = 1,
-    } = task;
+    const { id, comparisonLevel = 1 } = task;
 
     if (!visibleTasksMirror[id]) {
       return;
@@ -142,10 +118,11 @@ export const getMapTaskToCoordinates = (
       taskHeight,
       taskYOffset,
       distances,
-      svgWidth,
+      svgWidth
     );
 
-    const resByLevel = res.get(comparisonLevel) || new Map<string, TaskCoordinates>();
+    const resByLevel =
+      res.get(comparisonLevel) || new Map<string, TaskCoordinates>();
     resByLevel.set(id, taskCoordinates);
     res.set(comparisonLevel, resByLevel);
   });

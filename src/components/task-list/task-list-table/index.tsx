@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import React, { memo, useMemo } from "react";
-import { TaskListTableProps } from "../../../types/public-types";
+import { TaskListTableProps } from "../../../types";
 import { TaskListTableRow } from "../task-list-table-row";
 
 import styles from "./task-list-table.module.css";

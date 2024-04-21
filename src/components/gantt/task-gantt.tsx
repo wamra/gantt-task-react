@@ -1,15 +1,15 @@
-import React, { memo, SyntheticEvent, useMemo } from "react";
 import type { CSSProperties, RefObject } from "react";
+import React, { memo, SyntheticEvent, useMemo } from "react";
 
-import { GridProps, Grid } from "../grid/grid";
-import { CalendarProps, Calendar } from "../calendar/calendar";
-import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
+import { Grid, GridProps } from "../grid/grid";
+import { Calendar, CalendarProps } from "../calendar/calendar";
+import { TaskGanttContent, TaskGanttContentProps } from "./task-gantt-content";
 import styles from "./gantt.module.css";
-import { GanttActionsOption, Task } from "../../types/public-types";
+import { GanttActionsOption, Task } from "../../types";
 
 export interface TaskGanttProps extends GanttActionsOption {
   barProps: TaskGanttContentProps;
-  calendarProps: Omit<CalendarProps, 'scrollRef'>;
+  calendarProps: Omit<CalendarProps, "scrollRef">;
   fullRowHeight: number;
   fullSvgWidth: number;
   ganttFullHeight: number;

@@ -1,15 +1,9 @@
 import React from "react";
 
-import { ColumnProps } from "../../../types/public-types";
+import { ColumnProps } from "../../../types";
 
 export const DependenciesColumn: React.FC<ColumnProps> = ({
-  data: {
-    dependencies,
-  },
+  data: { dependencies },
 }) => {
-  return (
-    <>
-      {dependencies.map(({ name }) => name).join(', ')}
-    </>
-  );
+  return <>{dependencies.map(({ name }) => name).join(", ")}</>;
 };

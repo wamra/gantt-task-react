@@ -1,30 +1,20 @@
 import type { MouseEvent, MouseEventHandler } from "react";
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useCallback, useMemo, useRef } from "react";
 
 import {
   BarMoveAction,
-  GanttRelationEvent,
-  RelationMoveTarget,
-} from "../../types/gantt-task-actions";
-import {
   Distances,
   GanttActionsOption,
+  GanttRelationEvent,
   RelationKind,
+  RelationMoveTarget,
   Task,
   TaskOrEmpty,
-} from "../../types/public-types";
-import { Bar } from "./bar/bar";
-import { BarSmall } from "./bar/bar-small";
-import { Milestone } from "./milestone/milestone";
-import style from "./task-item.module.css";
-import { BarRelationHandle } from "./bar/bar-relation-handle";
+} from "../../types";
+import { Bar } from "./bar";
+import { Milestone } from "./milestone";
+import { BarRelationHandle } from "./bar-relation";
+import { TaskResponsiveLabel } from "./task-label";
 
 export interface TaskItemProps extends GanttActionsOption {
   hasChildren: boolean;
@@ -67,12 +57,7 @@ export interface TaskItemProps extends GanttActionsOption {
 
 const TaskItemInner: React.FC<TaskItemProps> = props => {
   const {
-    distances: {
-      arrowIndent,
-      handleWidth,
-      relationCircleOffset,
-      relationCircleRadius,
-    },
+    distances: { arrowIndent, relationCircleOffset, relationCircleRadius },
     onDeleteTask,
     isDateChangeable,
     canDelete,
@@ -115,7 +100,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
 
   const onTaskEventStart = useCallback(
     (action: BarMoveAction, clientX: number) => {
-      if (!isDateChangeable) {
+      if (!isDateChangeable(task)) {
         return;
       }
 
@@ -139,9 +124,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   const onRightRelationTriggerMouseDown = useCallback(() => {
     onRelationStart(rtl ? "startOfTask" : "endOfTask", task);
   }, [onRelationStart, rtl, task]);
-
-  const textRef = useRef<SVGTextElement>(null);
-  const [isTextInside, setIsTextInside] = useState(true);
 
   const taskItem = useMemo(() => {
     const isFromStartRelationAuthorized =
@@ -186,7 +168,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         {/* left */}
         {isRelationChangeable && displayLeftRelationHandle && (
           <BarRelationHandle
-            dataTestId={`task-relation-handle-left-${task.name}`}
+            dataTestId={`bar-relation-handle-left-${task.id}`}
             isRelationDrawMode={!!ganttRelationEvent}
             x={x1 - relationCircleOffset}
             y={taskYOffset + taskHalfHeight}
@@ -197,7 +179,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         {/* right */}
         {isRelationChangeable && displayRightRelationHandle && (
           <BarRelationHandle
-            dataTestId={`task-relation-handle-right-${task.name}`}
+            dataTestId={`bar-relation-handle-right-${task.id}`}
             isRelationDrawMode={!!ganttRelationEvent}
             x={x2 + relationCircleOffset}
             y={taskYOffset + taskHalfHeight}
@@ -219,8 +201,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           {relationHandles}
         </Milestone>
       );
-    } else if (width < handleWidth * 2) {
-      return <BarSmall {...props} onTaskEventStart={onTaskEventStart} />;
     } else
       return (
         <Bar
@@ -235,7 +215,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   }, [
     authorizedRelations,
     ganttRelationEvent,
-    handleWidth,
     isRelationChangeable,
     onLeftRelationTriggerMouseDown,
     onRightRelationTriggerMouseDown,
@@ -247,28 +226,9 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     task,
     taskHalfHeight,
     taskYOffset,
-    width,
     x1,
     x2,
   ]);
-
-  useEffect(() => {
-    if (textRef.current) {
-      setIsTextInside(textRef.current.getBBox().width < width);
-    }
-  }, [textRef, width]);
-
-  const x = useMemo(() => {
-    if (isTextInside) {
-      return x1 + width * 0.5;
-    }
-
-    if (rtl && textRef.current) {
-      return x1 - textRef.current.getBBox().width - arrowIndent * 0.8;
-    }
-
-    return x1 + width + arrowIndent * 1.2;
-  }, [x1, width, isTextInside, rtl, arrowIndent]);
 
   const onMouseDown = useCallback<MouseEventHandler>(
     event => {
@@ -309,18 +269,15 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       ref={taskRootRef}
     >
       {taskItem}
-      <text
-        x={x}
-        y={taskYOffset + taskHeight * 0.5}
-        className={
-          isTextInside
-            ? style.barLabel
-            : style.barLabel && style.barLabelOutside
-        }
-        ref={textRef}
-      >
-        {task.name}
-      </text>
+      <TaskResponsiveLabel
+        x1={x1}
+        width={width}
+        taskHeight={taskHeight}
+        arrowIndent={arrowIndent}
+        rtl={rtl}
+        label={task.name}
+        taskYOffset={taskYOffset}
+      />
     </g>
   );
 };

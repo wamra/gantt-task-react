@@ -1,22 +1,22 @@
 import {
-  addYears,
-  addMonths,
   addDays,
   addHours,
-  subYears,
-  subMonths,
-  subDays,
-  subHours,
-  subWeeks,
-  startOfYear,
-  startOfMonth,
+  addMonths,
+  addWeeks,
+  addYears,
   startOfDay,
   startOfHour,
+  startOfMonth,
   startOfWeek,
-  addWeeks,
+  startOfYear,
+  subDays,
+  subHours,
+  subMonths,
+  subWeeks,
+  subYears,
 } from "date-fns";
 
-import { Distances, TaskOrEmpty, ViewMode } from "../types/public-types";
+import { Distances, TaskOrEmpty, ViewMode } from "../types";
 import { getDatesDiff } from "./get-dates-diff";
 
 export const ganttDateRange = (
@@ -131,9 +131,7 @@ export const getWeekNumberISO8601 = (date: Date): number => {
   if (tmpDate.getDay() !== 4) {
     tmpDate.setMonth(0, 1 + ((4 - tmpDate.getDay() + 7) % 7));
   }
-  return (
-    1 + Math.ceil((firstThursday - tmpDate.valueOf()) / 604800000)
-  );
+  return 1 + Math.ceil((firstThursday - tmpDate.valueOf()) / 604800000);
 };
 
 export const getDaysInMonth = (month: number, year: number) => {

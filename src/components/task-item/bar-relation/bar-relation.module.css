@@ -1,0 +1,15 @@
+.barRelationHandleWrapper {
+  outline: none;
+}
+
+.barRelationHandleWrapper:hover .barRelationHandle, .barRelationHandle.barRelationHandle_drawMode {
+  opacity: 1;
+}
+
+/*noinspection CssUnresolvedCustomProperty*/
+.barRelationHandle {
+  fill: var(--gantt-bar-handle-color);
+  stroke: var(--gantt-primary-text-color);
+  cursor: pointer;
+  opacity: 0;
+}

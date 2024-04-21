@@ -1,13 +1,7 @@
-import React, {
-  memo,
-  useMemo,
-} from "react";
+import React, { memo, useMemo } from "react";
 import { getDatesDiff } from "../../helpers/get-dates-diff";
 
-import type {
-  Distances,
-  ViewMode,
-} from "../../types/public-types";
+import type { Distances, ViewMode } from "../../types";
 
 export type GridBodyProps = {
   additionalLeftSpace: number;
@@ -21,9 +15,7 @@ export type GridBodyProps = {
 
 const GridBodyInner: React.FC<GridBodyProps> = ({
   additionalLeftSpace,
-  distances: {
-    columnWidth,
-  },
+  distances: { columnWidth },
   ganttFullHeight,
   isUnknownDates,
   rtl,
@@ -39,9 +31,7 @@ const GridBodyInner: React.FC<GridBodyProps> = ({
 
     const tickX = todayIndex * columnWidth;
 
-    const x = rtl
-      ? tickX + columnWidth
-      : tickX;
+    const x = rtl ? tickX + columnWidth : tickX;
 
     return (
       <rect
@@ -49,7 +39,7 @@ const GridBodyInner: React.FC<GridBodyProps> = ({
         y={0}
         width={columnWidth}
         height={ganttFullHeight}
-        fill={'var(--gantt-calendar-today-color)'}
+        fill={"var(--gantt-calendar-today-color)"}
       />
     );
   }, [

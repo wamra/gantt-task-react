@@ -1,12 +1,12 @@
-import {useCallback, useRef, useState} from "react";
-import type {MouseEvent} from "react";
+import type { MouseEvent } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import type {
   CheckTaskIdExistsAtLevel,
   RowIndexToTaskMap,
   TaskOrEmpty,
   TaskToRowIndexMap,
-} from "../../types/public-types";
+} from "../../types";
 
 const initialValue = {};
 
@@ -32,38 +32,40 @@ export const useSelection = (
     lastSelectedIdRef.current = taskId;
   }, []);
 
-  const toggleTask = useCallback((taskId?: string | null, singleMode: boolean = false) => {
-    setCutIdsMirror(initialValue);
-    setSelectedIdsMirror(prevValue => {
-
-      if (!taskId) {
-        return {}
-      }
-
-      if (singleMode) {
-        return {
-          [taskId]: true,
+  const toggleTask = useCallback(
+    (taskId?: string | null, singleMode: boolean = false) => {
+      setCutIdsMirror(initialValue);
+      setSelectedIdsMirror(prevValue => {
+        if (!taskId) {
+          return {};
         }
-      }
 
-      if (prevValue[taskId]) {
-        const nextValue = {
+        if (singleMode) {
+          return {
+            [taskId]: true,
+          };
+        }
+
+        if (prevValue[taskId]) {
+          const nextValue = {
+            ...prevValue,
+          };
+
+          delete nextValue[taskId];
+
+          return nextValue;
+        }
+
+        return {
           ...prevValue,
+          [taskId]: true,
         };
+      });
 
-        delete nextValue[taskId];
-
-        return nextValue;
-      }
-
-      return {
-        ...prevValue,
-        [taskId]: true,
-      };
-    });
-
-    lastSelectedIdRef.current = taskId;
-  }, []);
+      lastSelectedIdRef.current = taskId;
+    },
+    []
+  );
 
   const selectTasksFromLastSelected = useCallback(
     (taskId: string) => {

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 
-import styles from "./bar-relation-handle.module.css";
+import styles from "./bar-relation.module.css";
 
 type BarRelationHandleProps = {
   dataTestId: string;

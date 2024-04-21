@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-import { DateSetup, ViewMode } from "../../types/public-types";
+import { DateSetup, ViewMode } from "../../types";
 
 const getDayText = (date: Date, dateSetup: DateSetup) => {
   try {

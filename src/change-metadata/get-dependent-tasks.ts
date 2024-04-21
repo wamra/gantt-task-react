@@ -3,7 +3,7 @@ import type {
   DependentMap,
   Task,
   TaskOrEmpty,
-} from "../types/public-types";
+} from "../types";
 
 export const fillDependentTasksForTask = (
   resSet: Set<Task>,

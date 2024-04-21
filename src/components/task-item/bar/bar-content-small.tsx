@@ -4,11 +4,11 @@ import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
 import { BarProgressHandle } from "./bar-progress-handle";
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types/gantt-task-actions";
+import type { BarMoveAction } from "../../../types";
 
 import styles from "./bar.module.css";
 
-export const BarSmall: React.FC<
+export const BarContentSmall: React.FC<
   TaskItemProps & {
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
@@ -66,7 +66,7 @@ export const BarSmall: React.FC<
       <g className="handleGroup">
         {isProgressChangeable(task) && (
           <BarProgressHandle
-            taskName={task.name}
+            taskId={task.id}
             progressPoint={progressPoint}
             startMoveProgress={startMoveProgress}
           />

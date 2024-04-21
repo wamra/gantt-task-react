@@ -1,4 +1,4 @@
-import { TaskOrEmpty } from "../types/public-types";
+import { TaskOrEmpty } from "../types";
 
 export const sortTasks = (taskA: TaskOrEmpty, taskB: TaskOrEmpty) => {
   const orderA = taskA.displayOrder || Number.MAX_VALUE;

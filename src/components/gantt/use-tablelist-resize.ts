@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useMemo, useState } from "react";
 
-import { Column, OnResizeColumn } from "../../types/public-types";
+import { Column, OnResizeColumn } from "../../types";
 import { useTaskListColumnsBuilder } from "../task-list/task-list-table-columns/use-task-list-columns-builder";
 import { useGanttLocale } from "../gantt-locale";
 import { useGanttTheme } from "../gantt-theme";
@@ -40,20 +40,41 @@ export const useTableListResize = (
     actionColumnWidth,
   } = theme.distances;
 
-  const defaultColumns = useMemo(()=> {
+  const defaultColumns = useMemo(() => {
     return [
-      columnsBuilder.createNameColumn(locale.table.columns.name, titleCellWidth),
-      columnsBuilder.createStartDateColumn(locale.table.columns.startDate, dateCellWidth),
-      columnsBuilder.createEndDateColumn(locale.table.columns.endDate, dateCellWidth),
-      columnsBuilder.createDependenciesColumn(locale.table.columns.dependencies, dependenciesCellWidth),
+      columnsBuilder.createNameColumn(
+        locale.table.columns.name,
+        titleCellWidth
+      ),
+      columnsBuilder.createStartDateColumn(
+        locale.table.columns.startDate,
+        dateCellWidth
+      ),
+      columnsBuilder.createEndDateColumn(
+        locale.table.columns.endDate,
+        dateCellWidth
+      ),
+      columnsBuilder.createDependenciesColumn(
+        locale.table.columns.dependencies,
+        dependenciesCellWidth
+      ),
       columnsBuilder.createDeleteActionColumn(actionColumnWidth),
       columnsBuilder.createEditActionColumn(actionColumnWidth),
       columnsBuilder.createAddActionColumn(actionColumnWidth),
     ];
-  }, [actionColumnWidth, columnsBuilder, dateCellWidth, dependenciesCellWidth, locale, titleCellWidth])
+  }, [
+    actionColumnWidth,
+    columnsBuilder,
+    dateCellWidth,
+    dependenciesCellWidth,
+    locale,
+    titleCellWidth,
+  ]);
 
-  const extraWidth = useMemo(() => canMoveTasks ? 26 : 0, [canMoveTasks])
-  const [columnsState, setColumns] = useState<readonly Column[]>(clientColumns || defaultColumns);
+  const extraWidth = useMemo(() => (canMoveTasks ? 26 : 0), [canMoveTasks]);
+  const [columnsState, setColumns] = useState<readonly Column[]>(
+    clientColumns || defaultColumns
+  );
 
   useEffect(() => {
     if (clientColumns) {
@@ -82,8 +103,8 @@ export const useTableListResize = (
   const [columnResizeEvent, setColumnResizeEvent] =
     useState<ColumnResizeEvent | null>(null);
 
-  const [tableWidthState, setTableWidth] = useState(() =>
-    columnsState.reduce((res, { width }) => res + width, 0) + extraWidth
+  const [tableWidthState, setTableWidth] = useState(
+    () => columnsState.reduce((res, { width }) => res + width, 0) + extraWidth
   );
 
   const onTableResizeStart = (clientX: number) => {
@@ -106,7 +127,8 @@ export const useTableListResize = (
 
   const isResizeTableInProgress = Boolean(tableResizeEvent);
   const isResizeColumnInProgress = Boolean(columnResizeEvent);
-  const taskListWidth = columnsState.reduce((res, { width }) => res + width, 0) + extraWidth;
+  const taskListWidth =
+    columnsState.reduce((res, { width }) => res + width, 0) + extraWidth;
   useEffect(() => {
     if (!isResizeTableInProgress) {
       return undefined;
@@ -155,7 +177,13 @@ export const useTableListResize = (
       gantt.removeEventListener("mouseup", handleUp);
       gantt.removeEventListener("touchend", handleUp);
     };
-  }, [isResizeTableInProgress, tableWidthState, tableResizeEvent, ganttRef, taskListWidth]);
+  }, [
+    isResizeTableInProgress,
+    tableWidthState,
+    tableResizeEvent,
+    ganttRef,
+    taskListWidth,
+  ]);
 
   useEffect(() => {
     if (!isResizeColumnInProgress) {
@@ -227,7 +255,14 @@ export const useTableListResize = (
       gantt.removeEventListener("mouseup", handleUp);
       gantt.removeEventListener("touchend", handleUp);
     };
-  }, [isResizeColumnInProgress, columnResizeEvent, columnsState, taskListWidth, onResizeColumn, ganttRef]);
+  }, [
+    isResizeColumnInProgress,
+    columnResizeEvent,
+    columnsState,
+    taskListWidth,
+    onResizeColumn,
+    ganttRef,
+  ]);
 
   return [
     columnsState,

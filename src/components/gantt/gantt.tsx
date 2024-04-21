@@ -7,6 +7,7 @@ import React, {
 } from "react";
 
 import {
+  BarMoveAction,
   ChangeAction,
   CheckTaskIdExistsAtLevel,
   ContextMenuOptionType,
@@ -18,7 +19,7 @@ import {
   Task,
   TaskOrEmpty,
   ViewMode,
-} from "../../types/public-types";
+} from "../../types";
 import { GridProps } from "../grid/grid";
 import { ganttDateRange } from "../../helpers/date-helper";
 import { CalendarProps } from "../calendar/calendar";
@@ -53,7 +54,6 @@ import { useHorizontalScrollbars } from "./use-horizontal-scrollbars";
 
 import { getDateByOffset } from "../../helpers/get-date-by-offset";
 import { getDatesDiff } from "../../helpers/get-dates-diff";
-import { BarMoveAction } from "../../types/gantt-task-actions";
 import { getMinAndMaxChildsMap } from "../../helpers/get-min-and-max-childs-map";
 import { useGetTaskCurrentState } from "./use-get-task-current-state";
 import { useSelection } from "./use-selection";
@@ -1677,7 +1677,7 @@ export const Gantt: React.FC<GanttProps> = props => {
             onKeyDown={handleKeyDown}
             tabIndex={0}
             ref={wrapperRef}
-            data-testid={`gantt-main`}
+            data-testid={`gantt`}
           >
             {/* {task-list-table-columns.length > 0 && <TaskList {...tableProps} />} */}
             {(!columnsProp || columnsProp.length > 0) && (

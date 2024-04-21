@@ -6,7 +6,7 @@ import type {
   Task,
   TaskOrEmpty,
   TaskToGlobalIndexMap,
-} from "../types/public-types";
+} from "../types";
 
 type ChangeStartAndEndDescendantsParams = {
   adjustTaskToWorkingDates: (params: AdjustTaskToWorkingDatesParams) => Task;

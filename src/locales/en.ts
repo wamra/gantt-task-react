@@ -1,12 +1,12 @@
-import {GanttLocale} from "../types/public-types";
+import { GanttLocale } from "../types";
 
 export const GANTT_EN_LOCALE: GanttLocale = {
   suffix: {
-    days: "day(s)"
+    days: "day(s)",
   },
   tooltip: {
     duration: "Duration",
-    progress: "Progress"
+    progress: "Progress",
   },
   context: {
     edit: "Edit",
@@ -15,13 +15,13 @@ export const GANTT_EN_LOCALE: GanttLocale = {
     paste: "Paste",
     delete: "Delete",
   },
-  table:{
+  table: {
     columns: {
       name: "Name",
       startDate: "Start Date",
       endDate: "End Date",
       progress: "Progress",
       dependencies: "Dependencies",
-    }
-  }
-}
+    },
+  },
+};

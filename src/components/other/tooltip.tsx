@@ -2,7 +2,7 @@ import React, { ComponentType } from "react";
 
 import type { Strategy } from "@floating-ui/dom";
 
-import type { Task } from "../../types/public-types";
+import type { Task } from "../../types";
 
 import styles from "./tooltip.module.css";
 import { useGanttLocale } from "../gantt-locale";

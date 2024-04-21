@@ -2,38 +2,34 @@ import type {
   CheckTaskIdExistsAtLevel,
   GetCopiedTaskId,
   TaskOrEmpty,
-} from "../types/public-types";
+} from "../types";
 
 export const copyTasks = (
   tasks: readonly TaskOrEmpty[],
   getCopiedTaskId: GetCopiedTaskId,
-  checkExistsAtLevel: CheckTaskIdExistsAtLevel,
+  checkExistsAtLevel: CheckTaskIdExistsAtLevel
 ) => {
   // comparison level -> original id -> new id
   const idToCopiedIdMap = new Map<number, Map<string, string>>();
 
-  tasks.forEach((originalTask) => {
-    const {
-      comparisonLevel = 1,
-    } = originalTask;
+  tasks.forEach(originalTask => {
+    const { comparisonLevel = 1 } = originalTask;
 
-    const idToCopiedIdAtLevelMap = idToCopiedIdMap.get(comparisonLevel)
-      || new Map<string, string>();
+    const idToCopiedIdAtLevelMap =
+      idToCopiedIdMap.get(comparisonLevel) || new Map<string, string>();
 
     idToCopiedIdAtLevelMap.set(
       originalTask.id,
-      getCopiedTaskId(originalTask, (taskId) => checkExistsAtLevel(taskId, comparisonLevel)),
+      getCopiedTaskId(originalTask, taskId =>
+        checkExistsAtLevel(taskId, comparisonLevel)
+      )
     );
 
     idToCopiedIdMap.set(comparisonLevel, idToCopiedIdAtLevelMap);
   });
 
-  return tasks.map<TaskOrEmpty>((originalTask) => {
-    const {
-      id: originalId,
-      comparisonLevel = 1,
-      parent,
-    } = originalTask;
+  return tasks.map<TaskOrEmpty>(originalTask => {
+    const { id: originalId, comparisonLevel = 1, parent } = originalTask;
 
     const idToCopiedIdAtLevelMap = idToCopiedIdMap.get(comparisonLevel);
 
@@ -47,9 +43,7 @@ export const copyTasks = (
       throw new Error(`NEw id is not found for task "${originalId}"`);
     }
 
-    const nextParent = parent
-      ? idToCopiedIdAtLevelMap.get(parent)
-      : undefined;
+    const nextParent = parent ? idToCopiedIdAtLevelMap.get(parent) : undefined;
 
     if (originalTask.type === "empty") {
       return {
@@ -59,26 +53,24 @@ export const copyTasks = (
       };
     }
 
-    const {
-      dependencies,
-    } = originalTask;
+    const { dependencies } = originalTask;
 
     return {
       ...originalTask,
       id: newId,
       dependencies: dependencies
-        ? dependencies.map((dependency) => {
-          const mappedId = idToCopiedIdAtLevelMap.get(dependency.sourceId);
+        ? dependencies.map(dependency => {
+            const mappedId = idToCopiedIdAtLevelMap.get(dependency.sourceId);
 
-          if (mappedId) {
-            return {
-              ...dependency,
-              sourceId: mappedId,
-            };
-          }
+            if (mappedId) {
+              return {
+                ...dependency,
+                sourceId: mappedId,
+              };
+            }
 
-          return dependency;
-        })
+            return dependency;
+          })
         : undefined,
 
       parent: nextParent,

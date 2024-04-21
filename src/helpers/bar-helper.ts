@@ -1,5 +1,4 @@
-import { Task, TaskCoordinates, ViewMode } from "../types/public-types";
-import { BarMoveAction } from "../types/gantt-task-actions";
+import { BarMoveAction, Task, TaskCoordinates, ViewMode } from "../types";
 import { getDatesDiff } from "./get-dates-diff";
 import { getDateByOffset } from "./get-date-by-offset";
 

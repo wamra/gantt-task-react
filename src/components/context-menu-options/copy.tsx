@@ -1,5 +1,5 @@
-import type { ContextMenuOptionType } from "../../types/public-types";
-import { GanttLocale } from "../../types/public-types";
+import type { ContextMenuOptionType } from "../../types";
+import { GanttLocale } from "../../types";
 import { CopyIcon } from "../icons/copy-icon";
 
 export const createCopyOption = (

@@ -2,14 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { autoUpdate, flip, offset, shift } from "@floating-ui/dom";
 import {
+  useDismiss,
   useFloating,
   useFocus,
-  useDismiss,
-  useRole,
   useInteractions,
+  useRole,
 } from "@floating-ui/react";
 
-import type { ChangeInProgress, Task } from "../types/public-types";
+import type { ChangeInProgress, Task } from "../types";
 
 export const useTaskTooltip = (changeInProgress: ChangeInProgress | null) => {
   const [hoverTooltipTask, setHoverTooltipTask] = useState<Task | null>(null);

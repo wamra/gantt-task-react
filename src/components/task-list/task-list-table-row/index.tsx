@@ -1,11 +1,7 @@
 import type { MouseEvent } from "react";
 import { forwardRef, memo, useCallback, useMemo } from "react";
 
-import {
-  ColumnData,
-  Task,
-  TaskListTableRowProps,
-} from "../../../types/public-types";
+import { ColumnData, Task, TaskListTableRowProps } from "../../../types";
 
 import styles from "./task-list-table-row.module.css";
 import { DragIndicatorIcon } from "../../icons/drag-indicator-icon";

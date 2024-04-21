@@ -2,7 +2,7 @@ import React from "react";
 
 import { format } from "date-fns";
 
-import { ColumnProps } from "../../../types/public-types";
+import { ColumnProps } from "../../../types";
 
 export const DateStartColumn: React.FC<ColumnProps> = ({
   data: {

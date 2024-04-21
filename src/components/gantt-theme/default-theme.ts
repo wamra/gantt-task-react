@@ -1,4 +1,4 @@
-import { GanttTheme } from "../../types/public-types";
+import { GanttTheme } from "../../types";
 
 export const DEFAULT_THEME: GanttTheme = {
   rtl: false,
@@ -13,7 +13,7 @@ export const DEFAULT_THEME: GanttTheme = {
 
     dividerColor: "#E0E0E0",
     primaryTextColor: "#555",
-    secondaryTextColor: "#333",
+    secondaryTextColor: "#757575",
     hoverFilter: "inherit",
     // hoverFilter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, .7))",
 
@@ -44,6 +44,7 @@ export const DEFAULT_THEME: GanttTheme = {
     barBackgroundSelectedCriticalColor: "#616161",
 
     barProgressColor: "#a3a3ff",
+    barHandleColor: "#ddd",
     barProgressCriticalColor: "#ff1919",
     barProgressSelectedColor: "#8282f5",
     barProgressSelectedCriticalColor: "#ff0000",
@@ -119,6 +120,6 @@ export const DEFAULT_THEME: GanttTheme = {
       } else {
         return `W${weekNumber.toString()}`;
       }
-    }
+    },
   },
 };

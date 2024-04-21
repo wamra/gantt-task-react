@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { max, min, addMilliseconds } from "date-fns";
+import { addMilliseconds, max, min } from "date-fns";
 
 import { checkIsDescendant } from "../../helpers/check-is-descendant";
 
@@ -11,7 +11,7 @@ import type {
   MinAndMaxChildsMap,
   Task,
   TaskMapByLevel,
-} from "../../types/public-types";
+} from "../../types";
 import { roundTaskDates } from "../../helpers/round-task-dates";
 
 type UseGetTaskCurrentStateParams = {

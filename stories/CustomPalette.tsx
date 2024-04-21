@@ -168,7 +168,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
       onChangeExpandState={onChangeExpandState}
       enableTableListContextMenu={1}
       isAdjustToWorkingDates={false}
-      isProgressChangeable={() => true}
+      // isProgressChangeable={() => true}
       allowMoveTask={(_, method) => {
         return method !== "inside";
       }}

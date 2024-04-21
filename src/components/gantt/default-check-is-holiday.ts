@@ -1,6 +1,6 @@
 import { differenceInDays, isWeekend } from "date-fns";
 
-import { DateSetup, ViewMode } from "../../types/public-types";
+import { DateSetup, ViewMode } from "../../types";
 
 const viewModesForDetectHolidays = new Set([
   ViewMode.Day,

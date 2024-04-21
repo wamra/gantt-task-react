@@ -1,7 +1,6 @@
 import React, { memo, useCallback, useMemo } from "react";
 
-import { Distances, Task } from "../../types/public-types";
-import { RelationMoveTarget } from "../../types/gantt-task-actions";
+import { Distances, RelationMoveTarget, Task } from "../../types";
 import { generateTrianglePoints } from "../../helpers/generate-triangle-points";
 
 import styles from "./arrow.module.css";

@@ -1,18 +1,15 @@
-import type {
-  TaskMapByLevel,
-  TaskOrEmpty,
-} from '../types/public-types';
+import type { TaskMapByLevel, TaskOrEmpty } from "../types";
 
 export const getSelectedTasks = (
   selectedIdsMirror: Readonly<Record<string, true>>,
-  tasksMap: TaskMapByLevel,
+  tasksMap: TaskMapByLevel
 ) => {
   const res: TaskOrEmpty[] = [];
 
   const tasksAtFirstLevel = tasksMap.get(1);
 
   if (tasksAtFirstLevel) {
-    Object.keys(selectedIdsMirror).forEach((taskId) => {
+    Object.keys(selectedIdsMirror).forEach(taskId => {
       const task = tasksAtFirstLevel.get(taskId);
 
       if (task) {

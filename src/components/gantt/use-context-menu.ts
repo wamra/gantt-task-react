@@ -1,8 +1,7 @@
-import { useCallback, useState } from "react";
 import type { RefObject } from "react";
+import { useCallback, useState } from "react";
 
-import type { ContextMenuType, TaskOrEmpty } from "../../types/public-types";
-import { Task } from "../../types/public-types";
+import { ContextMenuType, Task, TaskOrEmpty } from "../../types";
 
 export const useContextMenu = (
   wrapperRef: RefObject<HTMLDivElement>,

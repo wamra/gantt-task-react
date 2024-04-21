@@ -14,7 +14,7 @@ import {
   Task,
   TaskListTableRowProps,
   TaskOrEmpty,
-} from "../../types/public-types";
+} from "../../types";
 
 import { useOptimizedList } from "../../helpers/use-optimized-list";
 import { useTableListResize } from "../gantt/use-tablelist-resize";

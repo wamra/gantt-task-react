@@ -17,7 +17,7 @@ import type {
   ContextMenuType,
   Distances,
   TaskOrEmpty,
-} from "../../types/public-types";
+} from "../../types";
 
 import { MenuOption } from "./menu-option";
 

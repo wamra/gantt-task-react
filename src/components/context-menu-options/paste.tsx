@@ -1,5 +1,4 @@
-import type { ContextMenuOptionType } from "../../types/public-types";
-import { GanttLocale } from "../../types/public-types";
+import { ContextMenuOptionType, GanttLocale } from "../../types";
 import { PasteIcon } from "../icons/paste-icon";
 
 export const createPasteOption = (

@@ -1,10 +1,10 @@
-import { ViewMode } from "../types/public-types";
+import { ViewMode } from "../types";
 import { getDateByOffset } from "./get-date-by-offset";
 
 export const getPreviousWorkingDate = (
   date: Date,
   checkIsHoliday: (date: Date) => boolean,
-  viewMode: ViewMode,
+  viewMode: ViewMode
 ) => {
   let currentDate = getDateByOffset(date, -1, viewMode);
 

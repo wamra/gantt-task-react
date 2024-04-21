@@ -1,8 +1,9 @@
-import type { ContextMenuOptionType } from "../../types/public-types";
-import { GanttLocale } from "../../types/public-types";
+import { GanttLocale, ContextMenuOptionType } from "../../types";
 import { DeleteIcon } from "../icons/delete-icon";
 
-export const createDeleteOption = (locale: GanttLocale): ContextMenuOptionType => ({
+export const createDeleteOption = (
+  locale: GanttLocale
+): ContextMenuOptionType => ({
   action: ({
     getTasksWithDescendants,
     handleDeleteTasks,

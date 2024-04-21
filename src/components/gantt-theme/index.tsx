@@ -1,5 +1,10 @@
-import React, { createContext, CSSProperties, useContext, useMemo } from "react";
-import { GanttTheme } from "../../types/public-types";
+import React, {
+  createContext,
+  CSSProperties,
+  useContext,
+  useMemo,
+} from "react";
+import { GanttTheme } from "../../types";
 
 const GanttThemeContext = createContext<GanttTheme>({} as GanttTheme);
 
@@ -23,6 +28,7 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-hover-filter": colors.hoverFilter,
 
       "--gantt-bar-progress-color": colors.barProgressColor,
+      "--gantt-bar-handle-color": colors.barHandleColor,
       "--gantt-bar-progress-critical-color": colors.barProgressCriticalColor,
       "--gantt-bar-progress-selected-critical-color":
         colors.barProgressSelectedCriticalColor,
@@ -88,7 +94,7 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
       "--gantt-table-even-background-color": colors.tableEvenBackgroundColor,
       "--gantt-table-drag-task-background-color":
         colors.tableDragTaskBackgroundColor,
-      "--gantt-table-drag-column-width": '26px',
+      "--gantt-table-drag-column-width": "26px",
 
       "--gantt-scrollbar-thumb-color": colors.scrollbarThumbColor,
       "--gantt-calendar-stroke-color": colors.calendarStrokeColor,

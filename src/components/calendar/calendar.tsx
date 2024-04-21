@@ -7,7 +7,7 @@ import {
   RenderTopHeader,
   RenderBottomHeader,
   Distances,
-} from "../../types/public-types";
+} from "../../types";
 import { TopPartOfCalendar } from "./top-part-of-calendar";
 import { getDaysInMonth } from "../../helpers/date-helper";
 import { defaultRenderBottomHeader } from "./default-render-bottom-header";

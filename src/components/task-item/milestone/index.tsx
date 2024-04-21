@@ -1,11 +1,10 @@
 import React, { PropsWithChildren, useMemo } from "react";
 
-import stylesRelationHandle from "../bar/bar-relation-handle.module.css";
-
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types/gantt-task-actions";
+import type { BarMoveAction } from "../../../types";
 
 import styles from "./milestone.module.css";
+import { BarRelationWrapper } from "../bar-relation";
 
 export const Milestone: React.FC<
   TaskItemProps & {
@@ -46,10 +45,7 @@ export const Milestone: React.FC<
   }, [isSelected, isCritical]);
 
   return (
-    <g
-      tabIndex={0}
-      className={`${styles.milestoneWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
-    >
+    <BarRelationWrapper className={styles.milestoneWrapper}>
       <rect
         data-testid={`task-milestone-${task.id}`}
         fill={barColor}
@@ -72,8 +68,7 @@ export const Milestone: React.FC<
           }
         }}
       />
-
       {relationHandles}
-    </g>
+    </BarRelationWrapper>
   );
 };
