@@ -51,7 +51,7 @@ export const Milestone: React.FC<
       className={`${styles.milestoneWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
     >
       <rect
-        data-testid={`task-milestone-${task.name}`}
+        data-testid={`task-milestone-${task.id}`}
         fill={barColor}
         x={x1}
         width={rotatedHeight}

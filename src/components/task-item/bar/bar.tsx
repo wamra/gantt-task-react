@@ -121,9 +121,9 @@ export const Bar: React.FC<
       {barDisplay}
 
       {/* left */}
-      {isDateChangeable && (
+      {isDateChangeable(task) && (
         <BarDateHandle
-          dataTestid={`task-date-handle-left-${task.name}`}
+          dataTestId={`task-date-handle-left-${task.name}`}
           barCornerRadius={barCornerRadius}
           height={handleHeight}
           startMove={startMoveStartOfTask}
@@ -134,9 +134,9 @@ export const Bar: React.FC<
       )}
 
       {/* right */}
-      {isDateChangeable && (
+      {isDateChangeable(task) && (
         <BarDateHandle
-          dataTestid={`task-date-handle-right-${task.name}`}
+          dataTestId={`task-date-handle-right-${task.name}`}
           barCornerRadius={barCornerRadius}
           height={handleHeight}
           startMove={startMoveEndOfTask}

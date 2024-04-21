@@ -17,10 +17,8 @@ export const GanttThemeProvider: React.FC<GanttThemeProps> = ({
     return {
       "--gantt-background-color": colors.backgroundColor,
       "--gantt-arrow-color": colors.arrowColor,
-      "--gantt-arrow-fix-color": colors.arrowFixColor,
       "--gantt-arrow-relation-color": colors.arrowRelationColor,
       "--gantt-arrow-hover-color": colors.arrowHoverColor,
-      "--gantt-arrow-warning-color": colors.arrowWarningColor,
       "--gantt-arrow-critical-color": colors.arrowCriticalColor,
       "--gantt-hover-filter": colors.hoverFilter,
 

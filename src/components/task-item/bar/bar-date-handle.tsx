@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./bar.module.css";
 
 type BarDateHandleProps = {
-  dataTestid: string;
+  dataTestId: string;
   barCornerRadius: number;
   height: number;
   startMove: (clientX: number) => void;
@@ -12,7 +12,7 @@ type BarDateHandleProps = {
 };
 
 export const BarDateHandle: React.FC<BarDateHandleProps> = ({
-  dataTestid,
+  dataTestId,
   barCornerRadius,
   height,
   startMove,
@@ -22,7 +22,7 @@ export const BarDateHandle: React.FC<BarDateHandleProps> = ({
 }) => {
   return (
     <rect
-      data-testid={dataTestid}
+      data-testid={dataTestId}
       x={x}
       y={y}
       width={width}

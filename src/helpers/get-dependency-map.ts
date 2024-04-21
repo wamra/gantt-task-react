@@ -10,20 +10,19 @@ import type {
 } from "../types/public-types";
 import { getCoordinatesOnLevel, getMapTaskToCoordinatesOnLevel } from "./get-task-coordinates";
 
-export const getDependencyMapAndWarnings = (
+export const getDependencyMap = (
   tasks: readonly TaskOrEmpty[],
   visibleTasksMirror: Readonly<Record<string, true>>,
   tasksMap: TaskMapByLevel,
   mapTaskToCoordinates: MapTaskToCoordinates,
   fullRowHeight: number,
-  isShowDependencyWarnings: boolean,
   isShowCriticalPath: boolean,
 ): [DependencyMap, DependentMap, DependencyMargins] => {
   const dependencyRes = new Map<number, Map<string, ExpandedDependency[]>>();
   const dependentRes = new Map<number, Map<string, ExpandedDependent[]>>();
   const marginsRes = new Map<number, Map<string, Map<string, number>>>();
 
-  const isCollectMargins = isShowDependencyWarnings || isShowCriticalPath;
+  const isCollectMargins = isShowCriticalPath;
 
   tasks.forEach((task) => {
     if (task.type === 'empty') {
@@ -41,7 +40,7 @@ export const getDependencyMapAndWarnings = (
     }
 
     const tasksByLevel = tasksMap.get(comparisonLevel);
-    
+
     if (!dependencies || !tasksByLevel) {
       return;
     }

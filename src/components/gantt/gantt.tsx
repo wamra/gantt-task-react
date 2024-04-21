@@ -12,9 +12,7 @@ import {
   ContextMenuOptionType,
   DateSetup,
   Dependency,
-  FixPosition,
   GanttProps,
-  OnDateChange,
   OnDateChangeSuggestionType,
   OnRelationChange,
   Task,
@@ -35,8 +33,7 @@ import { getTaskCoordinates as getTaskCoordinatesDefault } from "../../helpers/g
 import { getTasksMap } from "../../helpers/get-tasks-map";
 import { getMapTaskToGlobalIndex } from "../../helpers/get-map-task-to-global-index";
 import { getMapTaskToRowIndex } from "../../helpers/get-map-task-to-row-index";
-import { getChildOutOfParentWarnings } from "../../helpers/get-child-out-of-parent-warnings";
-import { getDependencyMapAndWarnings } from "../../helpers/get-dependency-map-and-warnings";
+import { getDependencyMap } from "../../helpers/get-dependency-map";
 import {
   countTaskCoordinates as defaultCountTaskCoordinates,
   getMapTaskToCoordinates,
@@ -44,7 +41,6 @@ import {
 import { getCriticalPath } from "../../helpers/get-critical-path";
 import { getMapTaskToNestedIndex } from "../../helpers/get-map-task-to-nested-index";
 import { collectVisibleTasks } from "../../helpers/collect-visible-tasks";
-import { getTaskToHasDependencyWarningMap } from "../../helpers/get-task-to-has-dependency-warning-map";
 
 import { getChangeTaskMetadata } from "../../helpers/get-change-task-metadata";
 import { useCreateRelation } from "./use-create-relation";
@@ -104,16 +100,12 @@ export const Gantt: React.FC<GanttProps> = props => {
     comparisonLevels = 1,
     contextMenuOptions: contextMenuOptionsProp = undefined,
     enableTableListContextMenu = false,
-    fixEndPosition: fixEndPositionProp = undefined,
-    fixStartPosition: fixStartPositionProp = undefined,
     getCopiedTaskId = defaultGetCopiedTaskId,
     icons = undefined,
     isDeleteDependencyOnDoubleClick = true,
     isMoveChildsWithParent = true,
     isUpdateDisabledParentsOnChange = true,
-    isShowChildOutOfParentWarnings = false,
     isShowCriticalPath = false,
-    isShowDependencyWarnings = false,
     isShowTaskNumbers = true,
     isUnknownDates = false,
     isAdjustToWorkingDates = true,
@@ -128,7 +120,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     onDoubleClick = undefined,
     onEditTask = undefined,
     onEditTaskClick = undefined,
-    onFixDependencyPosition: onFixDependencyPositionProp = undefined,
     onMoveTaskBefore = undefined,
     onMoveTaskAfter = undefined,
     onMoveTaskInside = undefined,
@@ -147,6 +138,8 @@ export const Gantt: React.FC<GanttProps> = props => {
     viewMode = ViewMode.Day,
     locale: clientLocale,
     isProgressChangeable,
+    isRelationChangeable,
+    isDateChangeable,
     allowMoveTaskBar,
   } = props;
   const ganttSVGRef = useRef<SVGSVGElement>(null);
@@ -239,39 +232,10 @@ export const Gantt: React.FC<GanttProps> = props => {
     [tasks]
   );
 
-  const getTaskGlobalIndexByRef = useCallback(
-    (task: Task) => {
-      const { id, comparisonLevel = 1 } = task;
-
-      const indexesByLevel = mapTaskToGlobalIndex.get(comparisonLevel);
-
-      if (!indexesByLevel) {
-        return -1;
-      }
-
-      const res = indexesByLevel.get(id);
-
-      if (typeof res === "number") {
-        return res;
-      }
-
-      return -1;
-    },
-    [mapTaskToGlobalIndex]
-  );
-
   const mapTaskToNestedIndex = useMemo(
     () => getMapTaskToNestedIndex(childTasksMap, rootTasksMap),
     [childTasksMap, rootTasksMap]
   );
-
-  const childOutOfParentWarnings = useMemo(() => {
-    if (!isShowChildOutOfParentWarnings) {
-      return null;
-    }
-
-    return getChildOutOfParentWarnings(tasks, childTasksMap);
-  }, [tasks, childTasksMap, isShowChildOutOfParentWarnings]);
 
   const fullRowHeight = useMemo(
     () => distances.rowHeight * comparisonLevels,
@@ -466,13 +430,12 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const [dependencyMap, dependentMap, dependencyMarginsMap] = useMemo(
     () =>
-      getDependencyMapAndWarnings(
+      getDependencyMap(
         tasks,
         visibleTasksMirror,
         tasksMap,
         mapTaskToCoordinates,
         fullRowHeight,
-        isShowDependencyWarnings,
         isShowCriticalPath
       ),
     [
@@ -481,7 +444,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       tasksMap,
       mapTaskToCoordinates,
       fullRowHeight,
-      isShowDependencyWarnings,
       isShowCriticalPath,
     ]
   );
@@ -506,14 +468,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     dependencyMarginsMap,
     dependencyMap,
   ]);
-
-  const taskToHasDependencyWarningMap = useMemo(() => {
-    if (!isShowDependencyWarnings) {
-      return null;
-    }
-
-    return getTaskToHasDependencyWarningMap(dependencyMarginsMap);
-  }, [dependencyMarginsMap, isShowDependencyWarnings]);
 
   useEffect(() => {
     if (rtl) {
@@ -1316,103 +1270,6 @@ export const Gantt: React.FC<GanttProps> = props => {
     ]
   );
 
-  const fixStartPosition = useCallback<FixPosition>(
-    (task, date, index) => {
-      if (fixStartPositionProp) {
-        fixStartPositionProp(task, date, index);
-      }
-
-      if (onChangeTasks) {
-        const nextTasks = [...tasks];
-        nextTasks[index] = {
-          ...task,
-          start: date,
-        };
-
-        onChangeTasks(nextTasks, {
-          type: "fix_start_position",
-        });
-      }
-    },
-    [fixStartPositionProp, onChangeTasks, tasks]
-  );
-
-  const fixEndPosition = useCallback<FixPosition>(
-    (task, date, index) => {
-      if (fixEndPositionProp) {
-        fixEndPositionProp(task, date, index);
-      }
-
-      if (onChangeTasks) {
-        const nextTasks = [...tasks];
-        nextTasks[index] = {
-          ...task,
-          end: date,
-        };
-
-        onChangeTasks(nextTasks, {
-          type: "fix_end_position",
-        });
-      }
-    },
-    [fixEndPositionProp, onChangeTasks, tasks]
-  );
-
-  const onFixDependencyPosition = useCallback<OnDateChange>(
-    (task, dependentTasks, taskIndex, parents, suggestions) => {
-      if (onFixDependencyPositionProp) {
-        onFixDependencyPositionProp(
-          task,
-          dependentTasks,
-          taskIndex,
-          parents,
-          suggestions
-        );
-      }
-
-      if (onChangeTasks) {
-        const nextTasks = [...tasks];
-        nextTasks[taskIndex] = task;
-
-        onChangeTasks(nextTasks, {
-          type: "fix_dependency_position",
-        });
-      }
-    },
-    [onFixDependencyPositionProp, onChangeTasks, tasks]
-  );
-
-  const handleFixDependency = useCallback(
-    (task: Task, delta: number) => {
-      const { start, end } = task;
-
-      const newStart = new Date(start.getTime() + delta);
-      const newEnd = new Date(end.getTime() + delta);
-
-      const newChangedTask = {
-        ...task,
-        start: newStart,
-        end: newEnd,
-      };
-
-      const [dependentTasks, taskIndexes, parents, suggestions] = getMetadata({
-        type: "change",
-        task: newChangedTask,
-      });
-
-      const taskIndex = taskIndexes[0].index;
-
-      onFixDependencyPosition(
-        newChangedTask,
-        dependentTasks,
-        taskIndex,
-        parents,
-        suggestions
-      );
-    },
-    [getMetadata, onFixDependencyPosition]
-  );
-
   const onRelationChange = useCallback<OnRelationChange>(
     (from, to, isOneDescendant) => {
       if (onRelationChangeProp) {
@@ -1695,12 +1552,11 @@ export const Gantt: React.FC<GanttProps> = props => {
 
   const barProps: TaskGanttContentProps = useMemo(
     () => ({
-      allowMoveTaskBar: allowMoveTaskBar,
+      allowMoveTaskBar,
       authorizedRelations,
       additionalLeftSpace,
       additionalRightSpace,
       checkIsHoliday,
-      childOutOfParentWarnings,
       childTasksMap,
       comparisonLevels,
       criticalPaths,
@@ -1708,25 +1564,17 @@ export const Gantt: React.FC<GanttProps> = props => {
       dependentMap,
       distances,
       endColumnIndex,
-      fixEndPosition,
-      fixStartPosition,
       fullRowHeight,
       ganttRelationEvent,
       getDate,
       getTaskCoordinates,
-      getTaskGlobalIndexByRef,
-      handleBarRelationStart,
-      handleDeleteTasks,
-      handleFixDependency,
-      handleTaskDragStart,
-      isShowDependencyWarnings,
+      onTaskBarRelationStart: handleBarRelationStart,
+      onDeleteTask: taskForDelete => handleDeleteTasks([taskForDelete]),
+      onTaskBarDragStart: handleTaskDragStart,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
       onClick: onClick,
       onDoubleClick,
-      onFixDependencyPosition,
-      onProgressChange,
-      onRelationChange,
       renderedRowIndexes,
       rtl,
       selectTaskOnMouseDown,
@@ -1735,12 +1583,11 @@ export const Gantt: React.FC<GanttProps> = props => {
       startColumnIndex,
       taskHalfHeight,
       taskHeight,
-      taskToHasDependencyWarningMap,
-      taskToRowIndexMap,
       taskYOffset,
-      timeStep,
       visibleTasksMirror,
       isProgressChangeable,
+      isRelationChangeable,
+      isDateChangeable,
     }),
     [
       allowMoveTaskBar,
@@ -1748,7 +1595,6 @@ export const Gantt: React.FC<GanttProps> = props => {
       additionalLeftSpace,
       additionalRightSpace,
       checkIsHoliday,
-      childOutOfParentWarnings,
       childTasksMap,
       comparisonLevels,
       criticalPaths,
@@ -1756,25 +1602,17 @@ export const Gantt: React.FC<GanttProps> = props => {
       dependentMap,
       distances,
       endColumnIndex,
-      fixEndPosition,
-      fixStartPosition,
       fullRowHeight,
       ganttRelationEvent,
       getDate,
       getTaskCoordinates,
-      getTaskGlobalIndexByRef,
       handleBarRelationStart,
       handleDeleteTasks,
-      handleFixDependency,
       handleTaskDragStart,
-      isShowDependencyWarnings,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
       onClick,
       onDoubleClick,
-      onFixDependencyPosition,
-      onProgressChange,
-      onRelationChange,
       renderedRowIndexes,
       rtl,
       selectTaskOnMouseDown,
@@ -1783,12 +1621,11 @@ export const Gantt: React.FC<GanttProps> = props => {
       startColumnIndex,
       taskHalfHeight,
       taskHeight,
-      taskToHasDependencyWarningMap,
-      taskToRowIndexMap,
       taskYOffset,
-      timeStep,
       visibleTasksMirror,
       isProgressChangeable,
+      isRelationChangeable,
+      isDateChangeable,
     ]
   );
 

@@ -153,7 +153,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
   return (
     <Gantt
       {...props}
-      columns={columns}
+      // columns={columns}
       theme={customTheme}
       onAddTask={onAddTask}
       onChangeTasks={onChangeTasks}
@@ -167,7 +167,8 @@ export const CustomPalette: React.FC<AppProps> = props => {
       onWheel={handleWheel}
       onChangeExpandState={onChangeExpandState}
       enableTableListContextMenu={1}
-      isProgressChangeable={() => false}
+      isAdjustToWorkingDates={false}
+      isProgressChangeable={() => true}
       allowMoveTask={(_, method) => {
         return method !== "inside";
       }}

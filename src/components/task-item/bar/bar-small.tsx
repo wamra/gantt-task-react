@@ -14,9 +14,7 @@ export const BarSmall: React.FC<
   }
 > = ({
   distances: { barCornerRadius, handleWidth },
-
   hasChildren,
-
   progressWidth,
   progressX,
   taskYOffset,

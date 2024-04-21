@@ -1,12 +1,12 @@
+import type { MouseEvent, MouseEventHandler } from "react";
 import React, {
   memo,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
-  useMemo,
-  useCallback,
 } from "react";
-import type { MouseEvent, MouseEventHandler } from "react";
 
 import {
   BarMoveAction,
@@ -14,79 +14,68 @@ import {
   RelationMoveTarget,
 } from "../../types/gantt-task-actions";
 import {
-  ChildOutOfParentWarnings,
-  FixPosition,
+  Distances,
+  GanttActionsOption,
+  RelationKind,
   Task,
   TaskOrEmpty,
-  Distances,
-  RelationKind,
-  GanttActionsOption,
 } from "../../types/public-types";
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
 import { Milestone } from "./milestone/milestone";
-import { TaskWarning } from "./task-warning";
 import style from "./task-list.module.css";
-import { BarFixWidth, fixWidthContainerClass } from "../other/bar-fix-width";
 import { BarRelationHandle } from "./bar/bar-relation-handle";
 
 export interface TaskItemProps extends GanttActionsOption {
-  getTaskGlobalIndexByRef: (task: Task) => number;
   hasChildren: boolean;
-  hasDependencyWarning: boolean;
   progressWidth: number;
   progressX: number;
-  selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   task: Task;
   taskYOffset: number;
   width: number;
   x1: number;
   x2: number;
-  childOutOfParentWarnings: ChildOutOfParentWarnings | null;
   distances: Distances;
   taskHeight: number;
   taskHalfHeight: number;
-  isProgressChangeable: (task: Task) => boolean;
-  isDateChangeable: boolean;
+
   authorizedRelations: RelationKind[];
-  isRelationChangeable: boolean;
   ganttRelationEvent: GanttRelationEvent;
-  isDelete: boolean;
+
+  canDelete: boolean;
   isSelected: boolean;
   isCritical: boolean;
   rtl: boolean;
-  onDoubleClick?: (task: Task) => void;
+
+  isRelationChangeable: (task: Task) => boolean;
+  isProgressChangeable: (task: Task) => boolean;
+  isDateChangeable: (task: Task) => boolean;
+
+  onRelationStart: (target: RelationMoveTarget, selectedTask: Task) => void;
+  onDeleteTask: (task: TaskOrEmpty) => void;
+  onSelectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
-  setTooltipTask: (task: Task | null, element: Element | null) => void;
+  onDoubleClick?: (task: Task) => void;
   onEventStart: (
     action: BarMoveAction,
     selectedTask: Task,
     clientX: number,
     taskRootNode: Element
   ) => void;
-  onRelationStart: (target: RelationMoveTarget, selectedTask: Task) => void;
-  fixStartPosition?: FixPosition;
-  fixEndPosition?: FixPosition;
-  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
+  onTooltipTask: (task: Task | null, element: Element | null) => void;
 }
 
 const TaskItemInner: React.FC<TaskItemProps> = props => {
   const {
-    childOutOfParentWarnings,
     distances: {
       arrowIndent,
       handleWidth,
-      taskWarningOffset,
       relationCircleOffset,
       relationCircleRadius,
     },
-    fixEndPosition = undefined,
-    fixStartPosition = undefined,
-    getTaskGlobalIndexByRef,
-    handleDeleteTasks,
-    hasDependencyWarning,
+    onDeleteTask,
     isDateChangeable,
-    isDelete,
+    canDelete,
     onClick = undefined,
     onDoubleClick = undefined,
     onEventStart,
@@ -95,8 +84,8 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     isRelationChangeable,
     ganttRelationEvent,
     rtl,
-    selectTaskOnMouseDown,
-    setTooltipTask,
+    onSelectTaskOnMouseDown,
+    onTooltipTask,
     task,
     taskHalfHeight,
     taskHeight,
@@ -108,54 +97,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   } = props;
 
   const taskRootRef = useRef<SVGGElement>(null);
-
-  const outOfParentWarnings = useMemo(() => {
-    if (!childOutOfParentWarnings) {
-      return undefined;
-    }
-
-    const { id, comparisonLevel = 1 } = task;
-
-    const warningsByLevel = childOutOfParentWarnings.get(comparisonLevel);
-
-    if (!warningsByLevel) {
-      return undefined;
-    }
-
-    return warningsByLevel.get(id);
-  }, [task, childOutOfParentWarnings]);
-
-  const handleFixStartPosition = useCallback(() => {
-    if (!outOfParentWarnings || !fixStartPosition) {
-      return;
-    }
-
-    const { start } = outOfParentWarnings;
-
-    if (!start) {
-      return;
-    }
-
-    const globalIndex = getTaskGlobalIndexByRef(task);
-
-    fixStartPosition(task, start.date, globalIndex);
-  }, [task, fixStartPosition, outOfParentWarnings, getTaskGlobalIndexByRef]);
-
-  const handleFixEndPosition = useCallback(() => {
-    if (!outOfParentWarnings || !fixEndPosition) {
-      return;
-    }
-
-    const { end } = outOfParentWarnings;
-
-    if (!end) {
-      return;
-    }
-
-    const globalIndex = getTaskGlobalIndexByRef(task);
-
-    fixEndPosition(task, end.date, globalIndex);
-  }, [task, fixEndPosition, outOfParentWarnings, getTaskGlobalIndexByRef]);
 
   const handleClick = useCallback(
     (event: React.MouseEvent<SVGElement>) => {
@@ -240,12 +181,12 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         ? isFromStartRelationAuthorized
         : isFromEndRelationAuthorized;
     }
-    const relationhandles = (
+    const relationHandles = (
       <>
         {/* left */}
         {isRelationChangeable && displayLeftRelationHandle && (
           <BarRelationHandle
-            dataTestid={`task-relation-handle-left-${task.name}`}
+            dataTestId={`task-relation-handle-left-${task.name}`}
             isRelationDrawMode={!!ganttRelationEvent}
             x={x1 - relationCircleOffset}
             y={taskYOffset + taskHalfHeight}
@@ -256,7 +197,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         {/* right */}
         {isRelationChangeable && displayRightRelationHandle && (
           <BarRelationHandle
-            dataTestid={`task-relation-handle-right-${task.name}`}
+            dataTestId={`task-relation-handle-right-${task.name}`}
             isRelationDrawMode={!!ganttRelationEvent}
             x={x2 + relationCircleOffset}
             y={taskYOffset + taskHalfHeight}
@@ -275,7 +216,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
         >
-          {relationhandles}
+          {relationHandles}
         </Milestone>
       );
     } else if (width < handleWidth * 2) {
@@ -288,7 +229,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
         >
-          {relationhandles}
+          {relationHandles}
         </Bar>
       );
   }, [
@@ -331,30 +272,29 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
 
   const onMouseDown = useCallback<MouseEventHandler>(
     event => {
-      selectTaskOnMouseDown(task.id, event);
+      onSelectTaskOnMouseDown(task.id, event);
     },
-    [selectTaskOnMouseDown, task]
+    [onSelectTaskOnMouseDown, task]
   );
 
   const onMouseEnter = useCallback<MouseEventHandler<SVGGElement>>(
     event => {
-      setTooltipTask(task, event.currentTarget);
+      onTooltipTask(task, event.currentTarget);
     },
-    [setTooltipTask, task]
+    [onTooltipTask, task]
   );
 
   const onMouseLeave = useCallback(() => {
-    setTooltipTask(null, null);
-  }, [setTooltipTask]);
+    onTooltipTask(null, null);
+  }, [onTooltipTask]);
 
   return (
     <g
-      className={fixWidthContainerClass}
       onKeyDown={e => {
         switch (e.key) {
           case "Delete": {
-            if (isDelete) {
-              handleDeleteTasks([task]);
+            if (canDelete) {
+              onDeleteTask(task);
             }
             break;
           }
@@ -381,47 +321,6 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       >
         {task.name}
       </text>
-
-      {(outOfParentWarnings || hasDependencyWarning) && (
-        <TaskWarning
-          taskHalfHeight={taskHalfHeight}
-          taskWarningOffset={taskWarningOffset}
-          rtl={rtl}
-          outOfParentWarnings={outOfParentWarnings}
-          hasDependencyWarning={hasDependencyWarning}
-          taskYOffset={taskYOffset}
-          x1={x1}
-          x2={x2}
-        />
-      )}
-
-      {outOfParentWarnings && (
-        <>
-          {outOfParentWarnings.start && (
-            <BarFixWidth
-              x={rtl ? x2 : x1}
-              y={taskYOffset + taskHeight}
-              height={16}
-              width={10}
-              isLeft={outOfParentWarnings.start.isOutside !== rtl}
-              color={"var(--gantt-arrow-fix-color)"}
-              handleFixWidth={handleFixStartPosition}
-            />
-          )}
-
-          {outOfParentWarnings.end && (
-            <BarFixWidth
-              x={rtl ? x1 : x2}
-              y={taskYOffset + taskHeight}
-              height={16}
-              width={10}
-              isLeft={outOfParentWarnings.end.isOutside === rtl}
-              color={"var(--gantt-arrow-fix-color)"}
-              handleFixWidth={handleFixEndPosition}
-            />
-          )}
-        </>
-      )}
     </g>
   );
 };

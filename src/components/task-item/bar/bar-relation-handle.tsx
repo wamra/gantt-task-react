@@ -3,7 +3,7 @@ import React, { memo } from "react";
 import styles from "./bar-relation-handle.module.css";
 
 type BarRelationHandleProps = {
-  dataTestid: string;
+  dataTestId: string;
   isRelationDrawMode: boolean;
   radius: number;
   startDrawRelation: () => void;
@@ -12,7 +12,7 @@ type BarRelationHandleProps = {
 };
 
 const BarRelationHandleInner: React.FC<BarRelationHandleProps> = ({
-  dataTestid,
+  dataTestId,
   isRelationDrawMode,
   radius,
   startDrawRelation,
@@ -21,7 +21,7 @@ const BarRelationHandleInner: React.FC<BarRelationHandleProps> = ({
 }) => {
   return (
     <circle
-      data-testid={dataTestid}
+      data-testid={dataTestId}
       cx={x}
       cy={y}
       r={radius}

@@ -102,13 +102,11 @@ export interface ShapeStyles {
 export interface ColorStyles {
   backgroundColor: string;
   arrowColor: string;
-  arrowFixColor: string;
   arrowRelationColor: string;
   dividerColor: string;
   hoverFilter: string;
 
   arrowCriticalColor: string;
-  arrowWarningColor: string;
   barProgressColor: string;
   barProgressCriticalColor: string;
   barProgressSelectedColor: string;
@@ -191,9 +189,6 @@ export interface Distances {
   contextMenuSidePadding: number;
   dateCellWidth: number;
   dependenciesCellWidth: number;
-  dependencyFixHeight: number;
-  dependencyFixIndent: number;
-  dependencyFixWidth: number;
   expandIconWidth: number;
   handleWidth: number;
   headerHeight: number;
@@ -204,7 +199,6 @@ export interface Distances {
   relationCircleRadius: number;
   rowHeight: number;
   tableWidth?: number;
-  taskWarningOffset: number;
   titleCellWidth: number;
   viewModeYearOffsetYears?: number;
   viewModeMonthOffsetMonths?: number;
@@ -334,15 +328,6 @@ export type OnMoveTaskInside = (
 
 export type OnAddTask = (parentTask: Task, getMetadata: GetMetadata) => void;
 
-export type FixPosition = (
-  task: Task,
-  date: Date,
-  /**
-   * index in the array of tasks
-   */
-  index: number
-) => void;
-
 export type OnChangeTasksAction =
   | {
       type: "add_tasks";
@@ -378,15 +363,6 @@ export type OnChangeTasksAction =
     }
   | {
       type: "edit_task";
-    }
-  | {
-      type: "fix_dependency_position";
-    }
-  | {
-      type: "fix_end_position";
-    }
-  | {
-      type: "fix_start_position";
     }
   | {
       type: "move_task_before";
@@ -456,10 +432,6 @@ export interface EventOption {
   onDateChange?: OnDateChange;
   authorizedRelations?: RelationKind[];
   /**
-   * Invokes on click on fix element next to relation arrow
-   */
-  onFixDependencyPosition?: OnDateChange;
-  /**
    * Invokes new relation between tasks
    */
   onRelationChange?: OnRelationChange;
@@ -512,21 +484,19 @@ export interface EventOption {
    * Invokes on double click on the relation arrow between tasks
    */
   onArrowDoubleClick?: OnArrowDoubleClick;
-  /**
-   * Invokes on click on fix element on the start of task
-   */
-  fixStartPosition?: FixPosition;
-  /**
-   * Invokes on click on fix element on the end of task
-   */
-  fixEndPosition?: FixPosition;
 
+  /**
+   * Invokes on wheel event
+   * @param wheelEvent
+   */
   onWheel?: (wheelEvent: WheelEvent) => void;
 }
 
 export interface DisplayOption {
   viewMode?: ViewMode;
   isProgressChangeable?: (task: Task) => boolean;
+  isRelationChangeable?: (task: Task) => boolean;
+  isDateChangeable?: (task: Task) => boolean;
   isDeleteDependencyOnDoubleClick?: boolean;
   /**
    * Display offsets from start on timeline instead of dates
@@ -535,18 +505,6 @@ export interface DisplayOption {
   viewDate?: Date;
   preStepsCount?: number;
 
-  /**
-   * Show an warning icon next to task
-   * if some childs aren't within the time interval of the task
-   * and show elements to fix these warnings
-   */
-  isShowChildOutOfParentWarnings?: boolean;
-  /**
-   * Show an warning icon next to task
-   * if some dependencies are conflicting
-   * and show elements to fix these warnings
-   */
-  isShowDependencyWarnings?: boolean;
   /**
    * Show critical path
    */
@@ -782,34 +740,6 @@ export type TaskMapByLevel = Map<number, Map<string, TaskOrEmpty>>;
 // comparison level -> task id -> depth of nesting and task number in format like `1.2.1.1.3`
 export type MapTaskToNestedIndex = Map<number, Map<string, [number, string]>>;
 
-export interface TaskOutOfParentWarning {
-  isOutside: boolean;
-  date: Date;
-}
-
-export interface TaskOutOfParentWarnings {
-  start?: TaskOutOfParentWarning;
-  end?: TaskOutOfParentWarning;
-}
-
-/**
- * comparison level -> task id -> {
- *   start: {
- *     isOutsie: false,
- *     date: Date,
- *   },
- *
- *   end: {
- *     isOutsie: false,
- *     date: Date,
- *   },
- * }
- */
-export type ChildOutOfParentWarnings = Map<
-  number,
-  Map<string, TaskOutOfParentWarnings>
->;
-
 // comparison level -> task id -> expanded dependencies
 export type DependencyMap = Map<number, Map<string, ExpandedDependency[]>>;
 
@@ -818,9 +748,6 @@ export type DependentMap = Map<number, Map<string, ExpandedDependent[]>>;
 
 // comparison level -> task id -> dependency id -> difference in milliseconds between edges of dependency
 export type DependencyMargins = Map<number, Map<string, Map<string, number>>>;
-
-// comparison level -> task id -> task has a dependency with a warning
-export type TaskToHasDependencyWarningMap = Map<number, Set<string>>;
 
 export type CriticalPath = {
   tasks: Set<string>;

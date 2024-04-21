@@ -1,12 +1,8 @@
-import React, {memo, useCallback, useMemo} from "react";
+import React, { memo, useCallback, useMemo } from "react";
 
-import {Distances, Task} from "../../types/public-types";
-import {RelationMoveTarget} from "../../types/gantt-task-actions";
-import {generateTrianglePoints} from "../../helpers/generate-triangle-points";
-import {
-  FixDependencyPosition,
-  fixPositionContainerClass,
-} from "./fix-dependency-position";
+import { Distances, Task } from "../../types/public-types";
+import { RelationMoveTarget } from "../../types/gantt-task-actions";
+import { generateTrianglePoints } from "../../helpers/generate-triangle-points";
 
 import styles from "./arrow.module.css";
 
@@ -22,24 +18,16 @@ type ArrowProps = {
   toX1: number;
   toX2: number;
   toY: number;
-  marginBetweenTasks?: number | null;
   fullRowHeight: number;
   taskHeight: number;
-  isShowDependencyWarnings: boolean;
   isCritical: boolean;
   rtl: boolean;
   onArrowDoubleClick?: (taskFrom: Task, taskTo: Task) => void;
-  handleFixDependency: (task: Task, delta: number) => void;
 };
 
-const ArrowInner: React.FC<ArrowProps> = (props) => {
+const ArrowInner: React.FC<ArrowProps> = props => {
   const {
-    distances: {
-      arrowIndent,
-      dependencyFixWidth,
-      dependencyFixHeight,
-      dependencyFixIndent,
-    },
+    distances: { arrowIndent },
     taskFrom,
     targetFrom,
     fromX1,
@@ -50,14 +38,11 @@ const ArrowInner: React.FC<ArrowProps> = (props) => {
     toX1,
     toX2,
     toY,
-    marginBetweenTasks = undefined,
     fullRowHeight,
     taskHeight,
-    isShowDependencyWarnings,
     isCritical,
     rtl,
     onArrowDoubleClick = undefined,
-    handleFixDependency,
   } = props;
   const indexFrom = useMemo(
     () => Math.floor(fromY / fullRowHeight),
@@ -109,101 +94,27 @@ const ArrowInner: React.FC<ArrowProps> = (props) => {
     ]
   );
 
-  const taskFromFixerPosition = useMemo(() => {
-    const isLeft = (targetFrom === "startOfTask") !== rtl;
-
-    if (isLeft) {
-      return fromX1 - dependencyFixIndent;
-    }
-
-    return fromX2 + dependencyFixIndent;
-  }, [fromX1, fromX2, targetFrom, rtl, dependencyFixIndent]);
-
-  const taskToFixerPosition = useMemo(() => {
-    const isLeft = (targetTo === "startOfTask") !== rtl;
-
-    if (isLeft) {
-      return toX1 - dependencyFixIndent;
-    }
-
-    return toX2 + dependencyFixIndent;
-  }, [toX1, toX2, targetTo, rtl, dependencyFixIndent]);
-
-  const fixDependencyTaskFrom = useCallback(() => {
-    if (typeof marginBetweenTasks !== "number") {
-      return;
-    }
-
-    handleFixDependency(taskFrom, marginBetweenTasks);
-  }, [taskFrom, handleFixDependency, marginBetweenTasks]);
-
-  const fixDependencyTaskTo = useCallback(() => {
-    if (typeof marginBetweenTasks !== "number") {
-      return;
-    }
-
-    handleFixDependency(taskTo, -marginBetweenTasks);
-  }, [taskTo, handleFixDependency, marginBetweenTasks]);
-
-  const hasWarning = useMemo(
-    () =>
-      isShowDependencyWarnings &&
-      typeof marginBetweenTasks === "number" &&
-      marginBetweenTasks < 0,
-    [marginBetweenTasks, isShowDependencyWarnings]
-  );
-
   const color = useMemo(() => {
     if (isCritical) {
-      return 'var(--gantt-arrow-critical-color)';
+      return "var(--gantt-arrow-critical-color)";
     }
 
-    if (hasWarning) {
-      return 'var(--gantt-arrow-warning-color)';
-    }
-
-    return 'var(--gantt-arrow-color)';
-  }, [hasWarning, isCritical,]);
+    return "var(--gantt-arrow-color)";
+  }, [isCritical]);
 
   return (
-    <g className={fixPositionContainerClass} fill={color} stroke={color}>
+    <g fill={color} stroke={color}>
       <g
         data-testid={`task-arrow-${targetFrom}-${taskFrom.name}-${targetTo}-${taskTo.name}`}
         className={`arrow ${styles.arrow_clickable}`}
         onDoubleClick={onDoubleClick}
       >
-        {onArrowDoubleClick && <path d={path} className={styles.clickZone}/>}
+        {onArrowDoubleClick && <path d={path} className={styles.clickZone} />}
 
-        <path className={styles.mainPath} d={path}/>
+        <path className={styles.mainPath} d={path} />
 
-        <polygon className={'polygon'} points={trianglePoints}/>
+        <polygon className={"polygon"} points={trianglePoints} />
       </g>
-
-      {hasWarning && (
-        <>
-          <FixDependencyPosition
-            x={taskToFixerPosition}
-            y={toY}
-            dependencyFixIndent={dependencyFixIndent}
-            isLeft={rtl}
-            color={'var(--gantt-arrow-fix-color)'}
-            width={dependencyFixWidth}
-            height={dependencyFixHeight}
-            handleFixPosition={fixDependencyTaskTo}
-          />
-
-          <FixDependencyPosition
-            x={taskFromFixerPosition}
-            y={fromY}
-            dependencyFixIndent={dependencyFixIndent}
-            isLeft={!rtl}
-            color={'var(--gantt-arrow-fix-color)'}
-            width={dependencyFixWidth}
-            height={dependencyFixHeight}
-            handleFixPosition={fixDependencyTaskFrom}
-          />
-        </>
-      )}
     </g>
   );
 };

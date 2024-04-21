@@ -8,7 +8,6 @@ export const DEFAULT_THEME: GanttTheme = {
   colors: {
     backgroundColor: "white",
     arrowColor: "#90A4AE",
-    arrowFixColor: "#90A4AE",
     arrowRelationColor: "#90A4AE",
     arrowHoverColor: "#03A9F4",
 
@@ -38,7 +37,6 @@ export const DEFAULT_THEME: GanttTheme = {
       "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
 
     arrowCriticalColor: "#F44336",
-    arrowWarningColor: "#FF9800",
 
     barBackgroundColor: "#BDBDBD",
     barBackgroundSelectedColor: "#9E9E9E",
@@ -91,9 +89,6 @@ export const DEFAULT_THEME: GanttTheme = {
     contextMenuSidePadding: 10,
     dateCellWidth: 220,
     dependenciesCellWidth: 120,
-    dependencyFixHeight: 20,
-    dependencyFixIndent: 50,
-    dependencyFixWidth: 20,
     expandIconWidth: 20,
     handleWidth: 8,
     headerHeight: 50,
@@ -103,7 +98,6 @@ export const DEFAULT_THEME: GanttTheme = {
     relationCircleOffset: 10,
     relationCircleRadius: 5,
     rowHeight: 50,
-    taskWarningOffset: 35,
     titleCellWidth: 220,
 
     viewModeYearOffsetYears: 2,

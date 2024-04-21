@@ -1,21 +1,18 @@
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import type { MouseEvent, ReactNode } from "react";
 
 import {
   ChildByLevelMap,
-  ChildOutOfParentWarnings,
   CriticalPaths,
   DependencyMap,
   DependentMap,
   Distances,
-  FixPosition,
   GanttActionsOption,
   GlobalRowIndexToTaskMap,
   RelationKind,
   Task,
   TaskCoordinates,
   TaskOrEmpty,
-  TaskToHasDependencyWarningMap,
 } from "../../types/public-types";
 import { Arrow } from "../other/arrow";
 import { RelationLine } from "../other/relation-line";
@@ -26,7 +23,6 @@ import {
   RelationMoveTarget,
 } from "../../types/gantt-task-actions";
 import { checkHasChildren } from "../../helpers/check-has-children";
-import { checkTaskHasDependencyWarning } from "../../helpers/check-task-has-dependency-warning";
 import type { OptimizedListParams } from "../../helpers/use-optimized-list";
 
 export interface TaskGanttContentProps extends GanttActionsOption {
@@ -34,7 +30,6 @@ export interface TaskGanttContentProps extends GanttActionsOption {
   additionalLeftSpace: number;
   additionalRightSpace: number;
   checkIsHoliday: (date: Date) => boolean;
-  childOutOfParentWarnings: ChildOutOfParentWarnings | null;
   childTasksMap: ChildByLevelMap;
   comparisonLevels: number;
   criticalPaths: CriticalPaths | null;
@@ -42,23 +37,18 @@ export interface TaskGanttContentProps extends GanttActionsOption {
   dependentMap: DependentMap;
   distances: Distances;
   endColumnIndex: number;
-  fixEndPosition?: FixPosition;
-  fixStartPosition?: FixPosition;
   fullRowHeight: number;
   ganttRelationEvent: GanttRelationEvent | null;
   getDate: (index: number) => Date;
   getTaskCoordinates: (task: Task) => TaskCoordinates;
-  getTaskGlobalIndexByRef: (task: Task) => number;
-  handleBarRelationStart: (target: RelationMoveTarget, task: Task) => void;
-  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
-  handleFixDependency: (task: Task, delta: number) => void;
-  handleTaskDragStart: (
+  onTaskBarRelationStart: (target: RelationMoveTarget, task: Task) => void;
+  onDeleteTask: (task: TaskOrEmpty) => void;
+  onTaskBarDragStart: (
     action: BarMoveAction,
     task: Task,
     clientX: number,
     taskRootNode: Element
   ) => void;
-  isShowDependencyWarnings: boolean;
   mapGlobalRowIndexToTask: GlobalRowIndexToTaskMap;
   onArrowDoubleClick: (taskFrom: Task, taskTo: Task) => void;
   onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
@@ -69,19 +59,20 @@ export interface TaskGanttContentProps extends GanttActionsOption {
   selectedIdsMirror: Readonly<Record<string, true>>;
   setTooltipTask: (task: Task | null, element: Element | null) => void;
   startColumnIndex: number;
-  taskToHasDependencyWarningMap: TaskToHasDependencyWarningMap | null;
   taskYOffset: number;
   visibleTasksMirror: Readonly<Record<string, true>>;
   taskHeight: number;
   taskHalfHeight: number;
+
   isProgressChangeable?: (task: Task) => boolean;
+  isDateChangeable?: (task: Task) => boolean;
+  isRelationChangeable?: (task: Task) => boolean;
 }
 
-export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
+const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
   authorizedRelations,
   additionalLeftSpace,
   checkIsHoliday,
-  childOutOfParentWarnings,
   childTasksMap,
   comparisonLevels,
   criticalPaths,
@@ -89,18 +80,13 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   dependentMap,
   distances,
   endColumnIndex,
-  fixEndPosition = undefined,
-  fixStartPosition = undefined,
   fullRowHeight,
   ganttRelationEvent,
   getDate,
   getTaskCoordinates,
-  getTaskGlobalIndexByRef,
-  handleBarRelationStart,
-  handleDeleteTasks,
-  handleFixDependency,
-  handleTaskDragStart,
-  isShowDependencyWarnings,
+  onTaskBarRelationStart,
+  onDeleteTask,
+  onTaskBarDragStart,
   mapGlobalRowIndexToTask,
   onArrowDoubleClick,
   onDoubleClick,
@@ -111,12 +97,13 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   selectedIdsMirror,
   setTooltipTask,
   startColumnIndex,
-  taskToHasDependencyWarningMap,
   taskYOffset,
   taskHeight,
   taskHalfHeight,
   visibleTasksMirror,
   isProgressChangeable = task => !task.isDisabled,
+  isDateChangeable = task => !task.isDisabled,
+  isRelationChangeable = task => !task.isDisabled,
   allowMoveTaskBar,
 }) => {
   const renderedHolidays = useMemo(() => {
@@ -229,7 +216,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
       tasksRes.push(
         <svg
           id={task.id}
-          className="TaskItemClassName"
+          className="TaskItemWrapper"
           x={Math.max(containerX + (additionalLeftSpace || 0), 0)}
           y={levelY}
           width={containerWidth}
@@ -238,45 +225,33 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         >
           <TaskItem
             allowMoveTaskBar={allowMoveTaskBar}
-            getTaskGlobalIndexByRef={getTaskGlobalIndexByRef}
             hasChildren={checkHasChildren(task, childTasksMap)}
-            hasDependencyWarning={
-              taskToHasDependencyWarningMap
-                ? checkTaskHasDependencyWarning(
-                    task,
-                    taskToHasDependencyWarningMap
-                  )
-                : false
-            }
             progressWidth={progressWidth}
             progressX={rtl ? innerX2 : innerX1}
-            selectTaskOnMouseDown={selectTaskOnMouseDown}
+            onSelectTaskOnMouseDown={selectTaskOnMouseDown}
             task={task}
             taskYOffset={taskYOffset}
             width={width}
             x1={innerX1}
             x2={innerX2}
-            childOutOfParentWarnings={childOutOfParentWarnings}
             distances={distances}
             taskHeight={taskHeight}
             taskHalfHeight={taskHalfHeight}
             isProgressChangeable={isProgressChangeable}
-            isDateChangeable={!task.isDisabled}
-            isRelationChangeable={!task.isDisabled}
+            isDateChangeable={isDateChangeable}
+            isRelationChangeable={isRelationChangeable}
             authorizedRelations={authorizedRelations}
             ganttRelationEvent={ganttRelationEvent}
-            isDelete={!task.isDisabled}
+            canDelete={!task.isDisabled}
             onDoubleClick={onDoubleClick}
             onClick={onClick}
-            onEventStart={handleTaskDragStart}
-            setTooltipTask={setTooltipTask}
-            onRelationStart={handleBarRelationStart}
+            onEventStart={onTaskBarDragStart}
+            onTooltipTask={setTooltipTask}
+            onRelationStart={onTaskBarRelationStart}
             isSelected={Boolean(selectedIdsMirror[taskId])}
             isCritical={isCritical}
             rtl={rtl}
-            fixStartPosition={fixStartPosition}
-            fixEndPosition={fixEndPosition}
-            handleDeleteTasks={handleDeleteTasks}
+            onDeleteTask={onDeleteTask}
           />
         </svg>
       );
@@ -312,7 +287,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
               containerY,
               innerFromY,
               innerToY,
-              marginBetweenTasks,
               ownTarget,
               source,
               sourceTarget,
@@ -353,14 +327,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                     toX1={taskX1 - containerX}
                     toX2={taskX2 - containerX}
                     toY={innerToY}
-                    marginBetweenTasks={marginBetweenTasks}
                     fullRowHeight={fullRowHeight}
                     taskHeight={taskHeight}
-                    isShowDependencyWarnings={isShowDependencyWarnings}
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
-                    handleFixDependency={handleFixDependency}
                   />
                 </svg>
               );
@@ -385,7 +356,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
               containerY,
               innerFromY,
               innerToY,
-              marginBetweenTasks,
               ownTarget,
               dependent,
               dependentTarget,
@@ -436,14 +406,11 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                     toX1={toX1 - containerX}
                     toX2={toX2 - containerX}
                     toY={innerToY}
-                    marginBetweenTasks={marginBetweenTasks}
                     fullRowHeight={fullRowHeight}
                     taskHeight={taskHeight}
-                    isShowDependencyWarnings={isShowDependencyWarnings}
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
-                    handleFixDependency={handleFixDependency}
                   />
                 </svg>
               );
@@ -454,42 +421,37 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
     return [tasksRes, arrowsRes, selectedTasksRes];
   }, [
-    additionalLeftSpace,
-    authorizedRelations,
-    allowMoveTaskBar,
-    childOutOfParentWarnings,
-    childTasksMap,
+    renderedRowIndexes,
+    mapGlobalRowIndexToTask,
+    selectedIdsMirror,
     comparisonLevels,
     criticalPaths,
-    dependencyMap,
-    dependentMap,
-    distances,
-    fixEndPosition,
-    fixStartPosition,
-    fullRowHeight,
-    ganttRelationEvent,
     getTaskCoordinates,
-    getTaskGlobalIndexByRef,
-    handleBarRelationStart,
-    handleDeleteTasks,
-    handleFixDependency,
-    handleTaskDragStart,
-    isProgressChangeable,
-    isShowDependencyWarnings,
-    mapGlobalRowIndexToTask,
-    onArrowDoubleClick,
-    onClick,
-    onDoubleClick,
-    renderedRowIndexes,
+    additionalLeftSpace,
+    fullRowHeight,
+    allowMoveTaskBar,
+    childTasksMap,
     rtl,
     selectTaskOnMouseDown,
-    selectedIdsMirror,
-    setTooltipTask,
-    taskHalfHeight,
-    taskHeight,
-    taskToHasDependencyWarningMap,
     taskYOffset,
+    distances,
+    taskHeight,
+    taskHalfHeight,
+    isProgressChangeable,
+    isDateChangeable,
+    isRelationChangeable,
+    authorizedRelations,
+    ganttRelationEvent,
+    onDoubleClick,
+    onClick,
+    onTaskBarDragStart,
+    setTooltipTask,
+    onTaskBarRelationStart,
+    onDeleteTask,
+    dependencyMap,
+    dependentMap,
     visibleTasksMirror,
+    onArrowDoubleClick,
   ]);
 
   return (
@@ -525,3 +487,5 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     </g>
   );
 };
+
+export const TaskGanttContent = memo(TaskGanttContentInner)
