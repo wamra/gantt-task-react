@@ -2,9 +2,9 @@ import type { MouseEvent, MouseEventHandler } from "react";
 import React, { memo, useCallback, useMemo, useRef } from "react";
 
 import {
-  BarMoveAction,
+  TaskBarMoveAction,
   Distances,
-  GanttActionsOption,
+  GanttTaskBarActions,
   GanttRelationEvent,
   RelationKind,
   RelationMoveTarget,
@@ -16,7 +16,7 @@ import { Milestone } from "./milestone";
 import { BarRelationHandle } from "./bar-relation";
 import { TaskResponsiveLabel } from "./task-label";
 
-export interface TaskItemProps extends GanttActionsOption {
+export interface TaskItemProps extends GanttTaskBarActions {
   hasChildren: boolean;
   progressWidth: number;
   progressX: number;
@@ -47,7 +47,7 @@ export interface TaskItemProps extends GanttActionsOption {
   onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
   onDoubleClick?: (task: Task) => void;
   onEventStart: (
-    action: BarMoveAction,
+    action: TaskBarMoveAction,
     selectedTask: Task,
     clientX: number,
     taskRootNode: Element
@@ -99,7 +99,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
   }, [onDoubleClick, task]);
 
   const onTaskEventStart = useCallback(
-    (action: BarMoveAction, clientX: number) => {
+    (action: TaskBarMoveAction, clientX: number) => {
       if (!isDateChangeable(task)) {
         return;
       }

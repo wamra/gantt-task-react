@@ -1,37 +1,18 @@
-import type {
-  ComponentType,
-  CSSProperties,
-  MouseEvent,
-  ReactNode,
-} from "react";
-import { RefObject } from "react";
+import type { ComponentType, ReactNode } from "react";
 
-import type { Locale as DateLocale } from "date-fns";
-
-import type { BarMoveAction, RelationMoveTarget } from "./gantt-task-actions";
-import { OptimizedListParams } from "../helpers/use-optimized-list";
-import { TaskId } from "./internal-types";
 import { GanttPartialTheme } from "./theme-types";
 import { GanttLocale } from "./theme-locale";
-
-export enum ViewMode {
-  Hour = "Hour",
-  QuarterDay = "Quarter Day",
-  HalfDay = "Half Day",
-  Day = "Day",
-  /** ISO-8601 week */
-  Week = "Week",
-  Month = "Month",
-  Year = "Year",
-}
-
-export interface DateSetup {
-  dateFormats: DateFormats;
-  dateLocale?: DateLocale;
-  isUnknownDates: boolean;
-  preStepsCount: number;
-  viewMode: ViewMode;
-}
+import {
+  ChildByLevelMap,
+  DateSetup,
+  Distances,
+  RelationMoveTarget,
+  RootMapByLevel,
+  Task,
+  TaskBarMoveAction,
+  TaskOrEmpty,
+  ViewMode,
+} from "./common-types";
 
 export type RenderTopHeader = (
   date: Date,
@@ -46,122 +27,6 @@ export type RenderBottomHeader = (
   index: number,
   isUnknownDates: boolean
 ) => ReactNode;
-
-export interface Dependency {
-  sourceId: string;
-  sourceTarget: RelationMoveTarget;
-  ownTarget: RelationMoveTarget;
-}
-
-export interface ExpandedDependency {
-  containerHeight: number;
-  containerY: number;
-  innerFromY: number;
-  innerToY: number;
-  marginBetweenTasks: number | null;
-  ownTarget: RelationMoveTarget;
-  source: Task;
-  sourceTarget: RelationMoveTarget;
-}
-
-export interface ExpandedDependent {
-  containerHeight: number;
-  containerY: number;
-  innerFromY: number;
-  innerToY: number;
-  marginBetweenTasks: number | null;
-  dependent: Task;
-  dependentTarget: RelationMoveTarget;
-  ownTarget: RelationMoveTarget;
-}
-
-/**
- * date-fns formats
- */
-export interface DateFormats {
-  dateColumnFormat: string;
-  dayBottomHeaderFormat: string;
-  dayTopHeaderFormat: string;
-  hourBottomHeaderFormat: string;
-  monthBottomHeaderFormat: string;
-  monthTopHeaderFormat: string;
-  weekBottomHeader: (
-    date: Date,
-    weekNumber: number,
-    locale?: DateLocale
-  ) => string;
-}
-
-export interface Distances {
-  actionColumnWidth: number;
-  arrowIndent: number;
-  barCornerRadius: number;
-  /**
-   * How many of row width can be taken by task.
-   * From 0 to 100
-   */
-  barFill: number;
-  columnWidth: number;
-  contextMenuIconWidth: number;
-  contextMenuOptionHeight: number;
-  contextMenuSidePadding: number;
-  dateCellWidth: number;
-  dependenciesCellWidth: number;
-  expandIconWidth: number;
-  handleWidth: number;
-  headerHeight: number;
-  ganttHeight: number;
-  minimumRowDisplayed: number;
-  nestedTaskNameOffset: number;
-  relationCircleOffset: number;
-  relationCircleRadius: number;
-  rowHeight: number;
-  tableWidth?: number;
-  titleCellWidth: number;
-  viewModeYearOffsetYears?: number;
-  viewModeMonthOffsetMonths?: number;
-  viewModeWeekOffsetWeeks?: number;
-  viewModeDayOffsetDays?: number;
-  viewModeHourOffsetHours?: number;
-}
-
-export type TaskType = "task" | "milestone" | "project";
-
-export interface Task {
-  id: TaskId;
-  type: TaskType;
-  name: string;
-  start: Date;
-  end: Date;
-  /**
-   * From 0 to 100
-   */
-  progress: number;
-  assignees?: string[];
-  style?: CSSProperties;
-  isDisabled?: boolean;
-  /**
-   * Project or task
-   */
-  parent?: string;
-  dependencies?: Dependency[];
-  hideChildren?: boolean;
-  displayOrder?: number;
-  comparisonLevel?: number;
-  payload?: Record<string, string>;
-}
-
-export interface EmptyTask {
-  id: string;
-  type: "empty";
-  name: string;
-  parent?: string;
-  comparisonLevel?: number;
-  displayOrder?: number;
-  isDisabled?: boolean;
-}
-
-export type TaskOrEmpty = Task | EmptyTask;
 
 export type OnArrowDoubleClick = (
   taskFrom: Task,
@@ -204,48 +69,6 @@ export type OnDateChangeSuggestionType = [
   number,
 ];
 
-export type OnDateChange = (
-  task: TaskOrEmpty,
-  dependentTasks: readonly Task[],
-  index: number,
-  parents: readonly Task[],
-  suggestions: readonly OnDateChangeSuggestionType[]
-) => void;
-
-export type OnProgressChange = (
-  task: Task,
-  children: readonly Task[],
-  index: number
-) => void;
-
-export type OnEditTask = (
-  task: TaskOrEmpty,
-  index: number,
-  getMetadata: GetMetadata
-) => void;
-
-export type OnMoveTaskBeforeAfter = (
-  task: TaskOrEmpty,
-  taskForMove: TaskOrEmpty,
-  dependentTasks: readonly Task[],
-  taskIndex: number,
-  taskForMoveIndex: number,
-  parents: readonly Task[],
-  suggestions: readonly OnDateChangeSuggestionType[]
-) => void;
-
-export type OnMoveTaskInside = (
-  parent: Task,
-  childs: readonly TaskOrEmpty[],
-  dependentTasks: readonly Task[],
-  parentIndex: number,
-  childIndexes: readonly number[],
-  parents: readonly Task[],
-  suggestions: readonly OnDateChangeSuggestionType[]
-) => void;
-
-export type OnAddTask = (parentTask: Task, getMetadata: GetMetadata) => void;
-
 export type OnChangeTasksAction =
   | {
       type: "add_tasks";
@@ -284,18 +107,54 @@ export type OnChangeTasksAction =
     }
   | {
       type: "move_task_before";
+      payload: {
+        task: TaskOrEmpty;
+        taskForMove: TaskOrEmpty;
+        taskIndex: number;
+        taskForMoveIndex: number;
+      };
     }
   | {
       type: "move_task_after";
+      payload: {
+        task: TaskOrEmpty;
+        taskForMove: TaskOrEmpty;
+        taskIndex: number;
+        taskForMoveIndex: number;
+      };
     }
   | {
       type: "move_task_inside";
+      payload: {
+        parent: Task;
+        childs: readonly TaskOrEmpty[];
+        dependentTasks: readonly Task[];
+        parentIndex: number;
+        childIndexes: readonly number[];
+      }
     }
   | {
       type: "progress_change";
+      payload: {
+        task: Task;
+      }
     }
   | {
       type: "relation_change";
+      payload: {
+        /**
+         * Task, from, index
+         */
+        from: [Task, RelationMoveTarget, number],
+        /**
+         * Task, to, index
+         */
+        to: [Task, RelationMoveTarget, number],
+        /**
+         * One of tasks is descendant of other task
+         */
+        isOneDescendant: boolean;
+      }
     }
   | {
       type: "expandState_change";
@@ -310,16 +169,74 @@ export type RelationKind =
   | "endToStart"
   | "endToEnd";
 
-export type OnChangeTasks = (
+export type OnCommitTasks = (
   nextTasks: readonly TaskOrEmpty[],
   action: OnChangeTasksAction
 ) => void;
 
-export interface EventOption {
+export interface GanttTaskListProps {
+  enableTableListContextMenu?: number;
+
+  contextMenuOptions?: ContextMenuOptionType[];
+
   /**
-   * Time step value for date changes.
+   * Allow drag-n-drop of tasks in the table
    */
-  timeStep?: number;
+  allowReorderTask?: AllowReorderTask;
+
+  /**
+   * Can resize columns
+   */
+  canResizeColumns?: boolean;
+
+  /**
+   *  Custom icons
+   */
+  icons?: Partial<GanttRenderIconsProps>;
+
+  /**
+   * Show numbers of tasks next to tasks
+   */
+  isShowTaskNumbers?: boolean;
+
+  /**
+   * Can reorder tasks
+   */
+  canReorderTasks?: boolean;
+
+  /**
+   * Can reorder tasks
+   */
+  onResizeColumn?: OnResizeColumn;
+}
+
+export interface GanttTaskBarProps extends GanttTaskBarActions {
+  /**
+   * Render function of bottom part of header above chart
+   */
+  renderBottomHeader?: RenderBottomHeader;
+  /**
+   * Render function of top part of header above chart
+   */
+  renderTopHeader?: RenderTopHeader;
+
+  /**
+   * Show critical path
+   */
+  isShowCriticalPath?: boolean;
+  isProgressChangeable?: (task: Task) => boolean;
+  isRelationChangeable?: (task: Task) => boolean;
+  isDateChangeable?: (task: Task) => boolean;
+  isDeleteDependencyOnDoubleClick?: boolean;
+  preStepsCount?: number;
+
+  TooltipContent?: ComponentType<{ task: Task }>;
+
+  /**
+   * Invokes on double-click on the relation arrow between tasks
+   */
+  onArrowDoubleClick?: OnArrowDoubleClick;
+
   /**
    * Invokes on bar double click.
    */
@@ -328,112 +245,9 @@ export interface EventOption {
    * Invokes on bar click.
    */
   onClick?: (task: TaskOrEmpty) => void;
-  /**
-   * Recount descedents of a group task when moving
-   */
-  isMoveChildsWithParent?: boolean;
-  /**
-   * Recount parents of tasks in callback `onChangeTasks`
-   */
-  isUpdateDisabledParentsOnChange?: boolean;
-  /**
-   * Invokes when the task expand status changed(task.hideChildren)
-   */
-  onChangeExpandState?: (changedTask: Task) => void;
-  /**
-   * Invokes on every change of the list of tasks
-   */
-  onChangeTasks?: OnChangeTasks;
-  /**
-   * Invokes on end and start time change. Chart undoes operation if method return false or error.
-   */
-  onDateChange?: OnDateChange;
-  authorizedRelations?: RelationKind[];
-  /**
-   * Invokes new relation between tasks
-   */
-  onRelationChange?: OnRelationChange;
-  /**
-   * Invokes on progress change
-   */
-  onProgressChange?: OnProgressChange;
-  /**
-   * Callback for getting data of the added task
-   */
-  onAddTask?: (task: Task) => Promise<TaskOrEmpty | null>;
-  /**
-   * Invokes on edit button click
-   */
-  onAddTaskClick?: OnAddTask;
-  /**
-   * Invokes on delete selected task
-   */
-  onDelete?: (
-    tasks: readonly TaskOrEmpty[],
-    dependentTasks: readonly Task[],
-    indexes: Array<{
-      task: TaskOrEmpty;
-      index: number;
-    }>,
-    parents: readonly Task[],
-    suggestions: readonly OnDateChangeSuggestionType[]
-  ) => void;
-  /**
-   * Callback for getting new data of the edited task
-   */
-  onEditTask?: (task: TaskOrEmpty) => Promise<TaskOrEmpty | null>;
-  /**
-   * Invokes on edit button click
-   */
-  onEditTaskClick?: OnEditTask;
-  /**
-   * Invokes on move task after other task
-   */
-  onMoveTaskBefore?: OnMoveTaskBeforeAfter;
-  /**
-   * Invokes on move task after other task
-   */
-  onMoveTaskAfter?: OnMoveTaskBeforeAfter;
-  /**
-   * Invokes on move task inside other task
-   */
-  onMoveTaskInside?: OnMoveTaskInside;
-  /**
-   * Invokes on double click on the relation arrow between tasks
-   */
-  onArrowDoubleClick?: OnArrowDoubleClick;
-
-  /**
-   * Invokes on wheel event
-   * @param wheelEvent
-   */
-  onWheel?: (wheelEvent: WheelEvent) => void;
 }
 
-export interface DisplayOption {
-  viewMode?: ViewMode;
-  isProgressChangeable?: (task: Task) => boolean;
-  isRelationChangeable?: (task: Task) => boolean;
-  isDateChangeable?: (task: Task) => boolean;
-  isDeleteDependencyOnDoubleClick?: boolean;
-  /**
-   * Display offsets from start on timeline instead of dates
-   */
-  isUnknownDates?: boolean;
-  viewDate?: Date;
-  preStepsCount?: number;
-
-  /**
-   * Show critical path
-   */
-  isShowCriticalPath?: boolean;
-  /**
-   * Show numbers of tasks next to tasks
-   */
-  isShowTaskNumbers?: boolean;
-}
-
-export interface Icons {
+export interface GanttRenderIconsProps {
   renderAddIcon: () => ReactNode;
   renderDragIndicatorIcon: () => ReactNode;
   renderClosedIcon: () => ReactNode;
@@ -444,54 +258,28 @@ export interface Icons {
 }
 
 export type InsertTaskPosition = "before" | "inside" | "after";
-export type AllowMoveTask = (
+export type AllowReorderTask = (
   task: TaskOrEmpty,
   method: InsertTaskPosition
 ) => boolean;
 
-export interface StylingOption {
+export type CheckIsHoliday = (
+  date: Date,
+  minTaskDate: Date,
+  dateSetup: DateSetup
+) => boolean;
+
+export interface GanttProps {
   /**
-   * Allow drag-n-drop of tasks in the table
+   * Theme
    */
-  allowMoveTask?: AllowMoveTask;
-  canMoveTasks?: boolean;
-  canResizeColumns?: boolean;
   theme?: GanttPartialTheme;
+
+  /**
+   * Locale
+   */
   locale?: GanttLocale;
-  icons?: Partial<Icons>;
-  columns?: readonly Column[];
-  onResizeColumn?: OnResizeColumn;
-  TooltipContent?: ComponentType<{ task: Task }>;
 
-  /**
-   * Render function of bottom part of header above chart
-   */
-  renderBottomHeader?: RenderBottomHeader;
-  /**
-   * Render function of top part of header above chart
-   */
-  renderTopHeader?: RenderTopHeader;
-  /**
-   * Round end date of task after move or resize
-   * @param date Date after move
-   * @param viewMode current date unit
-   * @returns next date
-   */
-  roundEndDate?: (date: Date, viewMode: ViewMode) => Date;
-  /**
-   * Round start date of task after move or resize
-   * @param date Date after move
-   * @param viewMode current date unit
-   * @returns next date
-   */
-  roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
-}
-
-export interface GanttProps
-  extends EventOption,
-    DisplayOption,
-    StylingOption,
-    GanttActionsOption {
   /**
    * Check is current date holiday
    * @param date the date
@@ -499,183 +287,119 @@ export interface GanttProps
    * @param dateSetup
    * @returns
    */
-  checkIsHoliday?: (
-    date: Date,
-    minTaskDate: Date,
-    dateSetup: DateSetup
-  ) => boolean;
+  checkIsHoliday?: CheckIsHoliday;
+
   /**
    * Can be used to compare multiple graphs. This prop is the number of graps being compared
    */
   comparisonLevels?: number;
-  contextMenuOptions?: ContextMenuOptionType[];
-  enableTableListContextMenu?: number;
+
   /**
    * Get new id for task after using copy-paste
    */
   getCopiedTaskId?: GetCopiedTaskId;
+
+  /**
+   *  Tasks
+   */
+  tasks: readonly TaskOrEmpty[];
+
+  /**
+   * Columns of the table
+   */
+  columns?: readonly Column[];
+
+  /**
+   * Round end date of task after move or resize
+   * @param date Date after move
+   * @param viewMode current date unit
+   * @returns next date
+   */
+  roundEndDate?: (date: Date, viewMode: ViewMode) => Date;
+
+  /**
+   * Round start date of task after move or resize
+   * @param date Date after move
+   * @param viewMode current date unit
+   * @returns next date
+   */
+  roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
+
+  /**
+   * View mode
+   */
+  viewMode?: ViewMode;
+
+  /**
+   * View date
+   */
+  viewDate?: Date;
+
+  /**
+   * Task bar options
+   */
+  taskBar?: GanttTaskBarProps;
+
+  /**
+   * Task list options
+   */
+  taskList?: GanttTaskListProps;
+
+  /**
+   * Authorized relations between tasks
+   */
+  authorizedRelations?: RelationKind[];
+
+  /**
+   * Time step value for date changes.
+   */
+  timeStep?: number;
+
+  /**
+   * Invokes on every commit of the list of tasks
+   */
+  onCommitTasks?: OnCommitTasks;
+
+  /**
+   * Callback for getting data of the added task
+   */
+  onAddTaskAction?: (task: Task | null) => Promise<TaskOrEmpty | null>;
+
+  /**
+   * Callback for getting new data of the edited task
+   */
+  onEditTaskAction?: (task: TaskOrEmpty) => Promise<TaskOrEmpty | null>;
+
+  /**
+   * Invokes on wheel event
+   * @param wheelEvent
+   */
+  onWheel?: (wheelEvent: WheelEvent) => void;
+
+  /**
+   * Recount descedents of a group task when moving
+   */
+  isMoveChildsWithParent?: boolean;
+
+  /**
+   * Recount parents of tasks in callback `onCommitTasks`
+   */
+  isUpdateDisabledParentsOnChange?: boolean;
+
+  /**
+   * Display offsets from start on timeline instead of dates
+   */
+  isUnknownDates?: boolean;
+
   /**
    * Move dates of tasks to working days during change
    */
   isAdjustToWorkingDates?: boolean;
-  tasks: readonly TaskOrEmpty[];
 }
 
-export interface GanttActionsOption {
-  allowMoveTaskBar?: (action: BarMoveAction, task: TaskOrEmpty) => boolean;
+export interface GanttTaskBarActions {
+  allowMoveTaskBar?: (action: TaskBarMoveAction, task: TaskOrEmpty) => boolean;
 }
-
-export interface TaskListTableProps {
-  ganttRef: RefObject<HTMLDivElement>;
-  getTableRowProps: (task: TaskOrEmpty, index: number) => TaskListTableRowProps;
-  canMoveTasks: boolean;
-  allowMoveTask: AllowMoveTask;
-  childTasksMap: ChildByLevelMap;
-  columns: readonly Column[];
-  cutIdsMirror: Readonly<Record<string, true>>;
-  dateSetup: DateSetup;
-  dependencyMap: DependencyMap;
-  distances: Distances;
-  fullRowHeight: number;
-  ganttFullHeight: number;
-  getTaskCurrentState: (task: Task) => Task;
-  handleAddTask: (task: Task) => void;
-  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
-  handleEditTask: (task: TaskOrEmpty) => void;
-  handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
-  handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
-  handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
-  handleOpenContextMenu: (
-    task: TaskOrEmpty,
-    clientX: number,
-    clientY: number
-  ) => void;
-  icons?: Partial<Icons>;
-  isShowTaskNumbers: boolean;
-  mapTaskToNestedIndex: MapTaskToNestedIndex;
-  onClick: (task: TaskOrEmpty) => void;
-  onExpanderClick: (task: Task) => void;
-  renderedIndexes: OptimizedListParams | null;
-  scrollToTask: (task: Task) => void;
-  selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
-  selectedIdsMirror: Readonly<Record<string, true>>;
-  taskListWidth: number;
-  tasks: readonly TaskOrEmpty[];
-}
-
-export type TaskListTableRowProps = {
-  columns: readonly Column[];
-  dateSetup: DateSetup;
-  dependencyMap: DependencyMap;
-  depth: number;
-  distances: Distances;
-  fullRowHeight: number;
-  getTaskCurrentState: (task: Task) => Task;
-  handleAddTask: (task: Task) => void;
-  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
-  handleEditTask: (task: TaskOrEmpty) => void;
-  // eslint-disable-next-line
-  moveHandleProps?: any;
-  moveOverPosition?: InsertTaskPosition;
-  handleOpenContextMenu: (
-    task: TaskOrEmpty,
-    clientX: number,
-    clientY: number
-  ) => void;
-  hasChildren: boolean;
-  icons?: Partial<Icons>;
-  indexStr: string;
-  isDragging?: boolean;
-  isOverlay?: boolean;
-  isClosed: boolean;
-  isCut: boolean;
-  isEven: boolean;
-  isSelected: boolean;
-  isShowTaskNumbers: boolean;
-  onClick: (task: TaskOrEmpty) => void;
-  onExpanderClick: (task: Task) => void;
-  scrollToTask: (task: Task) => void;
-  selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
-  style?: CSSProperties;
-  task: TaskOrEmpty;
-};
-
-export interface TaskListHeaderProps {
-  headerHeight: number;
-  columns: readonly Column[];
-  canMoveTasks: boolean;
-  canResizeColumns: boolean;
-  onColumnResizeStart: (columnIndex: number, clientX: number) => void;
-}
-
-// comparison level -> task id -> index in array of tasks
-export type TaskToGlobalIndexMap = Map<number, Map<string, number>>;
-
-// comparison level -> task id -> index of the row containing the task
-export type TaskToRowIndexMap = Map<number, Map<string, number>>;
-
-// comparison level -> index of the row containing the task -> task id
-export type RowIndexToTaskMap = Map<number, Map<number, TaskOrEmpty>>;
-
-// global row index (tasks at different comparison levels have different indexes) -> the task
-export type GlobalRowIndexToTaskMap = Map<number, TaskOrEmpty>;
-
-// comparison level -> task id -> array of child tasks
-export type ChildByLevelMap = Map<number, Map<string, TaskOrEmpty[]>>;
-
-// comparison level -> tasks that don't have parent
-export type RootMapByLevel = Map<number, TaskOrEmpty[]>;
-
-// comparison level -> task id -> the task
-export type TaskMapByLevel = Map<number, Map<string, TaskOrEmpty>>;
-
-// comparison level -> task id -> depth of nesting and task number in format like `1.2.1.1.3`
-export type MapTaskToNestedIndex = Map<number, Map<string, [number, string]>>;
-
-// comparison level -> task id -> expanded dependencies
-export type DependencyMap = Map<number, Map<string, ExpandedDependency[]>>;
-
-// comparison level -> task id -> expanded dependents
-export type DependentMap = Map<number, Map<string, ExpandedDependent[]>>;
-
-// comparison level -> task id -> dependency id -> difference in milliseconds between edges of dependency
-export type DependencyMargins = Map<number, Map<string, Map<string, number>>>;
-
-export type CriticalPath = {
-  tasks: Set<string>;
-  dependencies: Map<string, Set<string>>;
-};
-
-export type MinAndMaxChildsOfTask = [
-  [
-    /**
-     * First min
-     */
-    Task | null,
-    /**
-     * Second min
-     */
-    Task | null,
-  ],
-  [
-    /**
-     * First max
-     */
-    Task | null,
-    /**
-     * Second max
-     */
-    Task | null,
-  ],
-];
-
-// comparison level -> task id -> [[first min, second min], [first max, second max]]
-export type MinAndMaxChildsMap = Map<
-  number,
-  Map<string, MinAndMaxChildsOfTask>
->;
-
-export type GetMetadata = (task: TaskOrEmpty) => ChangeMetadata;
 
 export type ColumnData = {
   dateSetup: DateSetup;
@@ -686,7 +410,7 @@ export type ColumnData = {
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
   hasChildren: boolean;
-  icons?: Partial<Icons>;
+  icons?: Partial<GanttRenderIconsProps>;
   indexStr: string;
   isClosed: boolean;
   isShowTaskNumbers: boolean;
@@ -918,7 +642,7 @@ export type GetCopiedTaskId = (
 ) => string;
 
 export type AdjustTaskToWorkingDatesParams = {
-  action: BarMoveAction;
+  action: TaskBarMoveAction;
   changedTask: Task;
   originalTask: Task;
 };

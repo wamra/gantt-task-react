@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-import { Gantt, Task, TaskOrEmpty, OnChangeTasks } from "../src";
+import { Gantt, Task, TaskOrEmpty, OnCommitTasks } from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
@@ -11,7 +11,7 @@ type AppProps = {
 export const Warnings: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
-  const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
+  const onChangeTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
         if (
@@ -54,10 +54,10 @@ export const Warnings: React.FC<AppProps> = props => {
       isShowChildOutOfParentWarnings
       isShowDependencyWarnings
       {...props}
-      onAddTask={onAddTask}
-      onChangeTasks={onChangeTasks}
+      onAddTaskAction={onAddTask}
+      onCommitTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
-      onEditTask={onEditTask}
+      onEditTaskAction={onEditTask}
       onClick={handleClick}
       tasks={tasks}
     />

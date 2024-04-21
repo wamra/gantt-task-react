@@ -1,4 +1,4 @@
-import { DateFormats, Distances } from "./public-types";
+import { DateFormats, Distances } from "./common-types";
 
 export interface GanttPartialTheme {
   rtl?: boolean;

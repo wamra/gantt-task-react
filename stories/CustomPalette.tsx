@@ -4,7 +4,7 @@ import {
   ColumnProps,
   Gantt,
   GanttTheme,
-  OnChangeTasks,
+  OnCommitTasks,
   Task,
   TaskOrEmpty,
   useTaskListColumnsBuilder,
@@ -68,7 +68,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
     ];
   }, [columnsBuilder]);
 
-  const onChangeTasks = useCallback<OnChangeTasks>(
+  const onChangeTasks = useCallback<OnCommitTasks>(
     (newTaskOrEmptys, action) => {
       const newTasks: Task[] = newTaskOrEmptys.map(task => task as Task);
       switch (action.type) {
@@ -155,10 +155,10 @@ export const CustomPalette: React.FC<AppProps> = props => {
       {...props}
       // columns={columns}
       theme={customTheme}
-      onAddTask={onAddTask}
-      onChangeTasks={onChangeTasks}
+      onAddTaskAction={onAddTask}
+      onCommitTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
-      onEditTask={onEditTask}
+      onEditTaskAction={onEditTask}
       onClick={handleClick}
       tasks={tasks}
       viewMode={viewMode}
@@ -169,7 +169,7 @@ export const CustomPalette: React.FC<AppProps> = props => {
       enableTableListContextMenu={1}
       isAdjustToWorkingDates={false}
       // isProgressChangeable={() => true}
-      allowMoveTask={(_, method) => {
+      allowReorderTask={(_, method) => {
         return method !== "inside";
       }}
     />

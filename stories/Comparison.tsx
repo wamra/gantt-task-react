@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
+import { Gantt, OnCommitTasks, Task, TaskOrEmpty } from "../src";
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
@@ -20,7 +20,7 @@ export const Comparison: React.FC<AppProps> = props => {
     return [...firstLevelTasks, ...secondLevelTasks];
   });
 
-  const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
+  const onChangeTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
         if (
@@ -62,10 +62,10 @@ export const Comparison: React.FC<AppProps> = props => {
     <Gantt
       comparisonLevels={2}
       {...props}
-      onAddTask={onAddTask}
-      onChangeTasks={onChangeTasks}
+      onAddTaskAction={onAddTask}
+      onCommitTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
-      onEditTask={onEditTask}
+      onEditTaskAction={onEditTask}
       onClick={handleClick}
       isShowTaskNumbers={false}
       tasks={tasks}

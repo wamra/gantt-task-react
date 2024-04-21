@@ -3,8 +3,8 @@ import React, { useCallback, useState } from "react";
 import {
   Distances,
   Gantt,
-  Icons,
-  OnChangeTasks,
+  GanttRenderIconsProps,
+  OnCommitTasks,
   Task,
   TaskOrEmpty,
   ViewMode,
@@ -12,7 +12,7 @@ import {
 
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
-const icons: Icons = {
+const icons: GanttRenderIconsProps = {
   renderAddIcon: () => <>➕</>,
   renderClosedIcon: () => <>📁</>,
   renderDeleteIcon: () => <>➖</>,
@@ -32,7 +32,7 @@ type AppProps = {
 export const CustomIcons: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
-  const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
+  const onChangeTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
         if (
@@ -77,10 +77,10 @@ export const CustomIcons: React.FC<AppProps> = props => {
         distances
       }}
       icons={icons}
-      onAddTask={onAddTask}
-      onChangeTasks={onChangeTasks}
+      onAddTaskAction={onAddTask}
+      onCommitTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
-      onEditTask={onEditTask}
+      onEditTaskAction={onEditTask}
       onClick={handleClick}
       tasks={tasks}
       viewMode={ViewMode.Day}

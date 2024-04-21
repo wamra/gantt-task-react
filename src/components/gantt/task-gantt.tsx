@@ -5,9 +5,9 @@ import { Grid, GridProps } from "../grid/grid";
 import { Calendar, CalendarProps } from "../calendar/calendar";
 import { TaskGanttContent, TaskGanttContentProps } from "./task-gantt-content";
 import styles from "./gantt.module.css";
-import { GanttActionsOption, Task } from "../../types";
+import { GanttTaskBarActions, Task } from "../../types";
 
-export interface TaskGanttProps extends GanttActionsOption {
+export interface TaskGanttProps extends GanttTaskBarActions {
   barProps: TaskGanttContentProps;
   calendarProps: Omit<CalendarProps, "scrollRef">;
   fullRowHeight: number;

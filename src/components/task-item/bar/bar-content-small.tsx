@@ -4,13 +4,13 @@ import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
 import { BarProgressHandle } from "./bar-progress-handle";
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types";
+import type { TaskBarMoveAction } from "../../../types";
 
 import styles from "./bar.module.css";
 
 export const BarContentSmall: React.FC<
   TaskItemProps & {
-    onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
+    onTaskEventStart: (action: TaskBarMoveAction, clientX: number) => void;
   }
 > = ({
   distances: { barCornerRadius, handleWidth },

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { addDays } from "date-fns";
 
-import { Gantt, OnChangeTasks, Task, TaskOrEmpty } from "../src";
+import { Gantt, OnCommitTasks, Task, TaskOrEmpty } from "../src";
 
 import { onAddTask, onEditTask } from "./helper";
 
@@ -129,7 +129,7 @@ export const StressTest: React.FC<AppProps> = ({
     setTasks(initTasks(numberOfRoots, numberOfSubtasks, depth));
   }, [numberOfRoots, numberOfSubtasks, depth]);
 
-  const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
+  const onChangeTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
         if (
@@ -169,10 +169,10 @@ export const StressTest: React.FC<AppProps> = ({
 
   return (
     <Gantt
-      onAddTask={onAddTask}
-      onChangeTasks={onChangeTasks}
+      onAddTaskAction={onAddTask}
+      onCommitTasks={onChangeTasks}
       onDoubleClick={handleDblClick}
-      onEditTask={onEditTask}
+      onEditTaskAction={onEditTask}
       onClick={handleClick}
       tasks={tasks}
     />

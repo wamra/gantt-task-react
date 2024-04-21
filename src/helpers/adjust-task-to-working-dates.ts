@@ -1,8 +1,8 @@
-import { BarMoveAction, Task, ViewMode } from "../types";
+import { TaskBarMoveAction, Task, ViewMode } from "../types";
 import { countHolidays } from "./count-holidays";
 
 type AdjustTaskToWorkingDatesParams = {
-  action: BarMoveAction;
+  action: TaskBarMoveAction;
   changedTask: Task;
   checkIsHoliday: (date: Date) => boolean;
   getNextWorkingDate: (date: Date) => Date;

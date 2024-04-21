@@ -15,4 +15,6 @@ export * from "./components/context-menu-options";
 export * from "./constants";
 
 export * from "./types/public-types";
-export type { RelationMoveTarget } from "./types/gantt-task-actions";
+export * from "./types/common-types";
+export * from "./types/theme-types";
+export * from "./types/theme-locale";

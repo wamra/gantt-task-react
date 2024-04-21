@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 
-import { ColumnProps, Icons } from "../../../types";
+import { ColumnProps, GanttRenderIconsProps } from "../../../types";
 
 import styles from "./title-column.module.css";
 import { ExpandMoreIcon } from "../../icons/expand-more-icon";
@@ -10,7 +10,7 @@ const getExpanderSymbol = (
   hasChildren: boolean,
   isClosed: boolean,
   iconWidth: number,
-  icons: Partial<Icons> | undefined
+  icons: Partial<GanttRenderIconsProps> | undefined
 ) => {
   if (!hasChildren) {
     return icons?.renderNoChildrenIcon ? icons.renderNoChildrenIcon() : "";

@@ -2,13 +2,13 @@ import type { MouseEvent, RefObject } from "react";
 import React, { memo, useCallback } from "react";
 
 import {
-  AllowMoveTask,
+  AllowReorderTask,
   ChildByLevelMap,
   Column,
   DateSetup,
   DependencyMap,
   Distances,
-  Icons,
+  GanttRenderIconsProps,
   MapTaskToNestedIndex,
   OnResizeColumn,
   Task,
@@ -26,9 +26,9 @@ import { checkHasChildren } from "../../helpers/check-has-children";
 
 export type TaskListProps = {
   ganttRef: RefObject<HTMLDivElement>;
-  allowMoveTask: AllowMoveTask;
-  canMoveTasks: boolean;
-  canResizeColumns: boolean;
+  allowReorderTask?: AllowReorderTask;
+  canReorderTasks?: boolean;
+  canResizeColumns?: boolean;
   childTasksMap: ChildByLevelMap;
   columnsProp: readonly Column[];
   cutIdsMirror: Readonly<Record<string, true>>;
@@ -39,7 +39,7 @@ export type TaskListProps = {
   ganttFullHeight: number;
   ganttHeight: number;
   getTaskCurrentState: (task: Task) => Task;
-  handleAddTask: (task: Task) => void;
+  handleAddTask: (task: Task | null) => void;
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleEditTask: (task: TaskOrEmpty) => void;
   handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
@@ -50,8 +50,8 @@ export type TaskListProps = {
     clientX: number,
     clientY: number
   ) => void;
-  icons?: Partial<Icons>;
-  isShowTaskNumbers: boolean;
+  icons?: Partial<GanttRenderIconsProps>;
+  isShowTaskNumbers?: boolean;
   mapTaskToNestedIndex: MapTaskToNestedIndex;
   onClick?: (task: TaskOrEmpty) => void;
   onExpanderClick: (task: Task) => void;
@@ -67,7 +67,7 @@ export type TaskListProps = {
 };
 
 const TaskListInner: React.FC<TaskListProps> = ({
-  allowMoveTask,
+  allowReorderTask,
   canResizeColumns,
   childTasksMap,
   columnsProp,
@@ -99,7 +99,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
   taskListRef,
   tasks,
   onResizeColumn,
-  canMoveTasks,
+  canReorderTasks,
 }) => {
   // Manage the column and list table resizing
   const [
@@ -108,7 +108,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     tableWidth,
     onTableResizeStart,
     onColumnResizeStart,
-  ] = useTableListResize(columnsProp, canMoveTasks, onResizeColumn, ganttRef);
+  ] = useTableListResize(columnsProp, canReorderTasks, onResizeColumn, ganttRef);
 
   const renderedIndexes = useOptimizedList(
     taskListContainerRef,
@@ -183,7 +183,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     ]
   );
 
-  const RenderTaskListTable = canMoveTasks
+  const RenderTaskListTable = canReorderTasks
     ? TaskListSortableTable
     : TaskListTable;
 
@@ -196,7 +196,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
         }}
       >
         <TaskListTableHeaders
-          canMoveTasks={canMoveTasks}
+          canMoveTasks={canReorderTasks}
           headerHeight={distances.headerHeight}
           columns={columns}
           onColumnResizeStart={onColumnResizeStart}
@@ -228,8 +228,8 @@ const TaskListInner: React.FC<TaskListProps> = ({
               <RenderTaskListTable
                 ganttRef={ganttRef}
                 getTableRowProps={getTableRowProps}
-                canMoveTasks={canMoveTasks}
-                allowMoveTask={allowMoveTask}
+                canMoveTasks={canReorderTasks}
+                allowMoveTask={allowReorderTask}
                 childTasksMap={childTasksMap}
                 columns={columns}
                 cutIdsMirror={cutIdsMirror}

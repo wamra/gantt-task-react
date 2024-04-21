@@ -6,7 +6,7 @@ import {
   DateEndColumn,
   DateStartColumn,
   Gantt,
-  OnChangeTasks,
+  OnCommitTasks,
   OnResizeColumn,
   Task,
   TaskOrEmpty,
@@ -81,7 +81,7 @@ export const getColumns = (
 export const CustomColumns: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
-  const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
+  const onChangeTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
         if (
@@ -144,10 +144,10 @@ export const CustomColumns: React.FC<AppProps> = props => {
       <Gantt
         {...props}
         columns={displayedColumns}
-        onAddTask={onAddTask}
-        onChangeTasks={onChangeTasks}
+        onAddTaskAction={onAddTask}
+        onCommitTasks={onChangeTasks}
         onDoubleClick={handleDblClick}
-        onEditTask={onEditTask}
+        onEditTaskAction={onEditTask}
         onClick={handleClick}
         tasks={tasks}
         onResizeColumn={onResizeColumn}

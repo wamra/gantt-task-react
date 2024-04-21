@@ -7,7 +7,7 @@ import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
 import { getTaskCoordinates } from "../../helpers/get-task-coordinates";
 import { roundTaskDates } from "../../helpers/round-task-dates";
 import {
-  BarMoveAction,
+  TaskBarMoveAction,
   ChangeInProgress,
   ChildByLevelMap,
   DependentMap,
@@ -189,7 +189,7 @@ type UseTaskDragParams = {
   mapTaskToCoordinates: MapTaskToCoordinates;
   mapTaskToGlobalIndex: TaskToGlobalIndexMap;
   onDateChange: (
-    action: BarMoveAction,
+    action: TaskBarMoveAction,
     changedTask: Task,
     originalTask: Task
   ) => void;
@@ -231,7 +231,7 @@ export const useTaskDrag = ({
 }: UseTaskDragParams): [
   ChangeInProgress | null,
   (
-    action: BarMoveAction,
+    action: TaskBarMoveAction,
     task: Task,
     clientX: number,
     taskRootNode: Element
@@ -249,7 +249,7 @@ export const useTaskDrag = ({
    */
   const handleTaskDragStart = useCallback(
     (
-      action: BarMoveAction,
+      action: TaskBarMoveAction,
       task: Task,
       clientX: number,
       taskRootNode: Element

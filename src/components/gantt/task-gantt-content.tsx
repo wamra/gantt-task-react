@@ -2,13 +2,13 @@ import type { MouseEvent, ReactNode } from "react";
 import React, { memo, useMemo } from "react";
 
 import {
-  BarMoveAction,
+  TaskBarMoveAction,
   ChildByLevelMap,
   CriticalPaths,
   DependencyMap,
   DependentMap,
   Distances,
-  GanttActionsOption,
+  GanttTaskBarActions,
   GanttRelationEvent,
   GlobalRowIndexToTaskMap,
   RelationKind,
@@ -24,7 +24,7 @@ import styles from "./task-gantt-content.module.css";
 import { checkHasChildren } from "../../helpers/check-has-children";
 import type { OptimizedListParams } from "../../helpers/use-optimized-list";
 
-export interface TaskGanttContentProps extends GanttActionsOption {
+export interface TaskGanttContentProps extends GanttTaskBarActions {
   authorizedRelations: RelationKind[];
   additionalLeftSpace: number;
   additionalRightSpace: number;
@@ -43,7 +43,7 @@ export interface TaskGanttContentProps extends GanttActionsOption {
   onTaskBarRelationStart: (target: RelationMoveTarget, task: Task) => void;
   onDeleteTask: (task: TaskOrEmpty) => void;
   onTaskBarDragStart: (
-    action: BarMoveAction,
+    action: TaskBarMoveAction,
     task: Task,
     clientX: number,
     taskRootNode: Element
@@ -56,7 +56,7 @@ export interface TaskGanttContentProps extends GanttActionsOption {
   rtl: boolean;
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   selectedIdsMirror: Readonly<Record<string, true>>;
-  setTooltipTask: (task: Task | null, element: Element | null) => void;
+  onTooltipTask: (task: Task | null, element: Element | null) => void;
   startColumnIndex: number;
   taskYOffset: number;
   visibleTasksMirror: Readonly<Record<string, true>>;
@@ -94,7 +94,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
   rtl,
   selectTaskOnMouseDown,
   selectedIdsMirror,
-  setTooltipTask,
+  onTooltipTask,
   startColumnIndex,
   taskYOffset,
   taskHeight,
@@ -245,7 +245,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
             onDoubleClick={onDoubleClick}
             onClick={onClick}
             onEventStart={onTaskBarDragStart}
-            onTooltipTask={setTooltipTask}
+            onTooltipTask={onTooltipTask}
             onRelationStart={onTaskBarRelationStart}
             isSelected={Boolean(selectedIdsMirror[taskId])}
             isCritical={isCritical}
@@ -444,7 +444,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
     onDoubleClick,
     onClick,
     onTaskBarDragStart,
-    setTooltipTask,
+    onTooltipTask,
     onTaskBarRelationStart,
     onDeleteTask,
     dependencyMap,

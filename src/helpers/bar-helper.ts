@@ -1,4 +1,4 @@
-import { BarMoveAction, Task, TaskCoordinates, ViewMode } from "../types";
+import { TaskBarMoveAction, Task, TaskCoordinates, ViewMode } from "../types";
 import { getDatesDiff } from "./get-dates-diff";
 import { getDateByOffset } from "./get-date-by-offset";
 
@@ -70,7 +70,7 @@ const dateByX = (
  * Method handles event in real time(mousemove) and on finish(mouseup)
  */
 export const handleTaskBySVGMouseEvent = (
-  action: BarMoveAction,
+  action: TaskBarMoveAction,
   selectedTask: Task,
   initialCoordinates: TaskCoordinates,
   coordinates: TaskCoordinates,
@@ -106,7 +106,7 @@ export const handleTaskBySVGMouseEvent = (
 };
 
 const handleTaskBySVGMouseEventForBar = (
-  action: BarMoveAction,
+  action: TaskBarMoveAction,
   selectedTask: Task,
   initialCoordinates: TaskCoordinates,
   coordinates: TaskCoordinates,
@@ -223,7 +223,7 @@ const handleTaskBySVGMouseEventForBar = (
 };
 
 const handleTaskBySVGMouseEventForMilestone = (
-  action: BarMoveAction,
+  action: TaskBarMoveAction,
   selectedTask: Task,
   initialCoordinates: TaskCoordinates,
   coordinates: TaskCoordinates,

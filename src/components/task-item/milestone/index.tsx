@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useMemo } from "react";
 
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types";
+import type { TaskBarMoveAction } from "../../../types";
 
 import styles from "./milestone.module.css";
 import { BarRelationWrapper } from "../bar-relation";
@@ -10,7 +10,7 @@ export const Milestone: React.FC<
   TaskItemProps & {
     onLeftRelationTriggerMouseDown: () => void;
     onRightRelationTriggerMouseDown: () => void;
-    onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
+    onTaskEventStart: (action: TaskBarMoveAction, clientX: number) => void;
   } & PropsWithChildren
 > = ({
   children: relationHandles,
