@@ -3,4 +3,5 @@
   stroke: var(--gantt-arrow-relation-color);
   stroke-width: 2;
   stroke-dasharray: 4;
+  z-index: 2;
 }

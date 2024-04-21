@@ -1,11 +1,11 @@
 import type { CSSProperties, RefObject } from "react";
 import React, { memo, SyntheticEvent, useMemo } from "react";
 
-import { Grid, GridProps } from "../grid/grid";
+import { GanttToday, GanttTodayProps } from "../gantt-today";
 import { Calendar, CalendarProps } from "../calendar/calendar";
 import { TaskGanttContent, TaskGanttContentProps } from "./task-gantt-content";
 import styles from "./gantt.module.css";
-import { GanttTaskBarActions, Task } from "../../types";
+import { GanttTaskBarActions } from "../../types";
 
 export interface TaskGanttProps extends GanttTaskBarActions {
   barProps: TaskGanttContentProps;
@@ -15,11 +15,10 @@ export interface TaskGanttProps extends GanttTaskBarActions {
   ganttFullHeight: number;
   ganttHeight: number;
   ganttSVGRef: RefObject<SVGSVGElement>;
-  gridProps: GridProps;
+  ganttTodayProps: GanttTodayProps;
   horizontalContainerRef: RefObject<HTMLDivElement>;
   onVerticalScrollbarScrollX: (event: SyntheticEvent<HTMLDivElement>) => void;
   verticalGanttContainerRef: RefObject<HTMLDivElement>;
-  isProgressChangeable?: (task: Task) => boolean;
 }
 
 const TaskGanttInner: React.FC<TaskGanttProps> = ({
@@ -31,8 +30,8 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
   ganttFullHeight,
   ganttHeight,
   ganttSVGRef,
-  gridProps,
-  gridProps: {
+  ganttTodayProps,
+  ganttTodayProps: {
     distances: { columnWidth, rowHeight, minimumRowDisplayed },
   },
   horizontalContainerRef,
@@ -98,7 +97,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             fontFamily={"var(--gantt-font-family)"}
             ref={ganttSVGRef}
           >
-            <Grid {...gridProps} />
+            <GanttToday {...ganttTodayProps} />
             <TaskGanttContent {...barProps} />
           </svg>
         </div>

@@ -282,7 +282,7 @@ export function initTasks() {
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 18),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 19),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 25),
       name: "Party Time",
       id: "party",
       progress: 0,

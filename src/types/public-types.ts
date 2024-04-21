@@ -27,6 +27,7 @@ export type RenderCustomLabel = (
   taskHeight: number,
   arrowIndent: number,
   taskYOffset: number,
+  movingAction: TaskBarMoveAction | null,
   rtl?: boolean
 ) => ReactNode;
 

@@ -31,7 +31,7 @@ const getNextCoordinates = (
 
   switch (action) {
     case "end": {
-      const nextX2 = Math.max(nextX, initialCoordinates.x1);
+      const nextX2 = Math.max(Math.max(nextX, initialCoordinates.x1), 0);
       const x2Diff = nextX2 - initialCoordinates.x2;
       const progressWidth = Math.max(
         (nextX2 - initialCoordinates.x1) * task.progress * 0.01,
@@ -45,7 +45,7 @@ const getNextCoordinates = (
             innerX2: nextX2 + additionalLeftSpace,
             progressWidth,
             progressX: initialCoordinates.progressX + x2Diff,
-            width: initialCoordinates.width + x2Diff,
+            width: Math.min(initialCoordinates.width + x2Diff, 1),
             x2: nextX2 - additionalLeftSpace,
           },
           x2Diff,
@@ -57,7 +57,7 @@ const getNextCoordinates = (
           ...prevValue.coordinates,
           innerX2: nextX2 + additionalLeftSpace,
           progressWidth,
-          width: initialCoordinates.width + x2Diff,
+          width: Math.min(initialCoordinates.width + x2Diff, 1),
           x2: nextX2 - additionalLeftSpace,
         },
         x2Diff,
@@ -65,7 +65,7 @@ const getNextCoordinates = (
     }
 
     case "start": {
-      const nextX1 = Math.min(nextX, initialCoordinates.x2);
+      const nextX1 = Math.max(Math.min(nextX, initialCoordinates.x2), 0);
       const x1Diff = nextX1 - initialCoordinates.x1;
       const progressWidth = Math.max(
         (initialCoordinates.x2 - nextX1) * task.progress * 0.01,
@@ -79,7 +79,7 @@ const getNextCoordinates = (
             innerX1: nextX1 + additionalLeftSpace,
             progressWidth,
             progressX: initialCoordinates.progressX - x1Diff,
-            width: initialCoordinates.width - x1Diff,
+            width: Math.min(initialCoordinates.width - x1Diff, 1),
             x1: nextX1,
           },
           x1Diff,
@@ -92,7 +92,7 @@ const getNextCoordinates = (
           innerX1: nextX1 + additionalLeftSpace,
           progressX: nextX1,
           progressWidth,
-          width: initialCoordinates.width - x1Diff,
+          width: Math.min(initialCoordinates.width - x1Diff, 1),
           x1: nextX1,
         },
         x1Diff,

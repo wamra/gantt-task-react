@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
@@ -30,7 +30,27 @@ export const Bar: React.FC<BarProps> = ({
   width,
   x1,
   x2,
+  movingAction,
+  ganttRelationEvent,
 }) => {
+  const isSmallWidth = useMemo(() => width < 30, [width]);
+  const handleHeight = useMemo(() => taskHeight - 2, [taskHeight]);
+  const isRelationDrawMode = useMemo(
+    () => !!ganttRelationEvent,
+    [ganttRelationEvent]
+  );
+  const isMovingProgress = useMemo(
+    () => movingAction === "progress",
+    [movingAction]
+  );
+
+  const isMovingDate = useMemo(
+    () => movingAction === "start" || movingAction === "end",
+    [movingAction]
+  );
+
+  // const isMovingEnd = useMemo(() => movingAction === "end", [movingAction]);
+
   const startMoveFullTask = useCallback(
     (clientX: number) => {
       onTaskEventStart("move", clientX);
@@ -64,7 +84,6 @@ export const Bar: React.FC<BarProps> = ({
     taskYOffset,
     taskHeight
   );
-  const handleHeight = taskHeight - 2;
 
   const renderBarDisplay = () => {
     if (task.type === "project") {
@@ -108,8 +127,6 @@ export const Bar: React.FC<BarProps> = ({
     }
   };
 
- //  const isSmallContent = width < handleWidth * 2;
-
   return (
     <BarRelationWrapper className={styles.barWrapper}>
       {renderBarDisplay()}
@@ -117,7 +134,7 @@ export const Bar: React.FC<BarProps> = ({
       {/* left */}
       {isDateChangeable(task) && (
         <BarDateHandle
-          className={styles.barHandle}
+          className={`${styles.barHandle} ${isMovingDate ? styles.barHandleImportantVisible : ""} ${isMovingProgress || isRelationDrawMode ? styles.barHandleImportantHidden : ""}`}
           dataTestId={`bar-date-handle-left-${task.id}`}
           barCornerRadius={barCornerRadius}
           height={handleHeight}
@@ -131,7 +148,7 @@ export const Bar: React.FC<BarProps> = ({
       {/* right */}
       {isDateChangeable(task) && (
         <BarDateHandle
-          className={styles.barHandle}
+          className={`${styles.barHandle} ${isMovingDate ? styles.barHandleImportantVisible : ""} ${isMovingProgress || isRelationDrawMode ? styles.barHandleImportantHidden : ""}`}
           dataTestId={`bar-date-handle-right-${task.id}`}
           barCornerRadius={barCornerRadius}
           height={handleHeight}
@@ -146,6 +163,7 @@ export const Bar: React.FC<BarProps> = ({
 
       {isProgressChangeable(task) && (
         <BarProgressHandle
+          className={`${styles.barHandle} ${isMovingProgress ? styles.barHandleImportantVisible : ""} ${isSmallWidth || isMovingDate || isRelationDrawMode ? styles.barHandleImportantHidden : ""}`}
           taskId={task.id}
           progressPoint={progressPoint}
           startMoveProgress={startMoveProgress}
@@ -153,19 +171,4 @@ export const Bar: React.FC<BarProps> = ({
       )}
     </BarRelationWrapper>
   );
-
-  // if (isSmallContent) {
-  //   return <BarContentSmall {...props} onTaskEventStart={onTaskEventStart} />;
-  // } else {
-  //   return (
-  //     <Bar
-  //       {...props}
-  //       onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
-  //       onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
-  //       onTaskEventStart={onTaskEventStart}
-  //     >
-  //       {relationHandles}
-  //     </Bar>
-  //   );
-  // }
 };

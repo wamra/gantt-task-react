@@ -17,7 +17,8 @@ import { Milestone } from "./milestone";
 import { BarRelationHandle } from "./bar-relation";
 import { TaskResponsiveLabel } from "./task-label";
 
-export interface TaskItemProps extends GanttTaskBarActions {
+export interface TaskItemProps
+  extends Omit<GanttTaskBarActions, "taskBarMovingAction"> {
   hasChildren: boolean;
   progressWidth: number;
   progressX: number;
@@ -36,6 +37,7 @@ export interface TaskItemProps extends GanttTaskBarActions {
   canDelete: boolean;
   isSelected: boolean;
   isCritical: boolean;
+  movingAction: TaskBarMoveAction | null;
   rtl: boolean;
 
   isRelationChangeable: (task: Task) => boolean;
@@ -60,6 +62,7 @@ export interface TaskItemProps extends GanttTaskBarActions {
 
 const TaskItemInner: React.FC<TaskItemProps> = props => {
   const {
+    movingAction,
     distances: { arrowIndent, relationCircleOffset, relationCircleRadius },
     onDeleteTask,
     isDateChangeable,
@@ -170,27 +173,31 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     const relationHandles = (
       <>
         {/* left */}
-        {isRelationChangeable && displayLeftRelationHandle && (
-          <BarRelationHandle
-            dataTestId={`bar-relation-handle-left-${task.id}`}
-            isRelationDrawMode={!!ganttRelationEvent}
-            x={x1 - relationCircleOffset}
-            y={taskYOffset + taskHalfHeight}
-            radius={relationCircleRadius}
-            startDrawRelation={onLeftRelationTriggerMouseDown}
-          />
-        )}
+        {isRelationChangeable(task) &&
+          !movingAction &&
+          displayLeftRelationHandle && (
+            <BarRelationHandle
+              dataTestId={`bar-relation-handle-left-${task.id}`}
+              isRelationDrawMode={!!ganttRelationEvent}
+              x={x1 - relationCircleOffset}
+              y={taskYOffset + taskHalfHeight}
+              radius={relationCircleRadius}
+              startDrawRelation={onLeftRelationTriggerMouseDown}
+            />
+          )}
         {/* right */}
-        {isRelationChangeable && displayRightRelationHandle && (
-          <BarRelationHandle
-            dataTestId={`bar-relation-handle-right-${task.id}`}
-            isRelationDrawMode={!!ganttRelationEvent}
-            x={x2 + relationCircleOffset}
-            y={taskYOffset + taskHalfHeight}
-            radius={relationCircleRadius}
-            startDrawRelation={onRightRelationTriggerMouseDown}
-          />
-        )}
+        {isRelationChangeable(task) &&
+          !movingAction &&
+          displayRightRelationHandle && (
+            <BarRelationHandle
+              dataTestId={`bar-relation-handle-right-${task.id}`}
+              isRelationDrawMode={!!ganttRelationEvent}
+              x={x2 + relationCircleOffset}
+              y={taskYOffset + taskHalfHeight}
+              radius={relationCircleRadius}
+              startDrawRelation={onRightRelationTriggerMouseDown}
+            />
+          )}
       </>
     );
 
@@ -212,6 +219,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
           onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
+
         >
           {relationHandles}
         </Bar>
@@ -220,6 +228,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     authorizedRelations,
     ganttRelationEvent,
     isRelationChangeable,
+    movingAction,
     onLeftRelationTriggerMouseDown,
     onRightRelationTriggerMouseDown,
     onTaskEventStart,
@@ -281,6 +290,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           taskHeight,
           arrowIndent,
           taskYOffset,
+          movingAction,
           rtl
         )
       ) : (

@@ -6,18 +6,31 @@ export const roundTaskDates = (
   roundEndDate: (date: Date) => Date
 ): Task => {
   switch (task.type) {
-    case "milestone":
+    case "milestone": {
+      const newMilestoneStartDate = roundEndDate(task.start);
+      let newMilestoneEndDate = roundEndDate(task.end);
+      newMilestoneEndDate =
+        newMilestoneStartDate.getTime() !== newMilestoneEndDate.getTime()
+          ? newMilestoneStartDate
+          : newMilestoneEndDate;
       return {
         ...task,
-        end: roundEndDate(task.end),
-        start: roundEndDate(task.start),
+        end: newMilestoneEndDate,
+        start: newMilestoneStartDate,
       };
+    }
+    default: {
+      let newStartDate = roundStartDate(task.start);
+      const newEndDate = roundEndDate(task.end);
+      if (newStartDate.getTime() > newEndDate.getTime()) {
+        newStartDate = newEndDate;
+      }
 
-    default:
       return {
         ...task,
-        end: roundEndDate(task.end),
-        start: roundStartDate(task.start),
+        end: newEndDate,
+        start: newStartDate,
       };
+    }
   }
 };

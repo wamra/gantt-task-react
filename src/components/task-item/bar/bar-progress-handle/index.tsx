@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "../bar.module.css";
 import { TaskId } from "../../../../types";
 
 type BarProgressHandleProps = {
@@ -12,11 +11,12 @@ export const BarProgressHandle: React.FC<BarProgressHandleProps> = ({
   taskId,
   progressPoint,
   startMoveProgress,
+  className,
 }) => {
   return (
     <polygon
       data-testid={`bar-progress-handle-${taskId}`}
-      className={styles.barHandle}
+      className={className}
       points={progressPoint}
       onMouseDown={e => {
         startMoveProgress(e.clientX);

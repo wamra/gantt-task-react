@@ -22,7 +22,7 @@ import {
   TaskOrEmpty,
   ViewMode,
 } from "../../types";
-import { GridProps } from "../grid/grid";
+import { GanttTodayProps } from "../gantt-today";
 import { ganttDateRange } from "../../helpers/date-helper";
 import { CalendarProps } from "../calendar/calendar";
 import { TaskGanttContentProps } from "./task-gantt-content";
@@ -113,8 +113,8 @@ export const Gantt: React.FC<GanttProps> = props => {
     onEditTaskAction,
     onWheel,
 
-    roundEndDate: roundEndDateProp = defaultRoundEndDate,
-    roundStartDate: roundStartDateProp = defaultRoundStartDate,
+    roundEndDate: clientRoundEndDate = defaultRoundEndDate,
+    roundStartDate: clientRoundStartDate = defaultRoundStartDate,
     tasks,
     timeStep = 300000,
     viewDate,
@@ -176,13 +176,13 @@ export const Gantt: React.FC<GanttProps> = props => {
   ] = useHorizontalScrollbars();
 
   const roundEndDate = useCallback(
-    (date: Date) => roundEndDateProp(date, viewMode),
-    [roundEndDateProp, viewMode]
+    (date: Date) => clientRoundEndDate(date, viewMode),
+    [clientRoundEndDate, viewMode]
   );
 
   const roundStartDate = useCallback(
-    (date: Date) => roundStartDateProp(date, viewMode),
-    [roundStartDateProp, viewMode]
+    (date: Date) => clientRoundStartDate(date, viewMode),
+    [clientRoundStartDate, viewMode]
   );
 
   const [currentViewDate, setCurrentViewDate] = useState<Date | undefined>(
@@ -1392,7 +1392,7 @@ export const Gantt: React.FC<GanttProps> = props => {
     [additionalLeftSpace, additionalRightSpace, svgWidth]
   );
 
-  const gridProps: GridProps = useMemo(
+  const gridProps: GanttTodayProps = useMemo(
     () => ({
       additionalLeftSpace,
       distances,
@@ -1445,6 +1445,10 @@ export const Gantt: React.FC<GanttProps> = props => {
   const renderTaskBarProps: TaskGanttContentProps = useMemo(
     () => ({
       ...taskBar,
+      taskBarMovingAction: task =>
+        task.id === changeInProgress?.changedTask?.id
+          ? changeInProgress.action
+          : null,
       authorizedRelations,
       additionalLeftSpace,
       additionalRightSpace,
@@ -1494,20 +1498,22 @@ export const Gantt: React.FC<GanttProps> = props => {
       getDate,
       getTaskCoordinates,
       handleBarRelationStart,
-      handleDeleteTasks,
       handleTaskDragStart,
+      onChangeTooltipTask,
       mapGlobalRowIndexToTask,
       onArrowDoubleClick,
       renderedRowIndexes,
       rtl,
       selectTaskOnMouseDown,
       selectedIdsMirror,
-      onChangeTooltipTask,
       startColumnIndex,
       taskHalfHeight,
       taskHeight,
       taskYOffset,
       visibleTasksMirror,
+      changeInProgress?.changedTask?.id,
+      changeInProgress?.action,
+      handleDeleteTasks,
     ]
   );
 
@@ -1600,7 +1606,7 @@ export const Gantt: React.FC<GanttProps> = props => {
               ganttFullHeight={ganttFullHeight}
               ganttHeight={ganttHeight}
               ganttSVGRef={ganttSVGRef}
-              gridProps={gridProps}
+              ganttTodayProps={gridProps}
               horizontalContainerRef={horizontalContainerRef}
               onVerticalScrollbarScrollX={onVerticalScrollbarScrollX}
               verticalGanttContainerRef={verticalGanttContainerRef}

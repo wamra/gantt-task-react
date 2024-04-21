@@ -9,12 +9,12 @@ import {
   OnCommitTasks,
   OnResizeColumn,
   Task,
-  TaskOrEmpty,
-  TaskResponsiveLabel,
   TaskCenterLabel,
+  TaskOrEmpty,
   TitleColumn,
+  ViewMode,
 } from "../src";
-import { differenceInDays, isWeekend } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { initTasks, onAddTask, onEditTask } from "./helper";
 import { TaskOutlineLabel } from "../src/components/task-item/task-label";
 
@@ -145,6 +145,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
     <>
       <Gantt
         {...props}
+        viewMode={ViewMode.Day}
         columns={displayedColumns}
         taskBar={{
           onClick: handleClick,
@@ -156,19 +157,27 @@ export const CustomColumns: React.FC<AppProps> = props => {
             taskHeight,
             arrowIndent,
             taskYOffset,
+            movingAction,
             rtl
           ) => (
             <>
-              <TaskCenterLabel
-                hideWhenSmall
-                x1={x1}
-                rtl={rtl}
-                taskHeight={taskHeight}
-                arrowIndent={arrowIndent}
-                taskYOffset={taskYOffset}
-                width={width}
-                label={task.type === 'empty' ? null : `${differenceInDays(task.end, task.start)} day(s)`}
-              />
+              {movingAction !== "start" && movingAction !== "end" && (
+                <TaskCenterLabel
+                  hideWhenSmall
+                  x1={x1}
+                  rtl={rtl}
+                  taskHeight={taskHeight}
+                  arrowIndent={arrowIndent}
+                  taskYOffset={taskYOffset}
+                  width={width}
+                  label={
+                    task.type === "empty"
+                      ? null
+                      : `${differenceInDays(task.end, task.start)} day(s)`
+                  }
+                />
+              )}
+
               <TaskOutlineLabel
                 x1={x1}
                 rtl={rtl}
@@ -188,6 +197,7 @@ export const CustomColumns: React.FC<AppProps> = props => {
         onCommitTasks={onCommitTasks}
         onEditTaskAction={onEditTask}
         tasks={tasks}
+        isAdjustToWorkingDates={true}
       />
     </>
   );

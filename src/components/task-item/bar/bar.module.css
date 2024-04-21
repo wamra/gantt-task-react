@@ -16,6 +16,16 @@
   visibility: hidden;
 }
 
+.barHandleImportantVisible {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.barHandleImportantHidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
 .barBackground {
   user-select: none;
   stroke-width: 0;

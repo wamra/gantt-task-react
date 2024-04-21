@@ -17,7 +17,7 @@ export const DEFAULT_THEME: GanttTheme = {
     hoverFilter: "inherit",
     // hoverFilter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, .7))",
 
-    calendarTodayColor: "rgba(233, 30, 99, 0.2)",
+    calendarTodayColor: "rgba(233, 30, 99, 1)",
     calendarHolidayColor: "rgba(233, 233, 233, 0.3)",
     calendarStrokeColor: "#e0e0e0",
     scrollbarThumbColor: "#B0BEC5",

@@ -59,7 +59,7 @@ export const countTaskCoordinates = (
 
   const taskX2 = type === "milestone" ? x2 + taskHeight * 0.5 : x2;
 
-  const taskWidth = type === "milestone" ? taskHeight : taskX2 - taskX1;
+  const taskWidth = type === "milestone" ? taskHeight : Math.max(taskX2 - taskX1, 20);
 
   const containerX = taskX1 - columnWidth;
   const containerWidth = svgWidth - containerX;

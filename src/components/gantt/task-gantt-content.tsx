@@ -67,6 +67,7 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   isProgressChangeable?: (task: Task) => boolean;
   isDateChangeable?: (task: Task) => boolean;
   isRelationChangeable?: (task: Task) => boolean;
+  taskBarMovingAction: (task: TaskOrEmpty) => TaskBarMoveAction | null;
 }
 
 const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
@@ -106,6 +107,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
   isRelationChangeable = task => !task.isDisabled,
   allowMoveTaskBar,
   renderCustomLabel,
+  taskBarMovingAction,
 }) => {
   const renderedHolidays = useMemo(() => {
     const { columnWidth } = distances;
@@ -225,6 +227,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
           key={key}
         >
           <TaskItem
+            movingAction={taskBarMovingAction(task)}
             allowMoveTaskBar={allowMoveTaskBar}
             hasChildren={checkHasChildren(task, childTasksMap)}
             progressWidth={progressWidth}
@@ -431,6 +434,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
     getTaskCoordinates,
     additionalLeftSpace,
     fullRowHeight,
+    taskBarMovingAction,
     allowMoveTaskBar,
     childTasksMap,
     rtl,
