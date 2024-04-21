@@ -2,13 +2,14 @@ import type { MouseEvent, MouseEventHandler } from "react";
 import React, { memo, useCallback, useMemo, useRef } from "react";
 
 import {
-  TaskBarMoveAction,
   Distances,
-  GanttTaskBarActions,
   GanttRelationEvent,
+  GanttTaskBarActions,
   RelationKind,
   RelationMoveTarget,
+  RenderCustomLabel,
   Task,
+  TaskBarMoveAction,
   TaskOrEmpty,
 } from "../../types";
 import { Bar } from "./bar";
@@ -53,6 +54,8 @@ export interface TaskItemProps extends GanttTaskBarActions {
     taskRootNode: Element
   ) => void;
   onTooltipTask: (task: Task | null, element: Element | null) => void;
+
+  renderCustomLabel?: RenderCustomLabel;
 }
 
 const TaskItemInner: React.FC<TaskItemProps> = props => {
@@ -79,6 +82,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     x1,
     x2,
     allowMoveTaskBar,
+    renderCustomLabel,
   } = props;
 
   const taskRootRef = useRef<SVGGElement>(null);
@@ -269,15 +273,27 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       ref={taskRootRef}
     >
       {taskItem}
-      <TaskResponsiveLabel
-        x1={x1}
-        width={width}
-        taskHeight={taskHeight}
-        arrowIndent={arrowIndent}
-        rtl={rtl}
-        label={task.name}
-        taskYOffset={taskYOffset}
-      />
+      {renderCustomLabel ? (
+        renderCustomLabel(
+          task,
+          x1,
+          width,
+          taskHeight,
+          arrowIndent,
+          taskYOffset,
+          rtl
+        )
+      ) : (
+        <TaskResponsiveLabel
+          x1={x1}
+          width={width}
+          taskHeight={taskHeight}
+          arrowIndent={arrowIndent}
+          rtl={rtl}
+          label={task.name}
+          taskYOffset={taskYOffset}
+        />
+      )}
     </g>
   );
 };

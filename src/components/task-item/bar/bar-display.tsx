@@ -1,7 +1,7 @@
 import React, { CSSProperties, useMemo } from "react";
 
 import style from "./bar.module.css";
-import { TaskId } from "../../../types/internal-types";
+import { TaskId } from "../../../types";
 
 type BarDisplayProps = {
   barCornerRadius: number;

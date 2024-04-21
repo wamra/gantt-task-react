@@ -1,18 +1,12 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import style from "./task-label.module.css";
+import { TaskLabelProps } from "./types";
 
-export interface TaskLabelProps {
-  label: string;
-  taskYOffset: number;
-  width: number;
-  x1: number;
-  taskHeight: number;
-  arrowIndent: number;
-  rtl: boolean;
+interface Props extends TaskLabelProps {
   alwaysOutline?: boolean;
 }
 
-const TaskResponsiveLabelInner: React.FC<TaskLabelProps> = props => {
+const TaskResponsiveLabelInner: React.FC<Props> = props => {
   const {
     alwaysOutline,
     arrowIndent,
@@ -33,7 +27,7 @@ const TaskResponsiveLabelInner: React.FC<TaskLabelProps> = props => {
     }
   }, [textRef, width]);
 
-  const x = useMemo(() => {
+  const calculatedX = useMemo(() => {
     if (isTextInside && !alwaysOutline) {
       return x1 + width * 0.5;
     }
@@ -47,7 +41,7 @@ const TaskResponsiveLabelInner: React.FC<TaskLabelProps> = props => {
 
   return (
     <text
-      x={x}
+      x={calculatedX}
       y={taskYOffset + taskHeight * 0.5}
       className={
         isTextInside && !alwaysOutline

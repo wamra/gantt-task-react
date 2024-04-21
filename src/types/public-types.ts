@@ -20,6 +20,16 @@ export type RenderTopHeader = (
   dateSetup: DateSetup
 ) => ReactNode;
 
+export type RenderCustomLabel = (
+  task: TaskOrEmpty,
+  x1: number,
+  width: number,
+  taskHeight: number,
+  arrowIndent: number,
+  taskYOffset: number,
+  rtl?: boolean
+) => ReactNode;
+
 export type RenderBottomHeader = (
   date: Date,
   viewMode: ViewMode,
@@ -131,13 +141,13 @@ export type OnChangeTasksAction =
         dependentTasks: readonly Task[];
         parentIndex: number;
         childIndexes: readonly number[];
-      }
+      };
     }
   | {
       type: "progress_change";
       payload: {
         task: Task;
-      }
+      };
     }
   | {
       type: "relation_change";
@@ -145,16 +155,16 @@ export type OnChangeTasksAction =
         /**
          * Task, from, index
          */
-        from: [Task, RelationMoveTarget, number],
+        from: [Task, RelationMoveTarget, number];
         /**
          * Task, to, index
          */
-        to: [Task, RelationMoveTarget, number],
+        to: [Task, RelationMoveTarget, number];
         /**
          * One of tasks is descendant of other task
          */
         isOneDescendant: boolean;
-      }
+      };
     }
   | {
       type: "expandState_change";
@@ -219,6 +229,11 @@ export interface GanttTaskBarProps extends GanttTaskBarActions {
    * Render function of top part of header above chart
    */
   renderTopHeader?: RenderTopHeader;
+
+  /**
+   * Render custom label
+   */
+  renderCustomLabel?: RenderCustomLabel;
 
   /**
    * Show critical path

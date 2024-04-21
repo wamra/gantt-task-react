@@ -11,6 +11,10 @@
   pointer-events: none;
 }
 
+.barLabelHidden {
+  display: none;
+}
+
 /*noinspection CssUnresolvedCustomProperty*/
 .barLabelOutside {
   fill: var(--gantt-secondary-text-color);

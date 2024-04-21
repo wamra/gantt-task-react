@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../bar.module.css";
-import { TaskId } from "../../../../types/internal-types";
+import { TaskId } from "../../../../types";
 
 type BarProgressHandleProps = {
   className?: string;

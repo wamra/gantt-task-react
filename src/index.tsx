@@ -8,13 +8,11 @@ export { DateStartColumn } from "./components/task-list/task-list-table-columns/
 export { DeleteColumn } from "./components/task-list/task-list-table-columns/delete-column";
 export { DependenciesColumn } from "./components/task-list/task-list-table-columns/dependencies-column";
 export { TitleColumn } from "./components/task-list/task-list-table-columns/title-column";
+export { TaskResponsiveLabel, TaskCenterLabel } from "./components/task-item/task-label";
 export { useTaskListColumnsBuilder } from "./components/task-list/task-list-table-columns/use-task-list-columns-builder";
 
 export * from "./components/context-menu-options";
 
 export * from "./constants";
 
-export * from "./types/public-types";
-export * from "./types/common-types";
-export * from "./types/theme-types";
-export * from "./types/theme-locale";
+export * from "./types";

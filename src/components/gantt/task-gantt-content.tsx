@@ -2,18 +2,19 @@ import type { MouseEvent, ReactNode } from "react";
 import React, { memo, useMemo } from "react";
 
 import {
-  TaskBarMoveAction,
   ChildByLevelMap,
   CriticalPaths,
   DependencyMap,
   DependentMap,
   Distances,
-  GanttTaskBarActions,
   GanttRelationEvent,
+  GanttTaskBarActions,
   GlobalRowIndexToTaskMap,
   RelationKind,
   RelationMoveTarget,
+  RenderCustomLabel,
   Task,
+  TaskBarMoveAction,
   TaskCoordinates,
   TaskOrEmpty,
 } from "../../types";
@@ -62,7 +63,7 @@ export interface TaskGanttContentProps extends GanttTaskBarActions {
   visibleTasksMirror: Readonly<Record<string, true>>;
   taskHeight: number;
   taskHalfHeight: number;
-
+  renderCustomLabel?: RenderCustomLabel;
   isProgressChangeable?: (task: Task) => boolean;
   isDateChangeable?: (task: Task) => boolean;
   isRelationChangeable?: (task: Task) => boolean;
@@ -104,6 +105,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
   isDateChangeable = task => !task.isDisabled,
   isRelationChangeable = task => !task.isDisabled,
   allowMoveTaskBar,
+  renderCustomLabel,
 }) => {
   const renderedHolidays = useMemo(() => {
     const { columnWidth } = distances;
@@ -251,6 +253,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
             isCritical={isCritical}
             rtl={rtl}
             onDeleteTask={onDeleteTask}
+            renderCustomLabel={renderCustomLabel}
           />
         </svg>
       );
@@ -447,6 +450,7 @@ const TaskGanttContentInner: React.FC<TaskGanttContentProps> = ({
     onTooltipTask,
     onTaskBarRelationStart,
     onDeleteTask,
+    renderCustomLabel,
     dependencyMap,
     dependentMap,
     visibleTasksMirror,

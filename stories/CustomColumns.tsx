@@ -10,10 +10,13 @@ import {
   OnResizeColumn,
   Task,
   TaskOrEmpty,
+  TaskResponsiveLabel,
+  TaskCenterLabel,
   TitleColumn,
 } from "../src";
-
+import { differenceInDays, isWeekend } from "date-fns";
 import { initTasks, onAddTask, onEditTask } from "./helper";
+import { TaskOutlineLabel } from "../src/components/task-item/task-label";
 
 const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   if (task.type === "project" || task.type === "task") {
@@ -81,7 +84,7 @@ export const getColumns = (
 export const CustomColumns: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
-  const onChangeTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
+  const onCommitTasks = useCallback<OnCommitTasks>((nextTasks, action) => {
     switch (action.type) {
       case "delete_relation":
         if (
@@ -119,7 +122,6 @@ export const CustomColumns: React.FC<AppProps> = props => {
     console.log("On Click event Id:" + task.id);
   }, []);
 
-
   const typeToColumn: Map<TaskListColumnEnum, Column> = getColumns(
     [
       TaskListColumnEnum.NAME,
@@ -144,13 +146,48 @@ export const CustomColumns: React.FC<AppProps> = props => {
       <Gantt
         {...props}
         columns={displayedColumns}
+        taskBar={{
+          onClick: handleClick,
+          onDoubleClick: handleDblClick,
+          renderCustomLabel: (
+            task,
+            x1,
+            width,
+            taskHeight,
+            arrowIndent,
+            taskYOffset,
+            rtl
+          ) => (
+            <>
+              <TaskCenterLabel
+                hideWhenSmall
+                x1={x1}
+                rtl={rtl}
+                taskHeight={taskHeight}
+                arrowIndent={arrowIndent}
+                taskYOffset={taskYOffset}
+                width={width}
+                label={task.type === 'empty' ? null : `${differenceInDays(task.end, task.start)} day(s)`}
+              />
+              <TaskOutlineLabel
+                x1={x1}
+                rtl={rtl}
+                taskHeight={taskHeight}
+                arrowIndent={arrowIndent}
+                taskYOffset={taskYOffset}
+                width={width}
+                label={task.name}
+              />
+            </>
+          ),
+        }}
+        taskList={{
+          onResizeColumn: onResizeColumn,
+        }}
         onAddTaskAction={onAddTask}
-        onCommitTasks={onChangeTasks}
-        onDoubleClick={handleDblClick}
+        onCommitTasks={onCommitTasks}
         onEditTaskAction={onEditTask}
-        onClick={handleClick}
         tasks={tasks}
-        onResizeColumn={onResizeColumn}
       />
     </>
   );
