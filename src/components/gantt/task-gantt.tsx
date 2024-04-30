@@ -5,8 +5,8 @@ import { GridProps, Grid } from "../grid/grid";
 import { CalendarProps, Calendar } from "../calendar/calendar";
 import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
 import styles from "./gantt.module.css";
-import Popper from "@material-ui/core/Popper";
-import Paper from "@material-ui/core/Paper";
+import Popper from "@mui/material/Popper";
+import Paper from "@mui/material/Paper";
 import {
   TaskContextualPaletteProps,
   Task,
@@ -14,7 +14,7 @@ import {
   DateExtremity,
   TaskDependencyContextualPaletteProps,
 } from "../../types/public-types";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 export type TaskGanttProps = {
   barProps: TaskGanttContentProps;
@@ -121,7 +121,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
     arrowContextualPalette = <div></div>;
   }
 
-  const onArrowClickAway = (e: React.MouseEvent<Document, MouseEvent>) => {
+  const onArrowClickAway = (e: MouseEvent | TouchEvent) => {
     const svgElement = e.target as SVGElement;
     if (svgElement) {
       const keepPalette =
@@ -164,7 +164,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
     contextualPalette = <div></div>;
   }
 
-  const onClickAway = (e: React.MouseEvent<Document, MouseEvent>) => {
+  const onClickAway = (e: MouseEvent | TouchEvent) => {
     const svgElement = e.target as SVGElement;
     if (svgElement) {
       const keepPalette =
@@ -214,7 +214,6 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
               key={`contextual-palette`}
               open={open}
               anchorEl={anchorEl}
-              transition
               disablePortal
               placement="top"
             >
@@ -229,7 +228,6 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
                 key={`dependency-contextual-palette`}
                 open={isArrowContextualPaletteOpened}
                 anchorEl={arrowAnchorEl}
-                transition
                 disablePortal
                 placement="top"
               >

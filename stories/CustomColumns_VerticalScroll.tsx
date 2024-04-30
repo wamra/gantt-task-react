@@ -22,7 +22,7 @@ import {
   ListItemText,
   MenuItem,
   Select,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   if (task.type === "project" || task.type === "task") {

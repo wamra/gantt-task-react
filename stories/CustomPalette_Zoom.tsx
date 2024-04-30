@@ -17,10 +17,10 @@ import {
 import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import { Add as AddIcon } from "@material-ui/icons";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import styles from "./CustomPalette_Zoom.module.css";
 
 export const CustomPalette_Zoom: React.FC = props => {
