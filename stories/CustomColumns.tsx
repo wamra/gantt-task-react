@@ -196,17 +196,27 @@ export const CustomColumns: React.FC<AppProps> = props => {
           ))}
         </Select>
       </FormControl>
-      <Gantt
-        {...props}
-        columns={displayedColumns}
-        onAddTask={onAddTask}
-        onChangeTasks={onChangeTasks}
-        onDoubleClick={handleDblClick}
-        onEditTask={onEditTask}
-        onClick={handleClick}
-        tasks={tasks}
-        onResizeColumn={onResizeColumn}
-      />
+      <div
+        style={{
+          display: "flex",
+          width: "980px",
+          height: "376px",
+          position: "absolute",
+          transform: "translate(149px, 8px)",
+        }}
+      >
+        <Gantt
+          {...props}
+          columns={displayedColumns}
+          onAddTask={onAddTask}
+          onChangeTasks={onChangeTasks}
+          onDoubleClick={handleDblClick}
+          onEditTask={onEditTask}
+          onClick={handleClick}
+          tasks={tasks}
+          onResizeColumn={onResizeColumn}
+        />
+      </div>
     </>
   );
 };

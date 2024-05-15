@@ -19,9 +19,12 @@ export type TaskGanttProps = {
   ganttHeight: number;
   ganttSVGRef: RefObject<SVGSVGElement>;
   gridProps: GridProps;
-  horizontalContainerRef: RefObject<HTMLDivElement>;
+  ganttTaskContentRef: RefObject<HTMLDivElement>;
   onVerticalScrollbarScrollX: (event: SyntheticEvent<HTMLDivElement>) => void;
-  verticalGanttContainerRef: RefObject<HTMLDivElement>;
+  ganttTaskRootRef: RefObject<HTMLDivElement>;
+  onScrollGanttContentVertically: (
+    event: SyntheticEvent<HTMLDivElement>
+  ) => void;
 };
 
 const TaskGanttInner: React.FC<TaskGanttProps> = ({
@@ -38,17 +41,20 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
   gridProps: {
     distances: { columnWidth, rowHeight, minimumRowDisplayed },
   },
-  horizontalContainerRef,
+  ganttTaskContentRef,
   onVerticalScrollbarScrollX,
-  verticalGanttContainerRef,
+  ganttTaskRootRef,
+  onScrollGanttContentVertically: onScrollVertically,
 }) => {
-  const containerStyle = useMemo<CSSProperties>(
-    () => ({
-      height: Math.max(ganttHeight, minimumRowDisplayed * rowHeight),
-      width: fullSvgWidth,
-    }),
-    [fullSvgWidth, ganttHeight, ganttFullHeight]
-  );
+  const containerStyle: CSSProperties = {
+    // In order to see the vertical scrollbar of the gantt content,
+    // we resize dynamically the width of the gantt content
+    height: Math.max(ganttHeight, minimumRowDisplayed * rowHeight),
+    width: ganttTaskRootRef?.current
+      ? ganttTaskRootRef.current.clientWidth +
+        ganttTaskRootRef.current.scrollLeft
+      : fullSvgWidth,
+  };
 
   const gridStyle = useMemo<CSSProperties>(
     () => ({
@@ -115,24 +121,27 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
 
   return (
     <div
-      className={styles.ganttVerticalContainer}
-      ref={verticalGanttContainerRef}
+      className={styles.ganttTaskRoot}
+      ref={ganttTaskRootRef}
       onScroll={onVerticalScrollbarScrollX}
       dir="ltr"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={fullSvgWidth}
-        height={calendarProps.distances.headerHeight}
-        fontFamily={barProps.fontFamily}
-      >
-        <Calendar {...calendarProps} />
-      </svg>
+      <div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={fullSvgWidth}
+          height={calendarProps.distances.headerHeight}
+          fontFamily={barProps.fontFamily}
+        >
+          <Calendar {...calendarProps} />
+        </svg>
+      </div>
 
       <div
-        ref={horizontalContainerRef}
-        className={styles.horizontalContainer}
+        ref={ganttTaskContentRef}
+        className={styles.ganttTaskContent}
         style={containerStyle}
+        onScroll={onScrollVertically}
       >
         <div style={gridStyle}>
           <svg

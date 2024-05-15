@@ -13,12 +13,12 @@ export const useHorizontalScrollbars = (): [
 ] => {
   const [scrollX, setScrollX] = useState(0);
 
-  const verticalGanttContainerRef = useRef<HTMLDivElement>(null);
+  const ganttTaskRootRef = useRef<HTMLDivElement>(null);
 
   const isLockedRef = useRef(false);
 
   const setScrollXProgrammatically = useCallback((nextScrollX: number) => {
-    const scrollEl = verticalGanttContainerRef.current;
+    const scrollEl = ganttTaskRootRef.current;
 
     if (!scrollEl) {
       return;
@@ -26,8 +26,8 @@ export const useHorizontalScrollbars = (): [
 
     isLockedRef.current = true;
 
-    if (verticalGanttContainerRef.current) {
-      verticalGanttContainerRef.current.scrollLeft = nextScrollX;
+    if (ganttTaskRootRef.current) {
+      ganttTaskRootRef.current.scrollLeft = nextScrollX;
     }
 
     setScrollX(scrollEl.scrollLeft);
@@ -45,8 +45,8 @@ export const useHorizontalScrollbars = (): [
 
       const nextScrollX = event.currentTarget.scrollLeft;
 
-      if (verticalGanttContainerRef.current) {
-        verticalGanttContainerRef.current.scrollLeft = nextScrollX;
+      if (ganttTaskRootRef.current) {
+        ganttTaskRootRef.current.scrollLeft = nextScrollX;
       }
 
       setScrollX(nextScrollX);
@@ -63,7 +63,7 @@ export const useHorizontalScrollbars = (): [
   }, [setScrollXProgrammatically, scrollX]);
 
   return [
-    verticalGanttContainerRef,
+    ganttTaskRootRef,
     scrollX,
     setScrollXProgrammatically,
     onVerticalScrollbarScrollX,
