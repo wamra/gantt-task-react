@@ -2,7 +2,7 @@
   display: table;
   border-bottom: #e6e4e4 3px solid;
   border-top: #e6e4e4 3px solid;
-  list-style: none;
+  box-sizing: content-box;
 }
 
 .ganttTable_HeaderSeparator {
