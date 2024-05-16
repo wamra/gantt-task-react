@@ -126,16 +126,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
       onScroll={onVerticalScrollbarScrollX}
       dir="ltr"
     >
-      <div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width={fullSvgWidth}
-          height={calendarProps.distances.headerHeight}
-          fontFamily={barProps.fontFamily}
-        >
-          <Calendar {...calendarProps} />
-        </svg>
-      </div>
+      <Calendar {...calendarProps} />
 
       <div
         ref={ganttTaskContentRef}

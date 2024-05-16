@@ -16,7 +16,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
     <div
       className={styles.ganttTable_Header}
       style={{
-        height: headerHeight - 2,
+        height: headerHeight,
         fontFamily: fontFamily,
         fontSize: fontSize,
       }}

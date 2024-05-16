@@ -87,7 +87,7 @@ export const getColumns = (
   return typeToColumn;
 };
 
-export const CustomColumns: React.FC<AppProps> = props => {
+export const CustomColumns_VerticalScroll: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {

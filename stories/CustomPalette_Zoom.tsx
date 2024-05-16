@@ -21,13 +21,13 @@ import "../dist/style.css";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import styles from "./CustomPalette.module.css";
+import styles from "./CustomPalette_Zoom.module.css";
 
 type AppProps = {
   ganttHeight?: number;
 };
 
-export const CustomPalette: React.FC<AppProps> = props => {
+export const CustomPalette_Zoom: React.FC<AppProps> = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
   const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
 
@@ -92,19 +92,22 @@ export const CustomPalette: React.FC<AppProps> = props => {
   };
 
   const handleWheel = (wheelEvent: WheelEvent) => {
-    const deltaY = wheelEvent.deltaY;
+    if (wheelEvent.ctrlKey) {
+      wheelEvent.preventDefault();
+      const deltaY = wheelEvent.deltaY;
 
-    if (deltaY < 0 && viewMode !== ViewMode.Hour) {
-      const currentIndex = Object.values(ViewMode).indexOf(viewMode);
-      const newZoomLevel = Object.values(ViewMode)[currentIndex - 1];
-      if (newZoomLevel) {
-        setView(newZoomLevel);
-      }
-    } else if (deltaY > 0 && viewMode !== ViewMode.Month) {
-      const currentIndex = Object.values(ViewMode).indexOf(viewMode);
-      const newZoomLevel = Object.values(ViewMode)[currentIndex + 1];
-      if (newZoomLevel) {
-        setView(newZoomLevel);
+      if (deltaY < 0 && viewMode !== ViewMode.Hour) {
+        const currentIndex = Object.values(ViewMode).indexOf(viewMode);
+        const newZoomLevel = Object.values(ViewMode)[currentIndex - 1];
+        if (newZoomLevel) {
+          setView(newZoomLevel);
+        }
+      } else if (deltaY > 0 && viewMode !== ViewMode.Month) {
+        const currentIndex = Object.values(ViewMode).indexOf(viewMode);
+        const newZoomLevel = Object.values(ViewMode)[currentIndex + 1];
+        if (newZoomLevel) {
+          setView(newZoomLevel);
+        }
       }
     }
   };
