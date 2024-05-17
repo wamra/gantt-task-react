@@ -1915,6 +1915,7 @@ export const Gantt: React.FC<GanttProps> = ({
     onScrollTableListContentVertically: onScrollVertically,
   };
 
+  const displayTable = !columnsProp || columnsProp.length > 0;
   return (
     <div
       className={styles.wrapper}
@@ -1922,9 +1923,12 @@ export const Gantt: React.FC<GanttProps> = ({
       tabIndex={0}
       ref={wrapperRef}
       data-testid={`gantt-main`}
+      style={{
+        gridTemplateColumns: `${displayTable ? "max-content" : ""} auto`,
+      }}
     >
       {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
-      {(!columnsProp || columnsProp.length > 0) && <TaskList {...tableProps} />}
+      {displayTable && <TaskList {...tableProps} />}
 
       <TaskGantt
         barProps={barProps}
