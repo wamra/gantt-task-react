@@ -1,13 +1,11 @@
-# kvandake-gantt-task-react
+# ju-gantt-task-react
 
 ## Interactive Gantt Chart for React with TypeScript.
-
-## [Live Demo In Storybook](https://661071b076b50cb537c16c19-yrsukdfefs.chromatic.com/)
 
 ## Install
 
 ```
-npm install kvandake-gantt-task-react
+npm install ju-gantt-task-react
 ```
 
 ## How to use it
