@@ -310,7 +310,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      {columns.map(({ component: Component, width }, index) => {
+      {columns.map(({ Cell, width }, index) => {
         return (
           <div
             className={styles.taskListCell}
@@ -350,7 +350,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
                   pointerEvents: hoveringState.hoveringInside ? "none" : "auto",
                 }}
               >
-                <Component data={columnData} />
+                <Cell data={columnData} />
               </div>
             </div>
           </div>

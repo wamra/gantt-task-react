@@ -55,28 +55,28 @@ export const getColumns = (
   columnTypes.forEach(columnType => {
     if (columnType === TaskListColumnEnum.NAME) {
       typeToColumn.set(columnType, {
-        component: TitleColumn,
+        Cell: TitleColumn,
         width: 210,
         title: "Name",
         id: TaskListColumnEnum.NAME,
       });
     } else if (columnType === TaskListColumnEnum.FROM) {
       typeToColumn.set(columnType, {
-        component: DateStartColumn,
+        Cell: DateStartColumn,
         width: 150,
         title: "Date of start",
         id: TaskListColumnEnum.FROM,
       });
     } else if (columnType === TaskListColumnEnum.TO) {
       typeToColumn.set(columnType, {
-        component: DateEndColumn,
+        Cell: DateEndColumn,
         width: 150,
         title: "Date of end",
         id: TaskListColumnEnum.TO,
       });
     } else if (columnType === TaskListColumnEnum.PROGRESS) {
       typeToColumn.set(columnType, {
-        component: ProgressColumn,
+        Cell: ProgressColumn,
         width: 40,
         title: "Progress",
         id: TaskListColumnEnum.PROGRESS,

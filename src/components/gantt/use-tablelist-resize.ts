@@ -47,49 +47,49 @@ export const useTableListResize = (
     return [
       {
         id: "TitleColumn",
-        component: TitleColumn,
+        Cell: TitleColumn,
         width: titleCellWidth,
         title: "Name",
       },
 
       {
         id: "DateStartColumn",
-        component: DateStartColumn,
+        Cell: DateStartColumn,
         width: dateCellWidth,
         title: "From",
       },
 
       {
         id: "DateEndColumn",
-        component: DateEndColumn,
+        Cell: DateEndColumn,
         width: dateCellWidth,
         title: "To",
       },
 
       {
         id: "DependenciesColumn",
-        component: DependenciesColumn,
+        Cell: DependenciesColumn,
         width: dependenciesCellWidth,
         title: "Dependencies",
       },
 
       {
         id: "DeleteColumn",
-        component: DeleteColumn,
+        Cell: DeleteColumn,
         width: actionColumnWidth,
         canResize: false,
       },
 
       {
         id: "EditColumn",
-        component: EditColumn,
+        Cell: EditColumn,
         width: actionColumnWidth,
         canResize: false,
       },
 
       {
         id: "AddColumn",
-        component: AddColumn,
+        Cell: AddColumn,
         width: actionColumnWidth,
         canResize: false,
       },

@@ -827,7 +827,7 @@ export type ColumnProps = {
 
 export type Column = {
   id: string;
-  component: ComponentType<ColumnProps>;
+  Cell: ComponentType<ColumnProps>;
   width: number;
   title?: ReactNode;
   canResize?: boolean;
