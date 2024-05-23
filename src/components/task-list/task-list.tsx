@@ -158,6 +158,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
               ),
               backgroundSize: `100% ${fullRowHeight * 2}px`,
               backgroundImage: `linear-gradient(to bottom, transparent ${fullRowHeight}px, #f5f5f5 ${fullRowHeight}px)`,
+              overflow: "hidden",
             }}
           >
             <TaskListTable

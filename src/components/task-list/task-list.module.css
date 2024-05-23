@@ -8,7 +8,9 @@
 .ganttTableWrapper {
   display: grid;
   overflow: hidden;
-  grid-template-rows: min-content
+  grid-template-rows: min-content;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .ganttTableWrapper::-webkit-scrollbar {

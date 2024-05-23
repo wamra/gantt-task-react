@@ -26,13 +26,15 @@ export const useVerticalScrollbars = (): [
         ganttTaskContentRef.current.scrollTop;
       //  On chrome, if a horizontal scrollbar is displayed in ganttTaskContentRef then the size of the gantt
       // is greater. So, when scrolling gantt to the bottom it goes more in the bottom
-      // than the taskListContent part can. In in case, ganttTaskContentRef.current.scrollTop is too high
-      // Th line below allow to lower ganttTaskContentRef.current.scrollTop
+      // than the taskListContent part can. In this case, ganttTaskContentRef.current.scrollTop is too high
+      // The line below allow to lower ganttTaskContentRef.current.scrollTop
       ganttTaskContentRef.current.scrollTop =
         taskListContentRef.current.scrollTop;
     } else {
       ganttTaskContentRef.current.scrollTop =
         taskListContentRef.current.scrollTop;
+      taskListContentRef.current.scrollTop =
+        ganttTaskContentRef.current.scrollTop;
     }
   };
 
