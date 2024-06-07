@@ -299,23 +299,16 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       if (!isUnknownDates && dayOfMonth !== prevDate.getDate()) {
         const topValue = renderTopHeaderByDate(date);
-        const widthMultiplier = i - 1;
 
         topValues.push(
           <TopPartOfCalendar
             key={`${prevDate.getDate()}_${prevDate.getMonth()}_${prevDate.getFullYear()}`}
             value={topValue}
-            x1Line={
-              additionalLeftSpace +
-              columnWidth * widthMultiplier +
-              ticks * columnWidth
-            }
+            x1Line={additionalLeftSpace + columnWidth * i}
             y1Line={0}
             y2Line={topDefaultHeight}
             xText={
-              additionalLeftSpace +
-              columnWidth * widthMultiplier +
-              ticks * columnWidth * 0.5
+              additionalLeftSpace + columnWidth * i + ticks * columnWidth * 0.5
             }
             yText={topDefaultHeight * 0.9}
           />
