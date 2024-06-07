@@ -531,19 +531,33 @@ export interface StylingOption {
    */
   renderTopHeader?: RenderTopHeader;
   /**
-   * Round end date of task after move or resize
-   * @param date Date after move
-   * @param viewMode current date unit
-   * @returns next date
+   * Check is current date is a holiday
+   * @param date the date
+   * @param minTaskDate lower date of all tasks
+   * @param dateSetup
+   * @param dateExtremity start or end date
    */
-  roundEndDate?: (date: Date, viewMode: ViewMode) => Date;
+  checkIsHoliday?: (
+    date: Date,
+    minTaskDate: Date,
+    dateSetup: DateSetup,
+    dateExtremity: DateExtremity
+  ) => boolean;
   /**
-   * Round start date of task after move or resize
+   * Round the date of task after move or resize
    * @param date Date after move
    * @param viewMode current date unit
-   * @returns next date
+   * @param dateExtremity start or end date
+   * @param action current user action
+   * @returns rounded date
    */
-  roundStartDate?: (date: Date, viewMode: ViewMode) => Date;
+  roundDate?: (
+    date: Date,
+    viewMode: ViewMode,
+    dateExtremity: DateExtremity,
+    action: BarMoveAction
+  ) => Date;
+  dateMoveStep?: String;
   ContextualPalette?: React.FC<TaskContextualPaletteProps>;
 }
 
@@ -552,19 +566,9 @@ export interface TaskContextualPaletteProps {
   onClose: () => void;
 }
 
+export type DateExtremity = "start" | "end";
+
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
-  /**
-   * Check is current date holiday
-   * @param date the date
-   * @param minTaskDate lower date of all tasks
-   * @param dateSetup
-   * @returns
-   */
-  checkIsHoliday?: (
-    date: Date,
-    minTaskDate: Date,
-    dateSetup: DateSetup
-  ) => boolean;
   /**
    * Can be used to compare multiple graphs. This prop is the number of graps being compared
    */
@@ -796,7 +800,7 @@ export type ChangeInProgress = {
   initialCoordinates: TaskCoordinates;
   lastClientX: number;
   startX: number;
-  task: Task;
+  originalTask: Task;
   taskRootNode: Element;
   tsDiff: number;
 };
@@ -1042,4 +1046,9 @@ export type AdjustTaskToWorkingDatesParams = {
   action: BarMoveAction;
   changedTask: Task;
   originalTask: Task;
+  roundDate: (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) => Date;
 };

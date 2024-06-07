@@ -1,17 +1,13 @@
 import React, { useCallback, useState } from "react";
 
 import {
-  Column,
   ColumnProps,
-  DateEndColumn,
-  DateStartColumn,
+  DateExtremity,
   Gantt,
-  GanttProps,
   OnChangeTasks,
   Task,
   TaskContextualPaletteProps,
   TaskOrEmpty,
-  TitleColumn,
   ViewMode,
 } from "../src";
 
@@ -22,6 +18,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import styles from "./CustomPalette_Zoom.module.css";
+import { BarMoveAction } from "../src/types/gantt-task-actions";
 
 type AppProps = {
   ganttHeight?: number;
@@ -151,6 +148,249 @@ export const CustomPalette_Zoom: React.FC<AppProps> = props => {
     });
   };
 
+  const roundDate = (
+    date: Date,
+    _: ViewMode,
+    dateExtremity: DateExtremity,
+    action: BarMoveAction
+  ): Date => {
+    if (dateExtremity == "start") {
+      return roundStartDate(date, action);
+    } else {
+      return roundEndDate(date, action);
+    }
+  };
+
+  // TODO roundDate function could be integrated in the project core and based on dateMoveStep prop. Then this test code should be used as unit test.
+  const testRoundDate = () => {
+    roundAndCheck(
+      new Date(2010, 0, 1, 0, 0),
+      new Date(2010, 0, 1, 0, 0),
+      roundStartDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 0, 1, 1, 0),
+      new Date(2010, 0, 1, 0, 0),
+      roundStartDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 0, 5, 1, 0),
+      new Date(2010, 0, 1, 0, 0),
+      roundStartDate,
+      "start"
+    );
+
+    roundAndCheck(
+      new Date(2010, 0, 1, 0, 0),
+      new Date(2010, 0, 1, 0, 0),
+      roundEndDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 0, 1, 1, 0),
+      new Date(2010, 0, 11, 0, 0),
+      roundEndDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 0, 5, 1, 0),
+      new Date(2010, 0, 11, 0, 0),
+      roundEndDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 0, 5, 1, 0),
+      new Date(2010, 0, 1, 0, 0),
+      roundEndDate,
+      "move"
+    );
+
+    roundAndCheck(
+      new Date(2010, 1, 10, 0, 0),
+      new Date(2010, 1, 10, 0, 0),
+      roundEndDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 1, 10, 1, 1),
+      new Date(2010, 1, 20, 0, 0),
+      roundEndDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 1, 15, 0, 1),
+      new Date(2010, 1, 20, 0, 0),
+      roundEndDate,
+      "start"
+    );
+    roundAndCheck(
+      new Date(2010, 1, 15, 0, 1),
+      new Date(2010, 1, 10, 0, 0),
+      roundEndDate,
+      "move"
+    );
+  };
+
+  const roundAndCheck = (
+    inputDate: Date,
+    expected: Date,
+    roundDate: (date: Date, action: BarMoveAction) => Date,
+    action: BarMoveAction
+  ) => {
+    const roundedDate = roundDate(inputDate, action);
+    testDate(expected, roundedDate);
+  };
+
+  const testDate = (expected: Date, current: Date) => {
+    if (expected.getTime() != current.getTime()) {
+      console.log(
+        "INVALID: Expected: " +
+          expected.getDate() +
+          " current: " +
+          current.getDate()
+      );
+    } else {
+      console.log("OK");
+    }
+  };
+
+  const dateMoveStep = "2D";
+
+  const getDayOfTheYear = (date: Date) => {
+    const start = new Date(date.getFullYear(), 0, 0);
+    // const diff = date.getTime() - start.getTime();
+    const diff =
+      date.getTime() -
+      start.getTime() +
+      (start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const day = Math.floor(diff / oneDay);
+    return day;
+  };
+
+  /* 
+  The rounding for start Date is always done with floor value
+  */
+  const roundStartDate = (date: Date, action: BarMoveAction): Date => {
+    const regex = /^(\d+)([DHm])$/;
+    const matches = dateMoveStep.match(regex);
+
+    if (matches && matches[1]) {
+      let value = parseInt(matches[1], 10);
+      const dimension = matches[2];
+      const newdate = new Date(date);
+
+      // When moving the task, the rounding is done when the nearest value
+      // This allow to keep the task duration which is the priority
+      if (dimension == "D") {
+        let dayOfTheYear: number = getDayOfTheYear(newdate);
+        if (
+          newdate.getMinutes() != 0 ||
+          newdate.getHours() != 0 ||
+          (dayOfTheYear - 1) % value > 0
+        ) {
+          newdate.setHours(0);
+          newdate.setMinutes(0);
+          dayOfTheYear = Math.floor((dayOfTheYear - 1) / value) * value + 1; //OK
+          newdate.setMonth(0);
+          newdate.setDate(1);
+          newdate.setDate(dayOfTheYear);
+        }
+      } else if (dimension == "H") {
+        newdate.setMinutes(0);
+        let hour = Math.floor(newdate.getHours() / value) * value;
+        newdate.setHours(hour);
+      } else if (dimension == "m") {
+        let minute = Math.floor(newdate.getMinutes() / value) * value;
+        newdate.setMinutes(minute);
+      }
+      newdate.setSeconds(0);
+      return newdate;
+    } else return new Date(date);
+  };
+
+  /* 
+  The rounding for end Date is always done with ceil value
+  */
+  const roundEndDate = (date: Date, action: BarMoveAction): Date => {
+    const regex = /^(\d+)([DHm])$/;
+    const matches = dateMoveStep.match(regex);
+
+    if (matches && matches[1]) {
+      let value = parseInt(matches[1], 10);
+      const dimension = matches[2];
+      const newdate = new Date(date);
+      if (dimension == "D") {
+        let dayOfTheYear: number = getDayOfTheYear(newdate);
+        if (
+          newdate.getMinutes() != 0 ||
+          newdate.getHours() != 0 ||
+          (dayOfTheYear - 1) % value > 0
+        ) {
+          newdate.setMinutes(0);
+          newdate.setHours(0);
+          if (action == "move") {
+            // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
+            dayOfTheYear = Math.floor((dayOfTheYear - 1) / value) * value + 1; // OK
+          } else {
+            dayOfTheYear = Math.ceil(dayOfTheYear / value) * value + 1; // OK
+          }
+          newdate.setMonth(0);
+          newdate.setDate(1);
+          newdate.setDate(dayOfTheYear);
+        }
+      } else if (dimension == "H") {
+        if (newdate.getMinutes() != 0 || newdate.getHours() % value > 0) {
+          newdate.setMinutes(0);
+          let hours = newdate.getHours();
+          if (action == "move") {
+            // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
+            hours = Math.floor(newdate.getHours() / value) * value;
+          } else {
+            hours = Math.ceil(newdate.getHours() / value) * value;
+          }
+          newdate.setHours(hours);
+        }
+      } else if (dimension == "m") {
+        if (newdate.getMinutes() % value > 0) {
+          let minutes = newdate.getMinutes();
+          if (action == "move") {
+            // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
+            minutes = Math.floor(newdate.getMinutes() / value) * value;
+          } else {
+            minutes = Math.ceil(newdate.getMinutes() / value) * value;
+          }
+          newdate.setMinutes(minutes);
+        }
+      }
+      newdate.setSeconds(0);
+      return newdate;
+    } else {
+      return new Date(date);
+    }
+  };
+
+  const checkIsHoliday = (date: Date, _, __, dateExtremity: DateExtremity) => {
+    const day = date.getDay();
+
+    let isHoliday = false;
+    const isMondayStart =
+      date.getDay() == 1 && date.getHours() == 0 && date.getMinutes() == 0;
+    const isStaturdayStart =
+      date.getDay() == 6 && date.getHours() == 0 && date.getMinutes() == 0;
+    if (dateExtremity == "start") {
+      //Monday 00:00 is excluded from WE
+      isHoliday = day == 6 || (day == 0 && !isMondayStart);
+    } else if (dateExtremity == "end") {
+      //Saturday 00:00 is included from WE
+      isHoliday = (day == 6 && !isStaturdayStart) || day == 0 || isMondayStart;
+    }
+
+    return isHoliday;
+  };
+
   return (
     <Gantt
       {...props}
@@ -161,11 +401,13 @@ export const CustomPalette_Zoom: React.FC<AppProps> = props => {
       onClick={handleClick}
       tasks={tasks}
       viewMode={viewMode}
-      roundEndDate={(date: Date) => date}
-      roundStartDate={(date: Date) => date}
+      roundDate={roundDate}
       ContextualPalette={ContextualPalette}
       onWheel={handleWheel}
       onChangeExpandState={onChangeExpandState}
+      checkIsHoliday={checkIsHoliday}
+      dateMoveStep={dateMoveStep}
+      // isAdjustToWorkingDates={false}
     />
   );
 };

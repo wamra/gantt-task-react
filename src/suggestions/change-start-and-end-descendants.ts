@@ -1,5 +1,5 @@
-import addMilliseconds from 'date-fns/addMilliseconds';
-import differenceInMilliseconds from 'date-fns/differenceInMilliseconds';
+import addMilliseconds from "date-fns/addMilliseconds";
+import differenceInMilliseconds from "date-fns/differenceInMilliseconds";
 
 import type {
   AdjustTaskToWorkingDatesParams,
@@ -7,7 +7,7 @@ import type {
   Task,
   TaskOrEmpty,
   TaskToGlobalIndexMap,
-} from '../types/public-types';
+} from "../types/public-types";
 
 type ChangeStartAndEndDescendantsParams = {
   adjustTaskToWorkingDates: (params: AdjustTaskToWorkingDatesParams) => Task;
@@ -26,21 +26,23 @@ export const changeStartAndEndDescendants = ({
 }: ChangeStartAndEndDescendantsParams): readonly OnDateChangeSuggestionType[] => {
   const diff = differenceInMilliseconds(changedTask.start, originalTask.start);
 
-  const mapTaskToGlobalIndexAtLevel = mapTaskToGlobalIndex.get(changedTask.comparisonLevel || 1);
+  const mapTaskToGlobalIndexAtLevel = mapTaskToGlobalIndex.get(
+    changedTask.comparisonLevel || 1
+  );
 
   if (!mapTaskToGlobalIndexAtLevel) {
-    throw new Error('Tasks are not found in the current level');
+    throw new Error("Tasks are not found in the current level");
   }
 
   return descendants.reduce<OnDateChangeSuggestionType[]>((res, task) => {
-    if (task.type === 'empty') {
+    if (task.type === "empty") {
       return res;
     }
 
     const index = mapTaskToGlobalIndexAtLevel.get(task.id);
 
-    if (typeof index !== 'number') {
-      throw new Error('Global index for the task is not found');
+    if (typeof index !== "number") {
+      throw new Error("Global index for the task is not found");
     }
 
     const preChangedTask: Task = {
@@ -49,18 +51,17 @@ export const changeStartAndEndDescendants = ({
       start: addMilliseconds(task.start, diff),
     };
 
+    // const adjustedTask = preChangedTask;
     const adjustedTask = adjustTaskToWorkingDates({
-      action: 'move',
+      action: "move",
       changedTask: preChangedTask,
       originalTask: task,
+      roundDate: (date: Date) => {
+        return date;
+      },
     });
 
-    res.push([
-      adjustedTask.start,
-      adjustedTask.end,
-      task,
-      index,
-    ]);
+    res.push([adjustedTask.start, adjustedTask.end, task, index]);
 
     return res;
   }, []);

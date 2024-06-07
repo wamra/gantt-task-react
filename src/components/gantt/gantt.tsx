@@ -13,6 +13,7 @@ import {
   CheckTaskIdExistsAtLevel,
   ColorStyles,
   ContextMenuOptionType,
+  DateExtremity,
   DateFormats,
   DateSetup,
   Dependency,
@@ -68,8 +69,7 @@ import { getMinAndMaxChildsMap } from "../../helpers/get-min-and-max-childs-map"
 import { useGetTaskCurrentState } from "./use-get-task-current-state";
 import { useSelection } from "./use-selection";
 import { defaultCheckIsHoliday } from "./default-check-is-holiday";
-import { defaultRoundEndDate } from "./default-round-end-date";
-import { defaultRoundStartDate } from "./default-round-start-date";
+import { defaultRoundDate } from "./default-round-date";
 
 import { useContextMenu } from "./use-context-menu";
 import { ContextMenu } from "../context-menu";
@@ -223,8 +223,8 @@ export const Gantt: React.FC<GanttProps> = ({
   preStepsCount = 1,
   renderBottomHeader = undefined,
   renderTopHeader = undefined,
-  roundEndDate: roundEndDateProp = defaultRoundEndDate,
-  roundStartDate: roundStartDateProp = defaultRoundStartDate,
+  roundDate: roundDateProp = defaultRoundDate,
+  dateMoveStep = "1D",
   rtl = false,
   tasks,
   timeStep = 300000,
@@ -254,14 +254,10 @@ export const Gantt: React.FC<GanttProps> = ({
     scrollToRightStep,
   ] = useHorizontalScrollbars();
 
-  const roundEndDate = useCallback(
-    (date: Date) => roundEndDateProp(date, viewMode),
-    [roundEndDateProp, viewMode]
-  );
-
-  const roundStartDate = useCallback(
-    (date: Date) => roundStartDateProp(date, viewMode),
-    [roundStartDateProp, viewMode]
+  const roundDate = useCallback(
+    (date: Date, action: BarMoveAction, dateExtremity: DateExtremity) =>
+      roundDateProp(date, viewMode, dateExtremity, action),
+    [roundDateProp, viewMode]
   );
 
   const [currentViewDate, setCurrentViewDate] = useState<Date | undefined>(
@@ -482,6 +478,8 @@ export const Gantt: React.FC<GanttProps> = ({
     dateSetup,
     isAdjustToWorkingDates,
     minTaskDate,
+    roundDate,
+    dateMoveStep,
   });
 
   const svgWidth = useMemo(
@@ -971,6 +969,7 @@ export const Gantt: React.FC<GanttProps> = ({
         action,
         changedTask,
         originalTask,
+        roundDate,
       });
 
       const changeAction: ChangeAction =
@@ -1051,8 +1050,8 @@ export const Gantt: React.FC<GanttProps> = ({
     onDateChange,
     onProgressChange,
     rtl,
-    roundEndDate,
-    roundStartDate,
+    roundDate,
+    dateMoveStep,
     scrollToLeftStep,
     scrollToRightStep,
     scrollX,
@@ -1630,6 +1629,7 @@ export const Gantt: React.FC<GanttProps> = ({
     visibleTasks,
   });
 
+  // Compute the task coordinates used to display the task
   const getTaskCurrentState = useGetTaskCurrentState({
     adjustTaskToWorkingDates,
     changeInProgress,
@@ -1638,15 +1638,16 @@ export const Gantt: React.FC<GanttProps> = ({
     isUpdateDisabledParentsOnChange,
     mapTaskToCoordinates,
     minAndMaxChildsMap,
-    roundEndDate,
-    roundStartDate,
+    roundDate,
     tasksMap,
+    dateMoveStep,
   });
 
   const getTaskCoordinates = useCallback(
     (task: Task) => countTaskCoordinates(getTaskCurrentState(task)),
     [countTaskCoordinates, getTaskCurrentState]
   );
+  // const getTaskCoordinates = (task: Task) => countTaskCoordinates(task);
 
   const contextMenuOptions = useMemo<ContextMenuOptionType[]>(() => {
     if (contextMenuOptionsProp) {

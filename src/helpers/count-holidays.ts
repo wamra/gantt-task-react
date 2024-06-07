@@ -1,20 +1,30 @@
-import isBefore from "date-fns/isBefore";
-import { ViewMode } from "../types/public-types";
-import { getDateByOffset } from "./get-date-by-offset";
+import { DateExtremity } from "../types/public-types";
 
 export const countHolidays = (
-  startFrom: Date,
+  startDate: Date,
   endDate: Date,
-  checkIsHoliday: (date: Date) => boolean,
-  viewMode: ViewMode,
+  checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean
 ) => {
-  let res = 0;
+  let holidayCount = checkIsHoliday(startDate, "start") ? 1 : 0;
 
-  for (let cur = startFrom; isBefore(cur, endDate); cur = getDateByOffset(cur, 1, viewMode)) {
-    if (checkIsHoliday(cur)) {
-      ++res;
+  let currentStartDate = new Date(startDate);
+  currentStartDate.setHours(0);
+  currentStartDate.setMinutes(0);
+  currentStartDate.setSeconds(0);
+  currentStartDate.setDate(currentStartDate.getDate() + 1);
+
+  let currentEndDate = new Date(endDate);
+  currentEndDate.setHours(0);
+  currentEndDate.setMinutes(0);
+  currentEndDate.setSeconds(0);
+
+  while (currentStartDate <= currentEndDate) {
+    if (checkIsHoliday(new Date(currentStartDate.getTime()), "end")) {
+      holidayCount++;
     }
+    // Move to the next day
+    currentStartDate.setDate(currentStartDate.getDate() + 1);
   }
 
-  return res;
+  return holidayCount;
 };

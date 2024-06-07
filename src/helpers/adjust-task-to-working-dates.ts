@@ -1,15 +1,22 @@
 import { BarMoveAction } from "../types/gantt-task-actions";
-import { Task, ViewMode } from "../types/public-types";
+import { DateExtremity, Task } from "../types/public-types";
 import { countHolidays } from "./count-holidays";
 
 type AdjustTaskToWorkingDatesParams = {
   action: BarMoveAction;
   changedTask: Task;
-  checkIsHoliday: (date: Date) => boolean;
-  getNextWorkingDate: (date: Date) => Date;
-  getPreviousWorkingDate: (date: Date) => Date;
+  checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean;
+  getNextWorkingDate: (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) => Date;
+  getPreviousWorkingDate: (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) => Date;
   originalTask: Task;
-  viewMode: ViewMode;
 };
 
 export const adjustTaskToWorkingDates = ({
@@ -19,12 +26,20 @@ export const adjustTaskToWorkingDates = ({
   getNextWorkingDate,
   getPreviousWorkingDate,
   originalTask,
-  viewMode,
 }: AdjustTaskToWorkingDatesParams) => {
   switch (changedTask.type) {
     case "milestone":
-      if (checkIsHoliday(changedTask.start)) {
-        const nextWorkingDate = getNextWorkingDate(changedTask.start);
+      if (
+        checkIsHoliday(
+          new Date(changedTask.start.getTime() + 1000 * 3600),
+          "start"
+        )
+      ) {
+        const nextWorkingDate = getNextWorkingDate(
+          changedTask.start,
+          action,
+          "start"
+        );
 
         return {
           ...changedTask,
@@ -38,10 +53,16 @@ export const adjustTaskToWorkingDates = ({
     default:
       switch (action) {
         case "end": {
-          if (checkIsHoliday(changedTask.end)) {
+          if (checkIsHoliday(changedTask.end, "end")) {
+            const moveEndDelta =
+              changedTask.end.getTime() - originalTask.end.getTime();
+            const endDate =
+              moveEndDelta < 0
+                ? getPreviousWorkingDate(changedTask.end, action, "end")
+                : getNextWorkingDate(changedTask.end, action, "end");
             return {
               ...changedTask,
-              end: getNextWorkingDate(changedTask.end),
+              end: endDate,
             };
           }
 
@@ -49,10 +70,20 @@ export const adjustTaskToWorkingDates = ({
         }
 
         case "start": {
-          if (checkIsHoliday(changedTask.start)) {
+          if (
+            checkIsHoliday(
+              new Date(changedTask.start.getTime() + 1000 * 3600),
+              "start"
+            )
+          ) {
+            const moveStartDelta =
+              changedTask.start.getTime() - originalTask.start.getTime();
             return {
               ...changedTask,
-              start: getPreviousWorkingDate(changedTask.start),
+              start:
+                moveStartDelta > 0
+                  ? getNextWorkingDate(changedTask.start, action, "start")
+                  : getPreviousWorkingDate(changedTask.start, action, "start"),
             };
           }
 
@@ -62,51 +93,67 @@ export const adjustTaskToWorkingDates = ({
         case "move": {
           let newStart = changedTask.start;
           let newEnd = changedTask.end;
-          const movingToTheRight =
-            changedTask.start.getTime() - originalTask.start.getTime() > 0;
 
-          const originalHolidaysLength = countHolidays(
-            originalTask.start,
-            originalTask.end,
-            checkIsHoliday,
-            viewMode
-          );
-          const durationWithoutHolidays =
-            originalTask.end.getTime() -
-            originalTask.start.getTime() -
-            originalHolidaysLength * 24 * 3600 * 1000;
-          if (movingToTheRight) {
-            if (checkIsHoliday(changedTask.start)) {
-              newStart = getNextWorkingDate(changedTask.start);
-            }
-
-            newEnd = new Date(newStart.getTime() + durationWithoutHolidays);
-            const newHolidaysLength = countHolidays(
-              newStart,
-              newEnd,
-              checkIsHoliday,
-              viewMode
+          const moveDelta =
+            changedTask.start.getTime() - originalTask.start.getTime();
+          if (moveDelta !== 0) {
+            const durationWithoutHolidays = getDurationAndHolidays(
+              originalTask.start,
+              originalTask.end,
+              checkIsHoliday
             );
-            if (checkIsHoliday(newEnd) || newHolidaysLength > 0) {
-              newEnd = new Date(newEnd.getTime() + 2 * 24 * 3600 * 1000);
-            }
-          } else {
-            if (checkIsHoliday(changedTask.end)) {
-              newEnd = getPreviousWorkingDate(changedTask.end);
-            }
-            newStart = new Date(newEnd.getTime() - durationWithoutHolidays);
 
-            const newHolidaysLength = countHolidays(
-              newStart,
-              newEnd,
-              checkIsHoliday,
-              viewMode
-            );
-            if (checkIsHoliday(newStart) || newHolidaysLength > 0) {
-              newStart = new Date(newStart.getTime() - 2 * 24 * 3600 * 1000);
+            const movingToTheRight = moveDelta >= 0;
+            if (movingToTheRight) {
+              if (checkIsHoliday(changedTask.start, "start")) {
+                newStart = getNextWorkingDate(
+                  changedTask.start,
+                  action,
+                  "start"
+                );
+              }
+              newEnd = new Date(newStart.getTime() + durationWithoutHolidays);
+
+              let newDurationWithoutHolidays = getDurationAndHolidays(
+                newStart,
+                newEnd,
+                checkIsHoliday
+              );
+
+              while (
+                newDurationWithoutHolidays < durationWithoutHolidays ||
+                checkIsHoliday(newEnd, "end")
+              ) {
+                //shift with one day
+                newEnd = new Date(newEnd.getTime() + 24 * 3600 * 1000); // à modifier . voir aussi de ne plus passer de roundDate comme prop (dateMoveStep pourrait suffire)
+
+                newDurationWithoutHolidays = getDurationAndHolidays(
+                  newStart,
+                  newEnd,
+                  checkIsHoliday
+                );
+              }
+            } else {
+              if (checkIsHoliday(changedTask.end, "end")) {
+                newEnd = getPreviousWorkingDate(changedTask.end, action, "end");
+              }
+              let newDurationWithoutHolidays = getDurationAndHolidays(
+                newStart,
+                newEnd,
+                checkIsHoliday
+              );
+
+              while (newDurationWithoutHolidays < durationWithoutHolidays) {
+                newStart = new Date(newStart.getTime() - 1 * 24 * 3600 * 1000);
+
+                newDurationWithoutHolidays = getDurationAndHolidays(
+                  newStart,
+                  newEnd,
+                  checkIsHoliday
+                );
+              }
             }
           }
-
           return {
             ...changedTask,
             start: newStart,
@@ -118,4 +165,18 @@ export const adjustTaskToWorkingDates = ({
           return changedTask;
       }
   }
+};
+
+const getDurationAndHolidays = (
+  startDate: Date,
+  endDate: Date,
+  checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean
+) => {
+  const newHolidaysLength = countHolidays(startDate, endDate, checkIsHoliday);
+  const newDurationWithoutHolidays =
+    endDate.getTime() -
+    startDate.getTime() -
+    newHolidaysLength * 24 * 3600 * 1000;
+
+  return newDurationWithoutHolidays;
 };

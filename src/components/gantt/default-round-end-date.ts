@@ -15,16 +15,12 @@ import subYears from "date-fns/subYears";
 
 import { ViewMode } from "../../types/public-types";
 
-export const defaultRoundEndDate = (
-  date: Date,
-  viewMode: ViewMode,
-) => {
+export const defaultRoundEndDate = (date: Date, viewMode: ViewMode) => {
   switch (viewMode) {
-    case ViewMode.Hour:
-      {
+    case ViewMode.Hour: {
       const end = endOfHour(date);
       const diff = differenceInMinutes(end, date);
-      
+
       if (diff < 30) {
         return end;
       }
@@ -32,11 +28,10 @@ export const defaultRoundEndDate = (
       return subHours(end, 1);
     }
 
-    case ViewMode.QuarterDay:
-    {
+    case ViewMode.QuarterDay: {
       const end = endOfDay(date);
       const diff = differenceInHours(end, date);
-      
+
       if (diff < 3) {
         return end;
       }
@@ -56,11 +51,10 @@ export const defaultRoundEndDate = (
       return subDays(end, 1);
     }
 
-    case ViewMode.HalfDay:
-    {
+    case ViewMode.HalfDay: {
       const end = endOfDay(date);
       const diff = differenceInHours(end, date);
-      
+
       if (diff < 6) {
         return end;
       }
@@ -72,8 +66,7 @@ export const defaultRoundEndDate = (
       return subDays(end, 1);
     }
 
-    case ViewMode.Day:
-    {
+    case ViewMode.Day: {
       const end = endOfDay(date);
       const diff = differenceInHours(end, date);
 
@@ -84,11 +77,10 @@ export const defaultRoundEndDate = (
       return subDays(end, 1);
     }
 
-    case ViewMode.Week:
-    {
+    case ViewMode.Week: {
       const end = endOfWeek(date);
       const diff = differenceInDays(end, date);
-      
+
       if (diff < 4) {
         return end;
       }
@@ -96,11 +88,10 @@ export const defaultRoundEndDate = (
       return subWeeks(end, 1);
     }
 
-    case ViewMode.Month:
-    {
+    case ViewMode.Month: {
       const end = endOfMonth(date);
       const diff = differenceInDays(end, date);
-      
+
       if (diff < 15) {
         return end;
       }
@@ -108,11 +99,10 @@ export const defaultRoundEndDate = (
       return subMonths(end, 1);
     }
 
-    case ViewMode.Year:
-    {
+    case ViewMode.Year: {
       const end = endOfYear(date);
       const diff = differenceInMonths(end, date);
-      
+
       if (diff < 6) {
         return end;
       }

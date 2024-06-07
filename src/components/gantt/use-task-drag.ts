@@ -18,6 +18,7 @@ import {
   Task,
   TaskCoordinates,
   TaskMapByLevel,
+  DateExtremity,
 } from "../../types/public-types";
 
 const SCROLL_DELAY = 25;
@@ -154,7 +155,7 @@ const getNextTsDiff = (
   prevValue: ChangeInProgress,
   rtl: boolean
 ): number => {
-  const { action, task } = prevValue;
+  const { action, originalTask: task } = prevValue;
 
   switch (action) {
     case "end":
@@ -194,8 +195,12 @@ type UseTaskDragParams = {
     originalTask: Task
   ) => void;
   onProgressChange: (task: Task) => void;
-  roundEndDate: (date: Date) => Date;
-  roundStartDate: (date: Date) => Date;
+  roundDate: (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) => Date;
+  dateMoveStep: String;
   rtl: boolean;
   scrollToLeftStep: () => void;
   scrollToRightStep: () => void;
@@ -216,8 +221,8 @@ export const useTaskDrag = ({
   mapTaskToGlobalIndex,
   onDateChange,
   onProgressChange,
-  roundEndDate,
-  roundStartDate,
+  roundDate,
+  dateMoveStep,
   rtl,
   scrollToLeftStep,
   scrollToRightStep,
@@ -240,7 +245,7 @@ export const useTaskDrag = ({
   const [changeInProgress, setChangeInProgress] =
     useState<ChangeInProgress | null>(null);
 
-  const changeInProgressTask = changeInProgress?.task;
+  const changeInProgressTask = changeInProgress?.originalTask;
 
   const isChangeInProgress = Boolean(changeInProgress);
 
@@ -278,16 +283,16 @@ export const useTaskDrag = ({
         changedTask: task,
         coordinates: {
           ...coordinates,
-          containerX: 0,
-          containerWidth: svgWidth,
-          innerX1: coordinates.x1,
-          innerX2: coordinates.x2,
+          // containerX: 0,
+          // containerWidth: svgWidth,
+          // innerX1: coordinates.x1,
+          // innerX2: coordinates.x2,
         },
         coordinatesDiff: 0,
         initialCoordinates: coordinates,
         lastClientX: cursor.x,
         startX: cursor.x,
-        task,
+        originalTask: task,
         taskRootNode,
         tsDiff: 0,
       });
@@ -303,7 +308,8 @@ export const useTaskDrag = ({
         return;
       }
 
-      const { task, additionalLeftSpace } = changeInProgressLatest;
+      const { originalTask: task, additionalLeftSpace } =
+        changeInProgressLatest;
 
       setChangeInProgress(prevValue => {
         if (!prevValue) {
@@ -393,7 +399,7 @@ export const useTaskDrag = ({
                 const { changedTask: newChangedTask } =
                   handleTaskBySVGMouseEvent(
                     prevValue.action,
-                    prevValue.task,
+                    prevValue.originalTask,
                     prevValue.initialCoordinates,
                     nextCoordinates,
                     xStep,
@@ -467,7 +473,7 @@ export const useTaskDrag = ({
                 const { changedTask: newChangedTask } =
                   handleTaskBySVGMouseEvent(
                     prevValue.action,
-                    prevValue.task,
+                    prevValue.originalTask,
                     prevValue.initialCoordinates,
                     nextCoordinates,
                     xStep,
@@ -571,7 +577,7 @@ export const useTaskDrag = ({
 
       event.preventDefault();
 
-      const { action, task } = changeInProgressLatest;
+      const { action, originalTask: task } = changeInProgressLatest;
 
       const { isChanged, changedTask: newChangedTask } =
         handleTaskBySVGMouseEvent(
@@ -585,7 +591,6 @@ export const useTaskDrag = ({
         );
 
       setChangeInProgress(null);
-
       if (!isChanged) {
         return;
       }
@@ -597,8 +602,9 @@ export const useTaskDrag = ({
 
       const roundedChangedTask = roundTaskDates(
         newChangedTask,
-        roundStartDate,
-        roundEndDate
+        roundDate,
+        action,
+        dateMoveStep
       );
 
       onDateChange(action, roundedChangedTask, task);
@@ -625,8 +631,7 @@ export const useTaskDrag = ({
     onDateChange,
     onProgressChange,
     recountOnMove,
-    roundEndDate,
-    roundStartDate,
+    roundDate,
     rtl,
     setChangeInProgress,
     tasksMap,

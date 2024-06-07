@@ -4,8 +4,6 @@
 
 ![example](https://user-images.githubusercontent.com/26743903/88215863-f35d5f00-cc64-11ea-81db-e829e6e9b5c8.png)
 
-## [Live Demo](https://matematuk.github.io/gantt-task-react/)
-
 ## Install
 
 ```
@@ -78,7 +76,7 @@ npm start
 | onDateChange\*     | (task: Task, children: Task[]) => void/boolean/Promise<void>/Promise<boolean> | Specifies the function to be executed when drag taskbar event on timeline has finished. |
 | onProgressChange\* | (task: Task, children: Task[]) => void/boolean/Promise<void>/Promise<boolean> | Specifies the function to be executed when drag taskbar progress event has finished.    |
 | onExpanderClick\*  | onExpanderClick: (task: Task) => void;                                        | Specifies the function to be executed on the table expander click                       |
-| onWheel\*          | onWheel: (wheelEvent: WheelEvent) => void;                                    | Specifies the function to be executed when the mouse wheel is used                           |
+| onWheel\*          | onWheel: (wheelEvent: WheelEvent) => void;                                    | Specifies the function to be executed when the mouse wheel is used                      |
 | timeStep           | number                                                                        | A time step value for onDateChange. Specify in milliseconds.                            |
 
 \* Chart undoes operation if method return false or error. Parameter children returns one level deep records.
@@ -94,6 +92,9 @@ npm start
 | monthCalendarFormat | string  | Specifies the month display on calendar                                                                     |
 | monthTaskListFormat | string  | Specifies the month display on list.                                                                        |
 | rtl                 | boolean | Sets rtl mode.                                                                                              |
+| roundDate           |         | Allow to customize the way the date start/end are rounded                                                   |
+| checkIsHoliday      |         | Tells if a date is a holday. It impacts the style of the day and the way the date is adjusted to working days|
+| dateMoveStep        | string  | A string that correponds to a duration. It is composed of a number and a character among **[DHm]** (corresponding to Day, Hour and minutes). It gives the step to ajust to the working day when moving the date allowing a smooth feedback |
 
 ### StylingOption
 

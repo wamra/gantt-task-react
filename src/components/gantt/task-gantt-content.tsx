@@ -6,6 +6,7 @@ import {
   ChildOutOfParentWarnings,
   ColorStyles,
   CriticalPaths,
+  DateExtremity,
   DependencyMap,
   DependentMap,
   Distances,
@@ -34,7 +35,7 @@ export type TaskGanttContentProps = {
   authorizedRelations: RelationKind[];
   additionalLeftSpace: number;
   additionalRightSpace: number;
-  checkIsHoliday: (date: Date) => boolean;
+  checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean;
   childOutOfParentWarnings: ChildOutOfParentWarnings | null;
   childTasksMap: ChildByLevelMap;
   colorStyles: ColorStyles;
@@ -134,7 +135,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
     for (let i = startColumnIndex; i <= endColumnIndex; ++i) {
       const date = getDate(i);
 
-      if (checkIsHoliday(date)) {
+      if (checkIsHoliday(date, "start")) {
         res.push(
           <rect
             height="100%"

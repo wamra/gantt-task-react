@@ -1,20 +1,33 @@
-import {
-  useCallback,
-} from 'react';
+import { useCallback } from "react";
+
+import { adjustTaskToWorkingDates as defaultAdjustTaskToWorkingDates } from "../../helpers/adjust-task-to-working-dates";
+import { getNextWorkingDate as defaultGetNextWorkingDate } from "../../helpers/get-previous-next-working-date";
+import { getPreviousWorkingDate as defaultGetPreviousWorkingDate } from "../../helpers/get-previous-next-working-date";
 
 import {
-  adjustTaskToWorkingDates as defaultAdjustTaskToWorkingDates,
-} from "../../helpers/adjust-task-to-working-dates";
-import { getNextWorkingDate as defaultGetNextWorkingDate } from '../../helpers/get-next-working-date';
-import { getPreviousWorkingDate as defaultGetPreviousWorkingDate } from '../../helpers/get-previous-working-date';
-
-import { AdjustTaskToWorkingDatesParams, DateSetup } from '../../types/public-types';
+  AdjustTaskToWorkingDatesParams,
+  DateExtremity,
+  DateSetup,
+} from "../../types/public-types";
+import { BarMoveAction } from "../../types/gantt-task-actions";
+import { getStepTime } from "../../helpers/round-task-dates";
 
 type UseHolidaysParams = {
-  checkIsHolidayProp: (date: Date, minTaskDate: Date, dateSetup: DateSetup) => boolean;
+  checkIsHolidayProp: (
+    date: Date,
+    minTaskDate: Date,
+    dateSetup: DateSetup,
+    dateExtremity: DateExtremity
+  ) => boolean;
   dateSetup: DateSetup;
   isAdjustToWorkingDates: boolean;
   minTaskDate: Date;
+  roundDate: (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) => Date;
+  dateMoveStep: String;
 };
 
 export const useHolidays = ({
@@ -22,56 +35,66 @@ export const useHolidays = ({
   dateSetup,
   isAdjustToWorkingDates,
   minTaskDate,
+  roundDate,
+  dateMoveStep,
 }: UseHolidaysParams) => {
   const checkIsHoliday = useCallback(
-    (date: Date) => checkIsHolidayProp(date, minTaskDate, dateSetup),
-    [checkIsHolidayProp, dateSetup, minTaskDate],
+    (date: Date, dateExtremity: DateExtremity) =>
+      checkIsHolidayProp(date, minTaskDate, dateSetup, dateExtremity),
+    [checkIsHolidayProp, dateSetup, minTaskDate]
   );
 
-  const getNextWorkingDate = useCallback(
-    (date: Date) => defaultGetNextWorkingDate(date, checkIsHoliday, dateSetup.viewMode),
-    [
-      checkIsHoliday,
-      dateSetup,
-    ],
-  );
-
-  const getPreviousWorkingDate = useCallback(
-    (date: Date) => defaultGetPreviousWorkingDate(date, checkIsHoliday, dateSetup.viewMode),
-    [
-      checkIsHoliday,
-      dateSetup,
-    ],
-  );
-
-  const adjustTaskToWorkingDates = useCallback(
-    ({
+  const getNextWorkingDate = (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) =>
+    defaultGetNextWorkingDate(
+      date,
       action,
-      changedTask,
-      originalTask,
-    }: AdjustTaskToWorkingDatesParams) => {
-      if (isAdjustToWorkingDates) {
-        return defaultAdjustTaskToWorkingDates({
-          action,
-          changedTask,
-          checkIsHoliday,
-          getNextWorkingDate,
-          getPreviousWorkingDate,
-          originalTask,
-          viewMode: dateSetup.viewMode,
-        });
-      }
-
-      return changedTask;
-    },
-    [
+      roundDate,
+      dateExtremity,
       checkIsHoliday,
-      dateSetup,
-      getNextWorkingDate,
-      getPreviousWorkingDate,
-      isAdjustToWorkingDates,
-    ],
-  );
+      dateMoveStep
+    );
+
+  const getPreviousWorkingDate = (
+    date: Date,
+    action: BarMoveAction,
+    dateExtremity: DateExtremity
+  ) =>
+    defaultGetPreviousWorkingDate(
+      date,
+      action,
+      roundDate,
+      dateExtremity,
+      checkIsHoliday,
+      dateMoveStep
+    );
+
+  const adjustTaskToWorkingDates = ({
+    action,
+    changedTask,
+    originalTask,
+  }: AdjustTaskToWorkingDatesParams) => {
+    const nbDaysTimeStep = getStepTime(dateMoveStep) / (1000 * 3600 * 24);
+    // There are too much corner cases when the step time is greater than 2 days
+    // for example when reducing a task, the moved date can be on a holidays which trigger a new shift to find the next date date not in holidays
+    // that can lead to unexpected behavior from user point of view
+    // TODO -> delegate adjustTaskToWorkingDates to the gantt api consumer coherently with the checkHoliday
+    if (isAdjustToWorkingDates && nbDaysTimeStep <= 2) {
+      return defaultAdjustTaskToWorkingDates({
+        action,
+        changedTask,
+        checkIsHoliday,
+        getNextWorkingDate,
+        getPreviousWorkingDate,
+        originalTask,
+      });
+    }
+
+    return changedTask;
+  };
 
   return {
     checkIsHoliday,

@@ -160,7 +160,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       isClosed,
       isShowTaskNumbers,
       onExpanderClick,
-      task: task.type === "empty" ? task : getTaskCurrentState(task),
+      task, //: task.type === "empty" ? task : getTaskCurrentState(task),
     }),
     [
       canMoveTasks,
