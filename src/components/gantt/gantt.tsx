@@ -164,6 +164,8 @@ const defaultDistances: Distances = {
   titleCellWidth: 220,
 };
 
+const MINIMUM_DISPLAYED_TIME_UNIT = 30;
+
 export const Gantt: React.FC<GanttProps> = ({
   TaskListHeader = TaskListHeaderDefault,
   TaskListTable = TaskListTableDefault,
@@ -483,10 +485,11 @@ export const Gantt: React.FC<GanttProps> = ({
   });
 
   const svgWidth = useMemo(
-    () => datesLength * distances.columnWidth,
+    () =>
+      Math.max(MINIMUM_DISPLAYED_TIME_UNIT, datesLength) *
+      distances.columnWidth,
     [datesLength, distances]
   );
-
   const renderedColumnIndexes = useOptimizedList(
     ganttTaskRootRef,
     "scrollLeft",
