@@ -16,15 +16,12 @@ import { initTasks, onAddTask, onEditTask } from "./helper";
 import "../dist/style.css";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
+import { Add as AddIcon } from "@material-ui/icons";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import styles from "./CustomPalette_Zoom.module.css";
 import { BarMoveAction } from "../src/types/gantt-task-actions";
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
-export const CustomPalette_Zoom: React.FC<AppProps> = props => {
+export const CustomPalette_Zoom: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
   const [viewMode, setView] = React.useState<ViewMode>(ViewMode.Day);
 
@@ -88,6 +85,28 @@ export const CustomPalette_Zoom: React.FC<AppProps> = props => {
     return conf;
   };
 
+  const handleTaskCreate = (task: Task) => {
+    const newTask: TaskOrEmpty = {
+      id: Math.random().toString(36).slice(-6),
+      name: task.name + "x",
+      parent: task.parent,
+      start: new Date(
+        task.start.getFullYear(),
+        task.start.getMonth(),
+        task.start.getDate()
+      ),
+      end: new Date(
+        task.end.getFullYear(),
+        task.end.getMonth(),
+        task.end.getDate()
+      ),
+      progress: 25,
+      type: "project",
+      hideChildren: false,
+    };
+    setTasks([...tasks, newTask]);
+  };
+
   const handleWheel = (wheelEvent: WheelEvent) => {
     if (wheelEvent.ctrlKey) {
       wheelEvent.preventDefault();
@@ -123,6 +142,15 @@ export const CustomPalette_Zoom: React.FC<AppProps> = props => {
           data-testid="delete-task"
         >
           <DeleteForeverIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          aria-label="Create task"
+          title="Create task"
+          onClick={() => handleTaskCreate(selectedTask)}
+          data-testid="create-task"
+        >
+          <AddIcon fontSize="small" />
         </IconButton>
         <IconButton
           size="small"
@@ -256,7 +284,7 @@ export const CustomPalette_Zoom: React.FC<AppProps> = props => {
     }
   };
 
-  const dateMoveStep = "2D";
+  const dateMoveStep = "12H";
 
   const getDayOfTheYear = (date: Date) => {
     const start = new Date(date.getFullYear(), 0, 0);

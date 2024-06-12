@@ -26,11 +26,7 @@ const distances: Partial<Distances> = {
   expandIconWidth: 30,
 };
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
-export const CustomIcons: React.FC<AppProps> = props => {
+export const CustomIcons: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {

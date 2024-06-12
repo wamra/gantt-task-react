@@ -14,11 +14,7 @@ import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
-export const CustomRelationKind: React.FC<AppProps> = props => {
+export const CustomRelationKind: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {

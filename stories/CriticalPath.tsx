@@ -10,10 +10,6 @@ import "../dist/style.css";
 
 const NUMBER_OF_SUBTASKS = 6;
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
 const initTasks = () => {
   const res: Task[] = [];
 
@@ -84,7 +80,7 @@ const initTasks = () => {
   return res;
 };
 
-export const CriticalPath: React.FC<AppProps> = props => {
+export const CriticalPath: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks);
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {

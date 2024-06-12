@@ -101,7 +101,6 @@ npm start
 | Parameter Name             | Type   | Description                                                                                    |
 | :------------------------- | :----- | :--------------------------------------------------------------------------------------------- |
 | headerHeight               | number | Specifies the header height.                                                                   |
-| ganttHeight                | number | Specifies the gantt chart height without header. Default is 0. It`s mean no height limitation. |
 | columnWidth                | number | Specifies the time period width.                                                               |
 | listCellWidth              | string | Specifies the task list cell width. Empty string is mean "no display".                         |
 | rowHeight                  | number | Specifies the task row height.                                                                 |

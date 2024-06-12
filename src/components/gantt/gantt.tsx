@@ -154,7 +154,6 @@ const defaultDistances: Distances = {
   expandIconWidth: 20,
   handleWidth: 8,
   headerHeight: 50,
-  ganttHeight: 600,
   minimumRowDisplayed: 4,
   nestedTaskNameOffset: 20,
   relationCircleOffset: 10,
@@ -416,14 +415,6 @@ export const Gantt: React.FC<GanttProps> = ({
   const ganttFullHeight = useMemo(
     () => maxLevelLength * fullRowHeight,
     [maxLevelLength, fullRowHeight]
-  );
-
-  const ganttHeight = useMemo(
-    () =>
-      distances.ganttHeight
-        ? Math.min(distances.ganttHeight, ganttFullHeight)
-        : ganttFullHeight,
-    [distances, ganttFullHeight]
   );
 
   const [taskToRowIndexMap, rowIndexToTaskMap, mapGlobalRowIndexToTask] =
@@ -1895,7 +1886,6 @@ export const Gantt: React.FC<GanttProps> = ({
     fontSize,
     fullRowHeight,
     ganttFullHeight,
-    ganttHeight,
     getTaskCurrentState,
     handleAddTask,
     handleDeleteTasks,
@@ -1940,7 +1930,6 @@ export const Gantt: React.FC<GanttProps> = ({
         fullRowHeight={fullRowHeight}
         fullSvgWidth={fullSvgWidth}
         ganttFullHeight={ganttFullHeight}
-        ganttHeight={ganttHeight}
         ganttSVGRef={ganttSVGRef}
         gridProps={gridProps}
         ganttTaskContentRef={ganttTaskContentRef}

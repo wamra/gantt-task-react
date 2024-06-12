@@ -6,11 +6,7 @@ import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
-export const Warnings: React.FC<AppProps> = props => {
+export const Warnings: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {
@@ -47,7 +43,6 @@ export const Warnings: React.FC<AppProps> = props => {
 
   return (
     <Gantt
-      isRecountParentsOnChange={false}
       isShowChildOutOfParentWarnings
       isShowDependencyWarnings
       {...props}

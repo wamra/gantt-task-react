@@ -16,7 +16,6 @@ export type TaskGanttProps = {
   fullRowHeight: number;
   fullSvgWidth: number;
   ganttFullHeight: number;
-  ganttHeight: number;
   ganttSVGRef: RefObject<SVGSVGElement>;
   gridProps: GridProps;
   ganttTaskContentRef: RefObject<HTMLDivElement>;
@@ -35,7 +34,6 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
   fullRowHeight,
   fullSvgWidth,
   ganttFullHeight,
-  ganttHeight,
   ganttSVGRef,
   gridProps,
   gridProps: {
@@ -49,7 +47,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
   const containerStyle: CSSProperties = {
     // In order to see the vertical scrollbar of the gantt content,
     // we resize dynamically the width of the gantt content
-    height: Math.max(ganttHeight, minimumRowDisplayed * rowHeight),
+    height: Math.max(ganttFullHeight, minimumRowDisplayed * rowHeight),
     width: ganttTaskRootRef?.current
       ? ganttTaskRootRef.current.clientWidth +
         ganttTaskRootRef.current.scrollLeft

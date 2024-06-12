@@ -32,10 +32,6 @@ const ProgressColumn: React.FC<ColumnProps> = ({ data: { task } }) => {
   return null;
 };
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
 enum TaskListColumnEnum {
   NAME = "Name",
   FROM = "From",
@@ -87,7 +83,7 @@ export const getColumns = (
   return typeToColumn;
 };
 
-export const CustomColumns_VerticalScroll: React.FC<AppProps> = props => {
+export const CustomColumns_VerticalScroll: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
 
   const onChangeTasks = useCallback<OnChangeTasks>((nextTasks, action) => {

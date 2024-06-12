@@ -6,15 +6,11 @@ import { initTasks, onAddTask, onEditTask } from "./helper";
 
 import "../dist/style.css";
 
-type AppProps = {
-  ganttHeight?: number;
-};
-
-export const Comparison: React.FC<AppProps> = props => {
+export const Comparison: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(() => {
     const firstLevelTasks = initTasks();
 
-    const secondLevelTasks = firstLevelTasks.map<Task>(task => ({
+    const secondLevelTasks = firstLevelTasks.map<TaskOrEmpty>(task => ({
       ...task,
       comparisonLevel: 2,
     }));

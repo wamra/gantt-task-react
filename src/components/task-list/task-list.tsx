@@ -43,7 +43,6 @@ export type TaskListProps = {
   fontSize: string;
   fullRowHeight: number;
   ganttFullHeight: number;
-  ganttHeight: number;
   getTaskCurrentState: (task: Task) => Task;
   handleAddTask: (task: Task) => void;
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
