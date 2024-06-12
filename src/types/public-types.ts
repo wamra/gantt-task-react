@@ -701,35 +701,6 @@ export type CriticalPath = {
   dependencies: Map<string, Set<string>>;
 };
 
-export type MinAndMaxChildsOfTask = [
-  [
-    /**
-     * First min
-     */
-    Task | null,
-    /**
-     * Second min
-     */
-    Task | null
-  ],
-  [
-    /**
-     * First max
-     */
-    Task | null,
-    /**
-     * Second max
-     */
-    Task | null
-  ]
-];
-
-// comparison level -> task id -> [[first min, second min], [first max, second max]]
-export type MinAndMaxChildsMap = Map<
-  number,
-  Map<string, MinAndMaxChildsOfTask>
->;
-
 // comparison level -> critical path
 export type CriticalPaths = Map<number, CriticalPath>;
 

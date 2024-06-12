@@ -65,7 +65,6 @@ import { useHorizontalScrollbars } from "./use-horizontal-scrollbars";
 import { getDateByOffset } from "../../helpers/get-date-by-offset";
 import { getDatesDiff } from "../../helpers/get-dates-diff";
 import { BarMoveAction } from "../../types/gantt-task-actions";
-import { getMinAndMaxChildsMap } from "../../helpers/get-min-and-max-childs-map";
 import { useGetTaskCurrentState } from "./use-get-task-current-state";
 import { useSelection } from "./use-selection";
 import { defaultCheckIsHoliday } from "./default-check-is-holiday";
@@ -276,11 +275,6 @@ export const Gantt: React.FC<GanttProps> = ({
   const [childTasksMap, rootTasksMap] = useMemo(
     () => getChildsAndRoots(sortedTasks, null),
     [sortedTasks]
-  );
-
-  const minAndMaxChildsMap = useMemo(
-    () => getMinAndMaxChildsMap(rootTasksMap, childTasksMap),
-    [rootTasksMap, childTasksMap]
   );
 
   const [visibleTasks, visibleTasksMirror] = useMemo(
@@ -1631,7 +1625,6 @@ export const Gantt: React.FC<GanttProps> = ({
     isMoveChildsWithParent,
     isUpdateDisabledParentsOnChange,
     mapTaskToCoordinates,
-    minAndMaxChildsMap,
     roundDate,
     tasksMap,
     dateMoveStep,

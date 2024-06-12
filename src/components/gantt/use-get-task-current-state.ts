@@ -11,7 +11,6 @@ import type {
   ChangeInProgress,
   DateExtremity,
   MapTaskToCoordinates,
-  MinAndMaxChildsMap,
   Task,
   TaskMapByLevel,
 } from "../../types/public-types";
@@ -25,7 +24,6 @@ type UseGetTaskCurrentStateParams = {
   isMoveChildsWithParent: boolean;
   isUpdateDisabledParentsOnChange: boolean;
   mapTaskToCoordinates: MapTaskToCoordinates;
-  minAndMaxChildsMap: MinAndMaxChildsMap;
   roundDate: (
     date: Date,
     action: BarMoveAction,
@@ -42,7 +40,6 @@ export const useGetTaskCurrentState = ({
   isMoveChildsWithParent,
   isUpdateDisabledParentsOnChange,
   mapTaskToCoordinates,
-  minAndMaxChildsMap,
   roundDate,
   tasksMap,
   dateMoveStep,
@@ -140,66 +137,37 @@ export const useGetTaskCurrentState = ({
             tasksMap
           )
         ) {
-          const minAndMaxChildsOnLevelMap = minAndMaxChildsMap.get(
-            currentOriginalTask.comparisonLevel || 1
-          );
+          // Get all the children of the current Task
+          const childrenTasks = Array.from(
+            tasksMap.get(currentOriginalTask.comparisonLevel || 1).values()
+          )
+            .filter(task => {
+              return (
+                task.parent == currentOriginalTask.id && task.type !== "empty"
+              );
+            })
+            .map(task => task as Task);
 
-          if (!minAndMaxChildsOnLevelMap) {
-            throw new Error("Min and max childs on level are not defined");
-          }
+          const startDates = childrenTasks.map(task => {
+            if (task.id == changeInProgress.changedTask.id) {
+              return getTaskCurrentState(task).start;
+            } else {
+              return task.start;
+            }
+          });
+          const endDates = childrenTasks.map(task => {
+            if (task.id == changeInProgress.changedTask.id) {
+              return getTaskCurrentState(task).end;
+            } else {
+              return task.end;
+            }
+          });
 
-          const minAndMaxChilds = minAndMaxChildsOnLevelMap.get(
-            currentOriginalTask.id
-          );
-
-          if (!minAndMaxChilds) {
-            throw new Error(
-              `Min and max childs on level are not defined for task "${currentOriginalTask.id}"`
-            );
-          }
-
-          const [
-            [firstMinBeforeChange, secondMinBeforeChange],
-            [firstMaxBeforeChange, secondMaxBeforeChange],
-          ] = minAndMaxChilds;
-
-          if (firstMinBeforeChange && firstMaxBeforeChange) {
-            const firstMin = getTaskCurrentState(firstMinBeforeChange);
-            const secondMin = getTaskCurrentState(
-              secondMinBeforeChange || firstMinBeforeChange
-            );
-
-            const firstMax = getTaskCurrentState(firstMaxBeforeChange);
-            const secondMax = getTaskCurrentState(
-              secondMaxBeforeChange || firstMaxBeforeChange
-            );
-
-            const minStartDate = minDate([
-              firstMin.start,
-              secondMin.start,
-              roundDate(
-                changeInProgress.changedTask.start,
-                changeInProgress.action,
-                "start"
-              ),
-            ]);
-
-            const maxEndDate = maxDate([
-              firstMax.end,
-              secondMax.end,
-              roundDate(
-                changeInProgress.changedTask.end,
-                changeInProgress.action,
-                "end"
-              ),
-            ]);
-
-            return {
-              ...currentOriginalTask,
-              end: maxEndDate,
-              start: minStartDate,
-            };
-          }
+          return {
+            ...currentOriginalTask,
+            start: minDate(startDates),
+            end: maxDate(endDates),
+          };
         }
       }
       return currentOriginalTask;
@@ -211,7 +179,6 @@ export const useGetTaskCurrentState = ({
       isMoveChildsWithParent,
       isUpdateDisabledParentsOnChange,
       mapTaskToCoordinates,
-      minAndMaxChildsMap,
       roundDate,
       tasksMap,
     ]
