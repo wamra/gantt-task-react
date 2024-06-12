@@ -13,8 +13,6 @@ import { ProjectDisplay } from "../project/project-display";
 
 export const Bar: React.FC<
   TaskItemProps & {
-    onLeftRelationTriggerMouseDown: () => void;
-    onRightRelationTriggerMouseDown: () => void;
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
 > = ({

@@ -253,6 +253,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         ? isFromStartRelationAuthorized
         : isFromEndRelationAuthorized;
     }
+    const isSmallBar = width < handleWidth * 2;
     const relationhandles = (
       <>
         {/* left */}
@@ -271,7 +272,11 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
           <BarRelationHandle
             dataTestid={`task-relation-handle-right-${task.name}`}
             isRelationDrawMode={!!ganttRelationEvent}
-            x={x2 + relationCircleOffset}
+            x={
+              !isSmallBar
+                ? x2 + relationCircleOffset
+                : x1 + 2 * handleWidth + relationCircleOffset
+            }
             y={taskYOffset + taskHalfHeight}
             radius={relationCircleRadius}
             startDrawRelation={onRightRelationTriggerMouseDown}
@@ -285,27 +290,25 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
         <Milestone
           {...props}
           colorStyles={styles}
-          onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
-          onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
         >
           {relationhandles}
         </Milestone>
       );
-    } else if (width < handleWidth * 2) {
+    } else if (isSmallBar) {
       return (
         <BarSmall
           {...props}
           colorStyles={styles}
           onTaskEventStart={onTaskEventStart}
-        />
+        >
+          {relationhandles}
+        </BarSmall>
       );
     } else
       return (
         <Bar
           {...props}
-          onLeftRelationTriggerMouseDown={onLeftRelationTriggerMouseDown}
-          onRightRelationTriggerMouseDown={onRightRelationTriggerMouseDown}
           onTaskEventStart={onTaskEventStart}
           colorStyles={styles}
         >

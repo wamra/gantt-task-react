@@ -9,8 +9,6 @@ import styles from "./milestone.module.css";
 
 export const Milestone: React.FC<
   TaskItemProps & {
-    onLeftRelationTriggerMouseDown: () => void;
-    onRightRelationTriggerMouseDown: () => void;
     onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
   }
 > = ({
