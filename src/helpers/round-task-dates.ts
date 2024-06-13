@@ -1,7 +1,8 @@
 import { BarMoveAction } from "../types/gantt-task-actions";
 import type { DateExtremity, Task } from "../types/public-types";
 
-const ONE_DAY_DURATION: number = 1000 * 3600 * 24;
+export const ONE_HOUR_DURATION: number = 1000 * 3600 * 1;
+export const ONE_DAY_DURATION: number = 1000 * 3600 * 24;
 
 export const roundTaskDates = (
   task: Task,
@@ -60,12 +61,12 @@ export const incrementDate = (
 ) => {
   const stepTime = getStepTime(dateMoveStep);
   let incrementedDate = date;
-  if (limitDateMoveToOneDay || stepTime < ONE_DAY_DURATION) {
-    incrementedDate = new Date(date.getTime() + stepTime);
-    incrementedDate = roundDate(incrementedDate, action, dateExtremity);
-  } else {
+  if (limitDateMoveToOneDay && stepTime > ONE_DAY_DURATION) {
     // this check allow to not have a major shit in case of rounding/step greater than one day
     incrementedDate = new Date(date.getTime() + ONE_DAY_DURATION);
+  } else {
+    incrementedDate = new Date(date.getTime() + stepTime);
+    incrementedDate = roundDate(incrementedDate, action, dateExtremity);
   }
   return incrementedDate;
 };
@@ -84,25 +85,18 @@ export const decrementDate = (
 ) => {
   const stepTime = getStepTime(dateMoveStep);
   let decrementedDate = date;
-  const dayLightSavingTime =
-    (date.getTimezoneOffset() -
-      new Date(date.getFullYear(), 0, 1).getTimezoneOffset()) *
-    60 *
-    1000;
-  if (limitDateMoveToOneDay || stepTime < ONE_DAY_DURATION) {
-    decrementedDate = new Date(date.getTime() - stepTime - dayLightSavingTime);
-    decrementedDate = roundDate(decrementedDate, action, dateExtremity);
-  } else {
+  if (limitDateMoveToOneDay && stepTime > ONE_DAY_DURATION) {
     // this check allow to not have a major shit in case of rounding/step greater than one day
-    decrementedDate = new Date(
-      date.getTime() - ONE_DAY_DURATION - dayLightSavingTime
-    );
+    decrementedDate = new Date(date.getTime() - ONE_DAY_DURATION);
+  } else {
+    decrementedDate = new Date(date.getTime() - stepTime);
+    decrementedDate = roundDate(decrementedDate, action, dateExtremity);
   }
   return decrementedDate;
 };
 
 export const getStepTime = (dateMoveStep: String) => {
-  let stepTime = ONE_DAY_DURATION; // default is one day
+  let stepTime = ONE_HOUR_DURATION; // default is one hour
 
   const regex = /^(\d+)([DHm])$/;
   const matches = dateMoveStep.match(regex);

@@ -90,6 +90,7 @@ export const useHolidays = ({
         getNextWorkingDate,
         getPreviousWorkingDate,
         originalTask,
+        dateMoveStep,
       });
     }
 

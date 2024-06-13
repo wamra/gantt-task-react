@@ -20,7 +20,7 @@ export const getNextWorkingDate = (
     roundDate,
     dateExtremity,
     dateMoveStep,
-    true
+    false
   );
 
   while (checkIsHoliday(currentDate, dateExtremity)) {
@@ -30,7 +30,7 @@ export const getNextWorkingDate = (
       roundDate,
       dateExtremity,
       dateMoveStep,
-      false
+      true
     );
     if (incrementedDate <= currentDate) {
       // Avoid infinite loop in case of corner case in checkIsHoliday/incrementDate
@@ -60,7 +60,7 @@ export const getPreviousWorkingDate = (
     roundDate,
     dateExtremity,
     dateMoveStep,
-    true
+    false
   );
 
   while (checkIsHoliday(currentDate, dateExtremity)) {
@@ -70,7 +70,7 @@ export const getPreviousWorkingDate = (
       roundDate,
       dateExtremity,
       dateMoveStep,
-      false
+      true
     );
     if (decrementedDate >= currentDate) {
       // Avoid infinite loop in case of corner case in checkIsHoliday/incrementDate
