@@ -10,6 +10,7 @@ export enum ViewMode {
   QuarterDay = "Quarter Day",
   HalfDay = "Half Day",
   Day = "Day",
+  TwoDays = "Two Days",
   /** ISO-8601 week */
   Week = "Week",
   Month = "Month",

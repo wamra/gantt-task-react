@@ -383,6 +383,9 @@ export const Calendar: React.FC<CalendarProps> = ({
     case ViewMode.Week:
       [topValues, bottomValues] = getCalendarValuesForWeek();
       break;
+    case ViewMode.TwoDays:
+      [topValues, bottomValues] = getCalendarValuesForDay();
+      break;
     case ViewMode.Day:
       [topValues, bottomValues] = getCalendarValuesForDay();
       break;

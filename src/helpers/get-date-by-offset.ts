@@ -9,18 +9,21 @@ import { ViewMode } from "../types/public-types";
 export const getDateByOffset = (
   startDate: Date,
   offset: number,
-  viewMode: ViewMode,
+  viewMode: ViewMode
 ) => {
   switch (viewMode) {
     case ViewMode.Day:
       return addDays(startDate, offset);
+
+    case ViewMode.TwoDays:
+      return addDays(startDate, offset * 2);
 
     case ViewMode.HalfDay:
       return addHours(startDate, offset * 12);
 
     case ViewMode.QuarterDay:
       return addHours(startDate, offset * 6);
-    
+
     case ViewMode.Hour:
       return addHours(startDate, offset);
 
@@ -34,6 +37,6 @@ export const getDateByOffset = (
       return addYears(startDate, offset);
 
     default:
-      throw new Error('Unknown view mode');
+      throw new Error("Unknown view mode");
   }
 };

@@ -19,16 +19,12 @@ import { getDatesDiff } from "./get-dates-diff";
 export const ganttDateRange = (
   tasks: readonly TaskOrEmpty[],
   viewMode: ViewMode,
-  preStepsCount: number,
-): [
-  Date,
-  Date,
-  number,
-] => {
+  preStepsCount: number
+): [Date, Date, number] => {
   let minTaskDate: Date | null = null;
   let maxTaskDate: Date | null = null;
   for (const task of tasks) {
-    if (task.type !== 'empty') {
+    if (task.type !== "empty") {
       if (!minTaskDate || task.start < minTaskDate) {
         minTaskDate = task.start;
       }
@@ -65,11 +61,17 @@ export const ganttDateRange = (
       newEndDate = startOfDay(maxTaskDate);
       newEndDate = addMonths(newEndDate, 1.5);
       break;
-    case ViewMode.Day:
+    case ViewMode.TwoDays:
       newStartDate = startOfDay(minTaskDate);
       newStartDate = subDays(newStartDate, preStepsCount);
       newEndDate = startOfDay(maxTaskDate);
       newEndDate = addDays(newEndDate, 19);
+      break;
+    case ViewMode.Day:
+      newStartDate = startOfDay(minTaskDate);
+      newStartDate = subDays(newStartDate, preStepsCount);
+      newEndDate = startOfDay(maxTaskDate);
+      newEndDate = addDays(newEndDate, 30);
       break;
     case ViewMode.QuarterDay:
       newStartDate = startOfDay(minTaskDate);
@@ -91,7 +93,11 @@ export const ganttDateRange = (
       break;
   }
 
-  return [newStartDate, minTaskDate, getDatesDiff(newEndDate, newStartDate, viewMode)];
+  return [
+    newStartDate,
+    minTaskDate,
+    getDatesDiff(newEndDate, newStartDate, viewMode),
+  ];
 };
 
 export const getWeekNumberISO8601 = (date: Date) => {
