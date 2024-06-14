@@ -6,7 +6,6 @@ import {
   ChildOutOfParentWarnings,
   ColorStyles,
   CriticalPaths,
-  DateExtremity,
   DependencyMap,
   DependentMap,
   Distances,
@@ -35,7 +34,6 @@ export type TaskGanttContentProps = {
   authorizedRelations: RelationKind[];
   additionalLeftSpace: number;
   additionalRightSpace: number;
-  checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean;
   childOutOfParentWarnings: ChildOutOfParentWarnings | null;
   childTasksMap: ChildByLevelMap;
   colorStyles: ColorStyles;
@@ -44,14 +42,12 @@ export type TaskGanttContentProps = {
   dependencyMap: DependencyMap;
   dependentMap: DependentMap;
   distances: Distances;
-  endColumnIndex: number;
   fixEndPosition?: FixPosition;
   fixStartPosition?: FixPosition;
   fontFamily: string;
   fontSize: string;
   fullRowHeight: number;
   ganttRelationEvent: GanttRelationEvent | null;
-  getDate: (index: number) => Date;
   getTaskCoordinates: (task: Task) => TaskCoordinates;
   getTaskGlobalIndexByRef: (task: Task) => number;
   handleBarRelationStart: (target: RelationMoveTarget, task: Task) => void;
@@ -73,7 +69,6 @@ export type TaskGanttContentProps = {
   selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
   selectedIdsMirror: Readonly<Record<string, true>>;
   setTooltipTask: (task: Task | null, element: Element | null) => void;
-  startColumnIndex: number;
   taskToHasDependencyWarningMap: TaskToHasDependencyWarningMap | null;
   taskYOffset: number;
   visibleTasksMirror: Readonly<Record<string, true>>;
@@ -86,7 +81,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   authorizedRelations,
   additionalLeftSpace,
   additionalRightSpace,
-  checkIsHoliday,
   childOutOfParentWarnings,
   childTasksMap,
   colorStyles,
@@ -95,14 +89,12 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   dependencyMap,
   dependentMap,
   distances,
-  endColumnIndex,
   fixEndPosition = undefined,
   fixStartPosition = undefined,
   fontFamily,
   fontSize,
   fullRowHeight,
   ganttRelationEvent,
-  getDate,
   getTaskCoordinates,
   getTaskGlobalIndexByRef,
   handleBarRelationStart,
@@ -119,47 +111,12 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   selectTaskOnMouseDown,
   selectedIdsMirror,
   setTooltipTask,
-  startColumnIndex,
   taskToHasDependencyWarningMap,
   taskYOffset,
   taskHeight,
   taskHalfHeight,
   visibleTasksMirror,
 }) => {
-  const renderedHolidays = useMemo(() => {
-    const { holidayBackgroundColor } = colorStyles;
-    const { columnWidth } = distances;
-
-    const res: ReactNode[] = [];
-
-    for (let i = startColumnIndex; i <= endColumnIndex; ++i) {
-      const date = getDate(i);
-
-      if (checkIsHoliday(date, "start")) {
-        res.push(
-          <rect
-            height="100%"
-            width={columnWidth}
-            x={additionalLeftSpace + i * columnWidth}
-            y={0}
-            fill={holidayBackgroundColor}
-            key={i}
-          />
-        );
-      }
-    }
-
-    return res;
-  }, [
-    additionalLeftSpace,
-    checkIsHoliday,
-    colorStyles,
-    distances,
-    endColumnIndex,
-    getDate,
-    startColumnIndex,
-  ]);
-
   const [renderedTasks, renderedArrows, renderedSelectedTasks] = useMemo(() => {
     if (!renderedRowIndexes) {
       return [null, null, null];
@@ -483,8 +440,6 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   return (
     <g className="content">
       {renderedSelectedTasks}
-
-      <g>{renderedHolidays}</g>
 
       <g
         className="arrows"

@@ -1699,28 +1699,22 @@ export const Gantt: React.FC<GanttProps> = ({
     [additionalLeftSpace, additionalRightSpace, svgWidth]
   );
 
-  const gridProps: GridProps = useMemo(
-    () => ({
-      additionalLeftSpace,
-      distances,
-      ganttFullHeight,
-      isUnknownDates,
-      rtl,
-      startDate,
-      todayColor: colorStyles.todayColor,
-      viewMode,
-    }),
-    [
-      additionalLeftSpace,
-      colorStyles.todayColor,
-      distances,
-      ganttFullHeight,
-      isUnknownDates,
-      rtl,
-      startDate,
-      viewMode,
-    ]
-  );
+  const gridProps: GridProps = {
+    additionalLeftSpace,
+    ganttFullHeight,
+    columnWidth: distances.columnWidth,
+    isUnknownDates,
+    rtl,
+    startDate,
+    todayColor: colorStyles.todayColor,
+    holidayBackgroundColor: colorStyles.holidayBackgroundColor,
+    viewMode,
+    startColumnIndex,
+    endColumnIndex,
+    checkIsHoliday,
+    getDate,
+    minTaskDate,
+  };
 
   const calendarProps: CalendarProps = useMemo(
     () => ({
@@ -1766,7 +1760,6 @@ export const Gantt: React.FC<GanttProps> = ({
       authorizedRelations,
       additionalLeftSpace,
       additionalRightSpace,
-      checkIsHoliday,
       childOutOfParentWarnings,
       childTasksMap,
       colorStyles,
@@ -1775,14 +1768,12 @@ export const Gantt: React.FC<GanttProps> = ({
       dependencyMap,
       dependentMap,
       distances,
-      endColumnIndex,
       fixEndPosition,
       fixStartPosition,
       fontFamily,
       fontSize,
       fullRowHeight,
       ganttRelationEvent,
-      getDate,
       getTaskCoordinates,
       getTaskGlobalIndexByRef,
       handleBarRelationStart,
@@ -1802,7 +1793,6 @@ export const Gantt: React.FC<GanttProps> = ({
       selectTaskOnMouseDown,
       selectedIdsMirror,
       setTooltipTask: onChangeTooltipTask,
-      startColumnIndex,
       taskHalfHeight,
       taskHeight,
       taskToHasDependencyWarningMap,
@@ -1920,6 +1910,7 @@ export const Gantt: React.FC<GanttProps> = ({
       <TaskGantt
         barProps={barProps}
         calendarProps={calendarProps}
+        distances={distances}
         fullRowHeight={fullRowHeight}
         fullSvgWidth={fullSvgWidth}
         ganttFullHeight={ganttFullHeight}

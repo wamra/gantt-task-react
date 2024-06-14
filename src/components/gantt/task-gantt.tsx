@@ -7,17 +7,22 @@ import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
 import styles from "./gantt.module.css";
 import Popper from "@material-ui/core/Popper";
 import Paper from "@material-ui/core/Paper";
-import { TaskContextualPaletteProps, Task } from "../../types/public-types";
+import {
+  TaskContextualPaletteProps,
+  Task,
+  Distances,
+} from "../../types/public-types";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
 
 export type TaskGanttProps = {
   barProps: TaskGanttContentProps;
   calendarProps: CalendarProps;
+  gridProps: GridProps;
+  distances: Distances;
   fullRowHeight: number;
   fullSvgWidth: number;
   ganttFullHeight: number;
   ganttSVGRef: RefObject<SVGSVGElement>;
-  gridProps: GridProps;
   ganttTaskContentRef: RefObject<HTMLDivElement>;
   onVerticalScrollbarScrollX: (event: SyntheticEvent<HTMLDivElement>) => void;
   ganttTaskRootRef: RefObject<HTMLDivElement>;
@@ -29,16 +34,13 @@ export type TaskGanttProps = {
 const TaskGanttInner: React.FC<TaskGanttProps> = ({
   barProps,
   barProps: { additionalLeftSpace },
-
   calendarProps,
   fullRowHeight,
   fullSvgWidth,
   ganttFullHeight,
   ganttSVGRef,
   gridProps,
-  gridProps: {
-    distances: { columnWidth, rowHeight, minimumRowDisplayed },
-  },
+  distances: { columnWidth, rowHeight, minimumRowDisplayed },
   ganttTaskContentRef,
   onVerticalScrollbarScrollX,
   ganttTaskRootRef,
