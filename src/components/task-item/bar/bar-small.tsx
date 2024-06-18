@@ -2,10 +2,10 @@ import React, { useCallback } from "react";
 import stylesRelationHandle from "./bar-relation-handle.module.css";
 import { BarDisplay } from "./bar-display";
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types/gantt-task-actions";
 
 import styles from "./bar.module.css";
 import { BarDateHandle } from "./bar-date-handle";
+import { BarMoveAction } from "../../../types/public-types";
 
 export const BarSmall: React.FC<
   TaskItemProps & {

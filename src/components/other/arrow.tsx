@@ -1,7 +1,11 @@
 import React, { memo, useCallback, useMemo } from "react";
 
-import { ColorStyles, Distances, Task } from "../../types/public-types";
-import { RelationMoveTarget } from "../../types/gantt-task-actions";
+import {
+  ColorStyles,
+  Distances,
+  RelationMoveTarget,
+  Task,
+} from "../../types/public-types";
 import { generateTrianglePoints } from "../../helpers/generate-triangle-points";
 import {
   FixDependencyPosition,

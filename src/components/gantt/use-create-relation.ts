@@ -7,10 +7,7 @@ import {
   getMapTaskToCoordinatesOnLevel,
   getTaskCoordinates,
 } from "../../helpers/get-task-coordinates";
-import {
-  GanttRelationEvent,
-  RelationMoveTarget,
-} from "../../types/gantt-task-actions";
+import { GanttRelationEvent } from "../../types/gantt-task-actions";
 import {
   Distances,
   MapTaskToCoordinates,
@@ -19,6 +16,7 @@ import {
   Task,
   TaskMapByLevel,
   TaskOrEmpty,
+  RelationMoveTarget,
 } from "../../types/public-types";
 
 type UseCreateRelationParams = {

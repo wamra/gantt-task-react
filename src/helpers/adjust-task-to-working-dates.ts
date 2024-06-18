@@ -1,5 +1,9 @@
-import { BarMoveAction } from "../types/gantt-task-actions";
-import { DateExtremity, Task } from "../types/public-types";
+import {
+  BarMoveAction,
+  DateExtremity,
+  GanttDateRounding,
+  Task,
+} from "../types/public-types";
 import { countHolidays } from "./count-holidays";
 import {
   ONE_DAY_DURATION,
@@ -22,7 +26,7 @@ type AdjustTaskToWorkingDatesParams = {
     dateExtremity: DateExtremity
   ) => Date;
   originalTask: Task;
-  dateMoveStep: String;
+  dateMoveStep: GanttDateRounding;
 };
 
 export const adjustTaskToWorkingDates = ({

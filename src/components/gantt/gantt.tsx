@@ -9,6 +9,7 @@ import React, {
 import enDateLocale from "date-fns/locale/en-US";
 
 import {
+  BarMoveAction,
   ChangeAction,
   CheckTaskIdExistsAtLevel,
   ColorStyles,
@@ -19,6 +20,7 @@ import {
   Dependency,
   Distances,
   FixPosition,
+  GanttDateRoundingTimeUnit,
   GanttProps,
   OnDateChange,
   OnDateChangeSuggestionType,
@@ -64,7 +66,6 @@ import { useHorizontalScrollbars } from "./use-horizontal-scrollbars";
 
 import { getDateByOffset } from "../../helpers/get-date-by-offset";
 import { getDatesDiff } from "../../helpers/get-dates-diff";
-import { BarMoveAction } from "../../types/gantt-task-actions";
 import { useGetTaskCurrentState } from "./use-get-task-current-state";
 import { useSelection } from "./use-selection";
 import { defaultCheckIsHoliday } from "./default-check-is-holiday";
@@ -224,7 +225,7 @@ export const Gantt: React.FC<GanttProps> = ({
   renderBottomHeader = undefined,
   renderTopHeader = undefined,
   roundDate: roundDateProp = defaultRoundDate,
-  dateMoveStep = "1D",
+  dateMoveStep = { value: 1, timeUnit: GanttDateRoundingTimeUnit.DAY },
   rtl = false,
   tasks,
   timeStep = 300000,

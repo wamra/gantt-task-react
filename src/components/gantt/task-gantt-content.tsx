@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import type { MouseEvent, ReactNode } from "react";
 
 import {
+  BarMoveAction,
   ChildByLevelMap,
   ChildOutOfParentWarnings,
   ColorStyles,
@@ -12,6 +13,7 @@ import {
   FixPosition,
   GlobalRowIndexToTaskMap,
   RelationKind,
+  RelationMoveTarget,
   Task,
   TaskContextualPaletteProps,
   TaskCoordinates,
@@ -21,11 +23,7 @@ import {
 import { Arrow } from "../other/arrow";
 import { RelationLine } from "../other/relation-line";
 import { TaskItem } from "../task-item/task-item";
-import {
-  BarMoveAction,
-  GanttRelationEvent,
-  RelationMoveTarget,
-} from "../../types/gantt-task-actions";
+import { GanttRelationEvent } from "../../types/gantt-task-actions";
 import { checkHasChildren } from "../../helpers/check-has-children";
 import { checkTaskHasDependencyWarning } from "../../helpers/check-task-has-dependency-warning";
 import type { OptimizedListParams } from "../../helpers/use-optimized-list";

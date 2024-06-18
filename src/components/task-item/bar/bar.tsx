@@ -5,11 +5,11 @@ import { BarDisplay } from "./bar-display";
 import { BarDateHandle } from "./bar-date-handle";
 import { BarProgressHandle } from "./bar-progress-handle";
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types/gantt-task-actions";
 
 import styles from "./bar.module.css";
 import stylesRelationHandle from "./bar-relation-handle.module.css";
 import { ProjectDisplay } from "../project/project-display";
+import { BarMoveAction } from "../../../types/public-types";
 
 export const Bar: React.FC<
   TaskItemProps & {

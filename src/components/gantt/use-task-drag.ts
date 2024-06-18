@@ -7,7 +7,6 @@ import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
 
 import { getTaskCoordinates } from "../../helpers/get-task-coordinates";
 import { roundTaskDates } from "../../helpers/round-task-dates";
-import { BarMoveAction } from "../../types/gantt-task-actions";
 
 import {
   ChangeInProgress,
@@ -19,6 +18,8 @@ import {
   TaskCoordinates,
   TaskMapByLevel,
   DateExtremity,
+  BarMoveAction,
+  GanttDateRounding,
 } from "../../types/public-types";
 
 const SCROLL_DELAY = 25;
@@ -200,7 +201,7 @@ type UseTaskDragParams = {
     action: BarMoveAction,
     dateExtremity: DateExtremity
   ) => Date;
-  dateMoveStep: String;
+  dateMoveStep: GanttDateRounding;
   rtl: boolean;
   scrollToLeftStep: () => void;
   scrollToRightStep: () => void;

@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from "react";
 
 import {
+  BarMoveAction,
   ColumnProps,
   DateExtremity,
   Gantt,
+  GanttDateRoundingTimeUnit,
   OnChangeTasks,
   Task,
   TaskContextualPaletteProps,
@@ -19,7 +21,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import { Add as AddIcon } from "@material-ui/icons";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import styles from "./CustomPalette_Zoom.module.css";
-import { BarMoveAction } from "../src/types/gantt-task-actions";
 
 export const CustomPalette_Zoom: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(initTasks());
@@ -284,7 +285,7 @@ export const CustomPalette_Zoom: React.FC = props => {
     }
   };
 
-  const dateMoveStep = "12H";
+  const dateMoveStep = { value: 1, timeUnit: GanttDateRoundingTimeUnit.DAY };
 
   const getDayOfTheYear = (date: Date) => {
     const start = new Date(date.getFullYear(), 0, 0);
@@ -302,102 +303,92 @@ export const CustomPalette_Zoom: React.FC = props => {
   The rounding for start Date is always done with floor value
   */
   const roundStartDate = (date: Date, action: BarMoveAction): Date => {
-    const regex = /^(\d+)([DHm])$/;
-    const matches = dateMoveStep.match(regex);
+    let value = dateMoveStep.value;
+    const dimension = dateMoveStep.timeUnit;
+    const newdate = new Date(date);
 
-    if (matches && matches[1]) {
-      let value = parseInt(matches[1], 10);
-      const dimension = matches[2];
-      const newdate = new Date(date);
-
-      // When moving the task, the rounding is done when the nearest value
-      // This allow to keep the task duration which is the priority
-      if (dimension == "D") {
-        let dayOfTheYear: number = getDayOfTheYear(newdate);
-        if (
-          newdate.getMinutes() != 0 ||
-          newdate.getHours() != 0 ||
-          (dayOfTheYear - 1) % value > 0
-        ) {
-          newdate.setHours(0);
-          newdate.setMinutes(0);
-          dayOfTheYear = Math.floor((dayOfTheYear - 1) / value) * value + 1; //OK
-          newdate.setMonth(0);
-          newdate.setDate(1);
-          newdate.setDate(dayOfTheYear);
-        }
-      } else if (dimension == "H") {
+    // When moving the task, the rounding is done when the nearest value
+    // This allow to keep the task duration which is the priority
+    if (dimension == GanttDateRoundingTimeUnit.DAY) {
+      let dayOfTheYear: number = getDayOfTheYear(newdate);
+      if (
+        newdate.getMinutes() != 0 ||
+        newdate.getHours() != 0 ||
+        (dayOfTheYear - 1) % value > 0
+      ) {
+        newdate.setHours(0);
         newdate.setMinutes(0);
-        let hour = Math.floor(newdate.getHours() / value) * value;
-        newdate.setHours(hour);
-      } else if (dimension == "m") {
-        let minute = Math.floor(newdate.getMinutes() / value) * value;
-        newdate.setMinutes(minute);
+        dayOfTheYear = Math.floor((dayOfTheYear - 1) / value) * value + 1; //OK
+        newdate.setMonth(0);
+        newdate.setDate(1);
+        newdate.setDate(dayOfTheYear);
       }
-      newdate.setSeconds(0);
-      return newdate;
-    } else return new Date(date);
+    } else if (dimension == GanttDateRoundingTimeUnit.HOUR) {
+      newdate.setMinutes(0);
+      let hour = Math.floor(newdate.getHours() / value) * value;
+      newdate.setHours(hour);
+    } else if (dimension == GanttDateRoundingTimeUnit.MINUTE) {
+      let minute = Math.floor(newdate.getMinutes() / value) * value;
+      newdate.setMinutes(minute);
+    }
+    newdate.setSeconds(0);
+    newdate.setMilliseconds(0);
+    return newdate;
   };
 
   /* 
   The rounding for end Date is always done with ceil value
   */
   const roundEndDate = (date: Date, action: BarMoveAction): Date => {
-    const regex = /^(\d+)([DHm])$/;
-    const matches = dateMoveStep.match(regex);
-
-    if (matches && matches[1]) {
-      let value = parseInt(matches[1], 10);
-      const dimension = matches[2];
-      const newdate = new Date(date);
-      if (dimension == "D") {
-        let dayOfTheYear: number = getDayOfTheYear(newdate);
-        if (
-          newdate.getMinutes() != 0 ||
-          newdate.getHours() != 0 ||
-          (dayOfTheYear - 1) % value > 0
-        ) {
-          newdate.setMinutes(0);
-          newdate.setHours(0);
-          if (action == "move") {
-            // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
-            dayOfTheYear = Math.floor((dayOfTheYear - 1) / value) * value + 1; // OK
-          } else {
-            dayOfTheYear = Math.ceil(dayOfTheYear / value) * value + 1; // OK
-          }
-          newdate.setMonth(0);
-          newdate.setDate(1);
-          newdate.setDate(dayOfTheYear);
+    let value = dateMoveStep.value;
+    const dimension = dateMoveStep.timeUnit;
+    const newdate = new Date(date);
+    if (dimension == GanttDateRoundingTimeUnit.DAY) {
+      let dayOfTheYear: number = getDayOfTheYear(newdate);
+      if (
+        newdate.getMinutes() != 0 ||
+        newdate.getHours() != 0 ||
+        (dayOfTheYear - 1) % value > 0
+      ) {
+        newdate.setMinutes(0);
+        newdate.setHours(0);
+        if (action == "move") {
+          // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
+          dayOfTheYear = Math.floor((dayOfTheYear - 1) / value) * value + 1; // OK
+        } else {
+          dayOfTheYear = Math.ceil(dayOfTheYear / value) * value + 1; // OK
         }
-      } else if (dimension == "H") {
-        if (newdate.getMinutes() != 0 || newdate.getHours() % value > 0) {
-          newdate.setMinutes(0);
-          let hours = newdate.getHours();
-          if (action == "move") {
-            // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
-            hours = Math.floor(newdate.getHours() / value) * value;
-          } else {
-            hours = Math.ceil(newdate.getHours() / value) * value;
-          }
-          newdate.setHours(hours);
-        }
-      } else if (dimension == "m") {
-        if (newdate.getMinutes() % value > 0) {
-          let minutes = newdate.getMinutes();
-          if (action == "move") {
-            // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
-            minutes = Math.floor(newdate.getMinutes() / value) * value;
-          } else {
-            minutes = Math.ceil(newdate.getMinutes() / value) * value;
-          }
-          newdate.setMinutes(minutes);
-        }
+        newdate.setMonth(0);
+        newdate.setDate(1);
+        newdate.setDate(dayOfTheYear);
       }
-      newdate.setSeconds(0);
-      return newdate;
-    } else {
-      return new Date(date);
+    } else if (dimension == GanttDateRoundingTimeUnit.HOUR) {
+      if (newdate.getMinutes() != 0 || newdate.getHours() % value > 0) {
+        newdate.setMinutes(0);
+        let hours = newdate.getHours();
+        if (action == "move") {
+          // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
+          hours = Math.floor(newdate.getHours() / value) * value;
+        } else {
+          hours = Math.ceil(newdate.getHours() / value) * value;
+        }
+        newdate.setHours(hours);
+      }
+    } else if (dimension == GanttDateRoundingTimeUnit.MINUTE) {
+      if (newdate.getMinutes() % value > 0) {
+        let minutes = newdate.getMinutes();
+        if (action == "move") {
+          // In case of move we need to round start and end date with the same direction (floor) so that the duration keeps unchanged
+          minutes = Math.floor(newdate.getMinutes() / value) * value;
+        } else {
+          minutes = Math.ceil(newdate.getMinutes() / value) * value;
+        }
+        newdate.setMinutes(minutes);
+      }
     }
+    newdate.setSeconds(0);
+    newdate.setMilliseconds(0);
+    return newdate;
   };
 
   const checkIsHoliday = (date: Date, _, __, dateExtremity: DateExtremity) => {

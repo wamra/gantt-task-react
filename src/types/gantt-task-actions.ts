@@ -1,8 +1,4 @@
-import { Task } from "./public-types";
-
-export type BarMoveAction = "progress" | "end" | "start" | "move";
-
-export type RelationMoveTarget = "startOfTask" | "endOfTask";
+import { Task, RelationMoveTarget } from "./public-types";
 
 export type GanttRelationEvent = {
   target: RelationMoveTarget;

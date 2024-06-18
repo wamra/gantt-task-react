@@ -1,5 +1,10 @@
-import { BarMoveAction } from "../types/gantt-task-actions";
-import type { DateExtremity, Task } from "../types/public-types";
+import {
+  GanttDateRoundingTimeUnit,
+  type BarMoveAction,
+  type DateExtremity,
+  type GanttDateRounding,
+  type Task,
+} from "../types/public-types";
 
 export const ONE_HOUR_DURATION: number = 1000 * 3600 * 1;
 export const ONE_DAY_DURATION: number = 1000 * 3600 * 24;
@@ -12,7 +17,7 @@ export const roundTaskDates = (
     dateExtremity: DateExtremity
   ) => Date,
   action: BarMoveAction,
-  dateMoveStep: String
+  dateMoveStep: GanttDateRounding
 ): Task => {
   switch (task.type) {
     case "milestone":
@@ -56,7 +61,7 @@ export const incrementDate = (
     dateExtremity: DateExtremity
   ) => Date,
   dateExtremity: DateExtremity,
-  dateMoveStep: String,
+  dateMoveStep: GanttDateRounding,
   limitDateMoveToOneDay: boolean
 ) => {
   const stepTime = getStepTime(dateMoveStep);
@@ -80,7 +85,7 @@ export const decrementDate = (
     dateExtremity: DateExtremity
   ) => Date,
   dateExtremity: DateExtremity,
-  dateMoveStep: String,
+  dateMoveStep: GanttDateRounding,
   limitDateMoveToOneDay: boolean
 ) => {
   const stepTime = getStepTime(dateMoveStep);
@@ -95,22 +100,17 @@ export const decrementDate = (
   return decrementedDate;
 };
 
-export const getStepTime = (dateMoveStep: String) => {
+export const getStepTime = (dateMoveStep: GanttDateRounding) => {
   let stepTime = ONE_HOUR_DURATION; // default is one hour
 
-  const regex = /^(\d+)([DHm])$/;
-  const matches = dateMoveStep.match(regex);
-
-  if (matches && matches[1]) {
-    let value = parseInt(matches[1], 10);
-    const dimension = matches[2];
-    if (dimension == "D") {
-      stepTime = 1000 * 3600 * 24 * value;
-    } else if (dimension == "H") {
-      stepTime = 1000 * 3600 * value;
-    } else if (dimension == "m") {
-      stepTime = 1000 * 60 * 24 * value;
-    }
+  const value = dateMoveStep.value;
+  const dimension = dateMoveStep.timeUnit;
+  if (dimension == GanttDateRoundingTimeUnit.DAY) {
+    stepTime = 1000 * 3600 * 24 * value;
+  } else if (dimension == GanttDateRoundingTimeUnit.HOUR) {
+    stepTime = 1000 * 3600 * value;
+  } else if (dimension == GanttDateRoundingTimeUnit.MINUTE) {
+    stepTime = 1000 * 60 * 24 * value;
   }
   return stepTime;
 };

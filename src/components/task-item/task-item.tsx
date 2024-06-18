@@ -8,11 +8,7 @@ import React, {
 } from "react";
 import type { MouseEvent, MouseEventHandler } from "react";
 
-import {
-  BarMoveAction,
-  GanttRelationEvent,
-  RelationMoveTarget,
-} from "../../types/gantt-task-actions";
+import { GanttRelationEvent } from "../../types/gantt-task-actions";
 import {
   ChildOutOfParentWarnings,
   FixPosition,
@@ -21,6 +17,8 @@ import {
   TaskOrEmpty,
   Distances,
   RelationKind,
+  BarMoveAction,
+  RelationMoveTarget,
 } from "../../types/public-types";
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";

@@ -6,10 +6,11 @@ import { getPreviousWorkingDate as defaultGetPreviousWorkingDate } from "../../h
 
 import {
   AdjustTaskToWorkingDatesParams,
+  BarMoveAction,
   DateExtremity,
   DateSetup,
+  GanttDateRounding,
 } from "../../types/public-types";
-import { BarMoveAction } from "../../types/gantt-task-actions";
 import { getStepTime } from "../../helpers/round-task-dates";
 
 type UseHolidaysParams = {
@@ -27,7 +28,7 @@ type UseHolidaysParams = {
     action: BarMoveAction,
     dateExtremity: DateExtremity
   ) => Date;
-  dateMoveStep: String;
+  dateMoveStep: GanttDateRounding;
 };
 
 export const useHolidays = ({

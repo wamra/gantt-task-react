@@ -8,14 +8,15 @@ import { checkIsDescendant } from "../../helpers/check-is-descendant";
 
 import type {
   AdjustTaskToWorkingDatesParams,
+  BarMoveAction,
   ChangeInProgress,
   DateExtremity,
+  GanttDateRounding,
   MapTaskToCoordinates,
   Task,
   TaskMapByLevel,
 } from "../../types/public-types";
 import { roundTaskDates } from "../../helpers/round-task-dates";
-import { BarMoveAction } from "../../types/gantt-task-actions";
 
 type UseGetTaskCurrentStateParams = {
   adjustTaskToWorkingDates: (params: AdjustTaskToWorkingDatesParams) => Task;
@@ -30,7 +31,7 @@ type UseGetTaskCurrentStateParams = {
     dateExtremity: DateExtremity
   ) => Date;
   tasksMap: TaskMapByLevel;
-  dateMoveStep: String;
+  dateMoveStep: GanttDateRounding;
 };
 
 export const useGetTaskCurrentState = ({

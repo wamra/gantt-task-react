@@ -1,5 +1,8 @@
-import { BarMoveAction } from "../types/gantt-task-actions";
-import { DateExtremity } from "../types/public-types";
+import {
+  BarMoveAction,
+  DateExtremity,
+  GanttDateRounding,
+} from "../types/public-types";
 import { decrementDate, incrementDate } from "./round-task-dates";
 
 export const getNextWorkingDate = (
@@ -12,7 +15,7 @@ export const getNextWorkingDate = (
   ) => Date,
   dateExtremity: DateExtremity,
   checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean,
-  dateMoveStep: String
+  dateMoveStep: GanttDateRounding
 ) => {
   let currentDate = incrementDate(
     date,
@@ -52,7 +55,7 @@ export const getPreviousWorkingDate = (
   ) => Date,
   dateExtremity: DateExtremity,
   checkIsHoliday: (date: Date, dateExtremity: DateExtremity) => boolean,
-  dateMoveStep: String
+  dateMoveStep: GanttDateRounding
 ) => {
   let currentDate = decrementDate(
     date,

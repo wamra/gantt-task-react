@@ -2,7 +2,6 @@ import type { ComponentType, MouseEvent, ReactNode } from "react";
 
 import type { Locale as DateLocale } from "date-fns";
 
-import type { BarMoveAction, RelationMoveTarget } from "./gantt-task-actions";
 import { OptimizedListParams } from "../helpers/use-optimized-list";
 
 export enum ViewMode {
@@ -500,6 +499,10 @@ export interface Icons {
   renderNoChildrenIcon: (task: TaskOrEmpty) => ReactNode;
 }
 
+export type BarMoveAction = "progress" | "end" | "start" | "move";
+
+export type RelationMoveTarget = "startOfTask" | "endOfTask";
+
 export interface StylingOption {
   /**
    * Allow drag-n-drop of tasks in the table
@@ -557,8 +560,19 @@ export interface StylingOption {
     dateExtremity: DateExtremity,
     action: BarMoveAction
   ) => Date;
-  dateMoveStep?: String;
+  dateMoveStep?: GanttDateRounding;
   ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+}
+
+export interface GanttDateRounding {
+  value: number;
+  timeUnit: GanttDateRoundingTimeUnit;
+}
+
+export enum GanttDateRoundingTimeUnit {
+  MINUTE,
+  HOUR,
+  DAY,
 }
 
 export interface TaskContextualPaletteProps {

@@ -94,7 +94,7 @@ npm start
 | rtl                 | boolean | Sets rtl mode.                                                                                              |
 | roundDate           |         | Allow to customize the way the date start/end are rounded                                                   |
 | checkIsHoliday      |         | Tells if a date is a holday. It impacts the style of the day and the way the date is adjusted to working days|
-| dateMoveStep        | string  | A string that correponds to a duration. It is composed of a number and a character among **[DHm]** (corresponding to Day, Hour and minutes). It gives the step to ajust to the working day when moving the date allowing a smooth feedback |
+| dateMoveStep        |         | An object that corresponds to a duration. It gives the step to ajust to the working day when moving the date allowing a smooth feedback |
 
 ### StylingOption
 

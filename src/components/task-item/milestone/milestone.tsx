@@ -3,9 +3,9 @@ import React, { useMemo } from "react";
 import stylesRelationHandle from "../bar/bar-relation-handle.module.css";
 
 import type { TaskItemProps } from "../task-item";
-import type { BarMoveAction } from "../../../types/gantt-task-actions";
 
 import styles from "./milestone.module.css";
+import { BarMoveAction } from "../../../types/public-types";
 
 export const Milestone: React.FC<
   TaskItemProps & {
