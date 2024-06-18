@@ -37,7 +37,7 @@ export const Grid: React.FC<GridProps> = props => {
       return rest === -1 || rest === -2;
     }
 
-    return checkIsHoliday(date, "start");
+    return checkIsHoliday(date, "startOfTask");
   };
 
   const renderedHolidays = useMemo(() => {

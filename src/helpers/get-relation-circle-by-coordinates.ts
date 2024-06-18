@@ -1,5 +1,5 @@
 import {
-  RelationMoveTarget,
+  DateExtremity,
   Task,
   TaskCoordinates,
   TaskOrEmpty,
@@ -14,7 +14,7 @@ export const getRelationCircleByCoordinates = (
   relationCircleRadius: number,
   rtl: boolean,
   mapTaskToCoordinatesOnLevel: Map<string, TaskCoordinates>
-): [Task, RelationMoveTarget] | null => {
+): [Task, DateExtremity] | null => {
   const { x, y } = svgP;
 
   for (let i = 0, l = tasks.length; i < l; ++i) {

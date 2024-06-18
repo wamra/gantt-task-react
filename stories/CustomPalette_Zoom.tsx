@@ -9,6 +9,7 @@ import {
   OnChangeTasks,
   Task,
   TaskContextualPaletteProps,
+  TaskDependencyContextualPaletteProps,
   TaskOrEmpty,
   ViewMode,
 } from "../src";
@@ -131,7 +132,7 @@ export const CustomPalette_Zoom: React.FC = props => {
 
   const ContextualPalette: React.FC<TaskContextualPaletteProps> = ({
     selectedTask,
-    onClose,
+    onClosePalette: onClose,
   }) => {
     return (
       <div className={styles.buttonEntries}>
@@ -166,6 +167,73 @@ export const CustomPalette_Zoom: React.FC = props => {
     );
   };
 
+  const handleTaskDependencyDelete = (
+    taskFrom: Task,
+    extremityFrom: DateExtremity,
+    taskTo: Task,
+    extremityTo: DateExtremity,
+    onClose: () => any
+  ) => {
+    const newTasks = tasks.map(t => {
+      if (t => t.id == taskTo.id) {
+        const dependenciesToKeep = taskTo.dependencies?.filter(dependency => {
+          const isDependencyToRemove =
+            dependency.sourceId == taskFrom.id &&
+            dependency.sourceTarget == extremityFrom &&
+            dependency.ownTarget == extremityTo;
+          return !isDependencyToRemove;
+        });
+        return {
+          ...t,
+          dependencies: dependenciesToKeep,
+        };
+      } else return t;
+    });
+    onClose();
+    setTasks(newTasks);
+  };
+
+  const DependencyContextualPalette: React.FC<
+    TaskDependencyContextualPaletteProps
+  > = ({
+    taskFrom,
+    extremityFrom,
+    taskTo,
+    extremityTo,
+    onClosePalette: onClose,
+  }) => {
+    return (
+      <div className={styles.buttonEntries}>
+        <IconButton
+          size="small"
+          aria-label="Delete task"
+          title="Delete task"
+          onClick={() =>
+            handleTaskDependencyDelete(
+              taskFrom,
+              extremityFrom,
+              taskTo,
+              extremityTo,
+              onClose
+            )
+          }
+          data-testid="delete-task"
+        >
+          <DeleteForeverIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          aria-label="Close toolbar"
+          title="Close toolbar"
+          onClick={onClose}
+          data-testid="close-toolbar"
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </div>
+    );
+  };
+
   const onChangeExpandState = (changedTask: Task) => {
     setTasks(prev => {
       return prev.map(task => {
@@ -183,7 +251,7 @@ export const CustomPalette_Zoom: React.FC = props => {
     dateExtremity: DateExtremity,
     action: BarMoveAction
   ): Date => {
-    if (dateExtremity == "start") {
+    if (dateExtremity == "startOfTask") {
       return roundStartDate(date, action);
     } else {
       return roundEndDate(date, action);
@@ -399,10 +467,10 @@ export const CustomPalette_Zoom: React.FC = props => {
       date.getDay() == 1 && date.getHours() == 0 && date.getMinutes() == 0;
     const isStaturdayStart =
       date.getDay() == 6 && date.getHours() == 0 && date.getMinutes() == 0;
-    if (dateExtremity == "start") {
+    if (dateExtremity == "startOfTask") {
       //Monday 00:00 is excluded from WE
       isHoliday = day == 6 || (day == 0 && !isMondayStart);
-    } else if (dateExtremity == "end") {
+    } else if (dateExtremity == "endOfTask") {
       //Saturday 00:00 is included from WE
       isHoliday = (day == 6 && !isStaturdayStart) || day == 0 || isMondayStart;
     }
@@ -422,6 +490,7 @@ export const CustomPalette_Zoom: React.FC = props => {
       viewMode={viewMode}
       roundDate={roundDate}
       ContextualPalette={ContextualPalette}
+      TaskDependencyContextualPalette={DependencyContextualPalette}
       onWheel={handleWheel}
       onChangeExpandState={onChangeExpandState}
       checkIsHoliday={checkIsHoliday}

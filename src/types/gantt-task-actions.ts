@@ -1,7 +1,7 @@
-import { Task, RelationMoveTarget } from "./public-types";
+import { Task, DateExtremity } from "./public-types";
 
 export type GanttRelationEvent = {
-  target: RelationMoveTarget;
+  extremity: DateExtremity;
   task: Task;
   startX: number;
   startY: number;

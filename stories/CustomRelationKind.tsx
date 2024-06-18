@@ -5,7 +5,7 @@ import {
   OnChangeTasks,
   OnRelationChange,
   RelationKind,
-  RelationMoveTarget,
+  DateExtremity,
   Task,
   TaskOrEmpty,
 } from "../src";
@@ -52,8 +52,8 @@ export const CustomRelationKind: React.FC = props => {
   const authorizedRelations: RelationKind[] = ["endToStart"];
 
   const handleRelationChange: OnRelationChange = (
-    from: [Task, RelationMoveTarget, number],
-    to: [Task, RelationMoveTarget, number]
+    from: [Task, DateExtremity, number],
+    to: [Task, DateExtremity, number]
   ) => {
     if (from[0].id !== to[0].id) {
       alert(`Relation between ${from[0].id} and ${to[0].id}`);

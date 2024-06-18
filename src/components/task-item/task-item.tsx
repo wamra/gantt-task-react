@@ -18,7 +18,7 @@ import {
   Distances,
   RelationKind,
   BarMoveAction,
-  RelationMoveTarget,
+  DateExtremity,
 } from "../../types/public-types";
 import { Bar } from "./bar/bar";
 import { BarSmall } from "./bar/bar-small";
@@ -62,7 +62,7 @@ export type TaskItemProps = {
     clientX: number,
     taskRootNode: Element
   ) => any;
-  onRelationStart: (target: RelationMoveTarget, selectedTask: Task) => void;
+  onRelationStart: (target: DateExtremity, selectedTask: Task) => void;
   fixStartPosition?: FixPosition;
   fixEndPosition?: FixPosition;
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
@@ -221,14 +221,14 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
       authorizedRelations.includes("endToEnd") ||
       authorizedRelations.includes("endToStart");
     const isToStartRelationAuthorized =
-      (ganttRelationEvent?.target === "startOfTask" &&
+      (ganttRelationEvent?.extremity === "startOfTask" &&
         authorizedRelations.includes("startToStart")) ||
-      (ganttRelationEvent?.target === "endOfTask" &&
+      (ganttRelationEvent?.extremity === "endOfTask" &&
         authorizedRelations.includes("endToStart"));
     const isToEndRelationAuthorized =
-      (ganttRelationEvent?.target === "startOfTask" &&
+      (ganttRelationEvent?.extremity === "startOfTask" &&
         authorizedRelations.includes("startToEnd")) ||
-      (ganttRelationEvent?.target === "endOfTask" &&
+      (ganttRelationEvent?.extremity === "endOfTask" &&
         authorizedRelations.includes("endToEnd"));
 
     let displayLeftRelationHandle: boolean = false;

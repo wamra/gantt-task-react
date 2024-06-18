@@ -23,25 +23,32 @@ export const roundTaskDates = (
     case "milestone":
       return {
         ...task,
-        end: roundDate(task.end, action, "end"),
-        start: roundDate(task.start, action, "end"),
+        end: roundDate(task.end, action, "endOfTask"),
+        start: roundDate(task.start, action, "endOfTask"),
       };
 
     default:
-      let start = roundDate(task.start, action, "start");
-      let end = roundDate(task.end, action, "end");
+      let start = roundDate(task.start, action, "startOfTask");
+      let end = roundDate(task.end, action, "endOfTask");
       //Avoid having start and end at the same date
       if (action == "start" && start.getTime() == end.getTime()) {
         start = decrementDate(
           start,
           action,
           roundDate,
-          "start",
+          "startOfTask",
           dateMoveStep,
           true
         );
       } else if (action == "end" && start.getTime() == end.getTime()) {
-        end = incrementDate(end, action, roundDate, "end", dateMoveStep, true);
+        end = incrementDate(
+          end,
+          action,
+          roundDate,
+          "endOfTask",
+          dateMoveStep,
+          true
+        );
       }
 
       return {

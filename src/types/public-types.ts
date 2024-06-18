@@ -40,8 +40,8 @@ export type RenderBottomHeader = (
 
 export interface Dependency {
   sourceId: string;
-  sourceTarget: RelationMoveTarget;
-  ownTarget: RelationMoveTarget;
+  sourceTarget: DateExtremity;
+  ownTarget: DateExtremity;
 }
 
 export interface ExpandedDependency {
@@ -50,9 +50,9 @@ export interface ExpandedDependency {
   innerFromY: number;
   innerToY: number;
   marginBetweenTasks: number | null;
-  ownTarget: RelationMoveTarget;
+  ownTarget: DateExtremity;
   source: Task;
-  sourceTarget: RelationMoveTarget;
+  sourceTarget: DateExtremity;
 }
 
 export interface ExpandedDependent {
@@ -62,8 +62,8 @@ export interface ExpandedDependent {
   innerToY: number;
   marginBetweenTasks: number | null;
   dependent: Task;
-  dependentTarget: RelationMoveTarget;
-  ownTarget: RelationMoveTarget;
+  dependentTarget: DateExtremity;
+  ownTarget: DateExtremity;
 }
 
 export interface ColorStyles {
@@ -201,11 +201,11 @@ export type OnRelationChange = (
   /**
    * Task, targer, index
    */
-  from: [Task, RelationMoveTarget, number],
+  from: [Task, DateExtremity, number],
   /**
    * Task, targer, index
    */
-  to: [Task, RelationMoveTarget, number],
+  to: [Task, DateExtremity, number],
   /**
    * One of tasks is descendant of other task
    */
@@ -501,8 +501,6 @@ export interface Icons {
 
 export type BarMoveAction = "progress" | "end" | "start" | "move";
 
-export type RelationMoveTarget = "startOfTask" | "endOfTask";
-
 export interface StylingOption {
   /**
    * Allow drag-n-drop of tasks in the table
@@ -562,6 +560,7 @@ export interface StylingOption {
   ) => Date;
   dateMoveStep?: GanttDateRounding;
   ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+  TaskDependencyContextualPalette?: React.FC<TaskDependencyContextualPaletteProps>;
 }
 
 export interface GanttDateRounding {
@@ -577,10 +576,18 @@ export enum GanttDateRoundingTimeUnit {
 
 export interface TaskContextualPaletteProps {
   selectedTask: Task;
-  onClose: () => void;
+  onClosePalette: () => void;
 }
 
-export type DateExtremity = "start" | "end";
+export interface TaskDependencyContextualPaletteProps {
+  taskFrom: Task;
+  extremityFrom: DateExtremity;
+  taskTo: Task;
+  extremityTo: DateExtremity;
+  onClosePalette: () => void;
+}
+
+export type DateExtremity = "startOfTask" | "endOfTask";
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   /**

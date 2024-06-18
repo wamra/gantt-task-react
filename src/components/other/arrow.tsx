@@ -3,7 +3,7 @@ import React, { memo, useCallback, useMemo } from "react";
 import {
   ColorStyles,
   Distances,
-  RelationMoveTarget,
+  DateExtremity,
   Task,
 } from "../../types/public-types";
 import { generateTrianglePoints } from "../../helpers/generate-triangle-points";
@@ -18,12 +18,12 @@ type ArrowProps = {
   colorStyles: ColorStyles;
   distances: Distances;
   taskFrom: Task;
-  targetFrom: RelationMoveTarget;
+  extremityFrom: DateExtremity;
   fromX1: number;
   fromX2: number;
   fromY: number;
   taskTo: Task;
-  targetTo: RelationMoveTarget;
+  extremityTo: DateExtremity;
   toX1: number;
   toX2: number;
   toY: number;
@@ -34,6 +34,13 @@ type ArrowProps = {
   isCritical: boolean;
   rtl: boolean;
   onArrowDoubleClick?: (taskFrom: Task, taskTo: Task) => void;
+  onArrowClick?: (
+    taskFrom: Task,
+    extremityFrom: DateExtremity,
+    taskTo: Task,
+    extremityTo: DateExtremity,
+    event: React.MouseEvent<SVGElement>
+  ) => void;
   handleFixDependency: (task: Task, delta: number) => void;
 };
 
@@ -48,12 +55,12 @@ const ArrowInner: React.FC<ArrowProps> = ({
   },
 
   taskFrom,
-  targetFrom,
+  extremityFrom,
   fromX1,
   fromX2,
   fromY,
   taskTo,
-  targetTo,
+  extremityTo,
   toX1,
   toX2,
   toY,
@@ -64,6 +71,7 @@ const ArrowInner: React.FC<ArrowProps> = ({
   isCritical,
   rtl,
   onArrowDoubleClick = undefined,
+  onArrowClick = undefined,
   handleFixDependency,
 }) => {
   const indexFrom = useMemo(
@@ -81,6 +89,15 @@ const ArrowInner: React.FC<ArrowProps> = ({
     }
   }, [taskFrom, taskTo, onArrowDoubleClick]);
 
+  const onClick = useCallback(
+    (event: React.MouseEvent<SVGElement>) => {
+      if (onArrowClick) {
+        onArrowClick(taskFrom, extremityFrom, taskTo, extremityTo, event);
+      }
+    },
+    [taskFrom, taskTo, onArrowDoubleClick]
+  );
+
   const [path, trianglePoints] = useMemo(
     () =>
       drownPathAndTriangle(
@@ -88,12 +105,12 @@ const ArrowInner: React.FC<ArrowProps> = ({
         fromX1,
         fromX2,
         fromY,
-        (targetFrom === "startOfTask") !== rtl,
+        (extremityFrom === "startOfTask") !== rtl,
         indexTo,
         toX1,
         toX2,
         toY,
-        (targetTo === "startOfTask") !== rtl,
+        (extremityTo === "startOfTask") !== rtl,
         fullRowHeight,
         taskHeight,
         arrowIndent
@@ -103,12 +120,12 @@ const ArrowInner: React.FC<ArrowProps> = ({
       fromX1,
       fromX2,
       fromY,
-      targetFrom,
+      extremityFrom,
       indexTo,
       toX1,
       toX2,
       toY,
-      targetTo,
+      extremityTo,
       rtl,
       fullRowHeight,
       taskHeight,
@@ -117,24 +134,24 @@ const ArrowInner: React.FC<ArrowProps> = ({
   );
 
   const taskFromFixerPosition = useMemo(() => {
-    const isLeft = (targetFrom === "startOfTask") !== rtl;
+    const isLeft = (extremityFrom === "startOfTask") !== rtl;
 
     if (isLeft) {
       return fromX1 - dependencyFixIndent;
     }
 
     return fromX2 + dependencyFixIndent;
-  }, [fromX1, fromX2, targetFrom, rtl, dependencyFixIndent]);
+  }, [fromX1, fromX2, extremityFrom, rtl, dependencyFixIndent]);
 
   const taskToFixerPosition = useMemo(() => {
-    const isLeft = (targetTo === "startOfTask") !== rtl;
+    const isLeft = (extremityTo === "startOfTask") !== rtl;
 
     if (isLeft) {
       return toX1 - dependencyFixIndent;
     }
 
     return toX2 + dependencyFixIndent;
-  }, [toX1, toX2, targetTo, rtl, dependencyFixIndent]);
+  }, [toX1, toX2, extremityTo, rtl, dependencyFixIndent]);
 
   const fixDependencyTaskFrom = useCallback(() => {
     if (typeof marginBetweenTasks !== "number") {
@@ -181,9 +198,10 @@ const ArrowInner: React.FC<ArrowProps> = ({
   return (
     <g className={fixPositionContainerClass} fill={color} stroke={color}>
       <g
-        data-testid={`task-arrow-${targetFrom}-${taskFrom.name}-${targetTo}-${taskTo.name}`}
+        data-testid={`task-arrow-${extremityFrom}-${taskFrom.name}-${extremityTo}-${taskTo.name}`}
         className={`"arrow" ${styles.arrow_clickable}`}
         onDoubleClick={onDoubleClick}
+        onClick={onClick}
       >
         {onArrowDoubleClick && <path d={path} className={styles.clickZone} />}
 

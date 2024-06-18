@@ -16,7 +16,7 @@ import {
   Task,
   TaskMapByLevel,
   TaskOrEmpty,
-  RelationMoveTarget,
+  DateExtremity,
 } from "../../types/public-types";
 
 type UseCreateRelationParams = {
@@ -44,7 +44,7 @@ export const useCreateRelation = ({
   visibleTasks,
 }: UseCreateRelationParams): [
   GanttRelationEvent | null,
-  (target: RelationMoveTarget, task: Task) => void
+  (extremity: DateExtremity, task: Task) => void
 ] => {
   const [ganttRelationEvent, setGanttRelationEvent] =
     useState<GanttRelationEvent | null>(null);
@@ -53,16 +53,16 @@ export const useCreateRelation = ({
    * Method is Start point of start draw relation
    */
   const handleBarRelationStart = useCallback(
-    (target: RelationMoveTarget, task: Task) => {
+    (extremity: DateExtremity, task: Task) => {
       const coordinates = getTaskCoordinates(task, mapTaskToCoordinates);
       const startX =
-        (target === "startOfTask") !== rtl
+        (extremity === "startOfTask") !== rtl
           ? coordinates.x1 - 10
           : coordinates.x2 + 10;
       const startY = coordinates.y + taskHalfHeight;
 
       setGanttRelationEvent({
-        target,
+        extremity,
         task,
         startX,
         startY,
@@ -73,14 +73,14 @@ export const useCreateRelation = ({
     [taskHalfHeight, mapTaskToCoordinates, rtl]
   );
 
-  const startRelationTarget = ganttRelationEvent?.target;
+  const startRelationExtremity = ganttRelationEvent?.extremity;
   const startRelationTask = ganttRelationEvent?.task;
 
   /**
    * Drag arrow
    */
   useEffect(() => {
-    if (!onRelationChange || !startRelationTarget || !startRelationTask) {
+    if (!onRelationChange || !startRelationExtremity || !startRelationTask) {
       return undefined;
     }
 
@@ -148,7 +148,7 @@ export const useCreateRelation = ({
 
       const svgP = point.matrixTransform(ctm.inverse());
 
-      const endTargetRelationCircle = getRelationCircleByCoordinates(
+      const endExtremityRelationCircle = getRelationCircleByCoordinates(
         svgP,
         visibleTasks,
         taskHalfHeight,
@@ -158,8 +158,9 @@ export const useCreateRelation = ({
         getMapTaskToCoordinatesOnLevel(startRelationTask, mapTaskToCoordinates)
       );
 
-      if (endTargetRelationCircle) {
-        const [endRelationTask, endRelationTarget] = endTargetRelationCircle;
+      if (endExtremityRelationCircle) {
+        const [endRelationTask, endRelationExtremity] =
+          endExtremityRelationCircle;
 
         const { comparisonLevel: startComparisonLevel = 1 } = startRelationTask;
 
@@ -195,8 +196,8 @@ export const useCreateRelation = ({
             checkIsDescendant(endRelationTask, startRelationTask, tasksMap);
 
           onRelationChange(
-            [startRelationTask, startRelationTarget, startIndex],
-            [endRelationTask, endRelationTarget, endIndex],
+            [startRelationTask, startRelationExtremity, startIndex],
+            [endRelationTask, endRelationExtremity, endIndex],
             isOneDescendant
           );
         }
@@ -233,7 +234,7 @@ export const useCreateRelation = ({
   }, [
     ganttSVGRef,
     rtl,
-    startRelationTarget,
+    startRelationExtremity,
     startRelationTask,
     setGanttRelationEvent,
     mapTaskToCoordinates,

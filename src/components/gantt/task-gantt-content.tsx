@@ -13,12 +13,13 @@ import {
   FixPosition,
   GlobalRowIndexToTaskMap,
   RelationKind,
-  RelationMoveTarget,
+  DateExtremity,
   Task,
   TaskContextualPaletteProps,
   TaskCoordinates,
   TaskOrEmpty,
   TaskToHasDependencyWarningMap,
+  TaskDependencyContextualPaletteProps,
 } from "../../types/public-types";
 import { Arrow } from "../other/arrow";
 import { RelationLine } from "../other/relation-line";
@@ -48,7 +49,7 @@ export type TaskGanttContentProps = {
   ganttRelationEvent: GanttRelationEvent | null;
   getTaskCoordinates: (task: Task) => TaskCoordinates;
   getTaskGlobalIndexByRef: (task: Task) => number;
-  handleBarRelationStart: (target: RelationMoveTarget, task: Task) => void;
+  handleBarRelationStart: (target: DateExtremity, task: Task) => void;
   handleDeleteTasks: (task: TaskOrEmpty[]) => void;
   handleFixDependency: (task: Task, delta: number) => void;
   handleTaskDragStart: (
@@ -59,6 +60,13 @@ export type TaskGanttContentProps = {
   ) => void;
   isShowDependencyWarnings: boolean;
   mapGlobalRowIndexToTask: GlobalRowIndexToTaskMap;
+  onArrowClick?: (
+    taskFrom: Task,
+    extremityFrom: DateExtremity,
+    taskTo: Task,
+    extremityTo: DateExtremity,
+    event: React.MouseEvent<SVGElement>
+  ) => void;
   onArrowDoubleClick: (taskFrom: Task, taskTo: Task) => void;
   onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
   onDoubleClick?: (task: Task) => void;
@@ -73,6 +81,7 @@ export type TaskGanttContentProps = {
   taskHeight: number;
   taskHalfHeight: number;
   ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+  TaskDependencyContextualPalette?: React.FC<TaskDependencyContextualPaletteProps>;
 };
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
@@ -102,6 +111,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   isShowDependencyWarnings,
   mapGlobalRowIndexToTask,
   onArrowDoubleClick,
+  onArrowClick,
   onDoubleClick,
   onClick,
   renderedRowIndexes,
@@ -299,6 +309,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
 
               arrowsRes.push(
                 <svg
+                  className="ArrowClassName"
                   x={containerX + (additionalLeftSpace || 0)}
                   y={containerY}
                   width={containerWidth}
@@ -309,12 +320,12 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                     colorStyles={colorStyles}
                     distances={distances}
                     taskFrom={source}
-                    targetFrom={sourceTarget}
+                    extremityFrom={sourceTarget}
                     fromX1={fromX1 - containerX}
                     fromX2={fromX2 - containerX}
                     fromY={innerFromY}
                     taskTo={task}
-                    targetTo={ownTarget}
+                    extremityTo={ownTarget}
                     toX1={taskX1 - containerX}
                     toX2={taskX2 - containerX}
                     toY={innerToY}
@@ -325,6 +336,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
+                    onArrowClick={onArrowClick}
                     handleFixDependency={handleFixDependency}
                   />
                 </svg>
@@ -393,12 +405,12 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                     colorStyles={colorStyles}
                     distances={distances}
                     taskFrom={task}
-                    targetFrom={ownTarget}
+                    extremityFrom={ownTarget}
                     fromX1={taskX1 - containerX}
                     fromX2={taskX2 - containerX}
                     fromY={innerFromY}
                     taskTo={dependent}
-                    targetTo={dependentTarget}
+                    extremityTo={dependentTarget}
                     toX1={toX1 - containerX}
                     toX2={toX2 - containerX}
                     toY={innerToY}
@@ -409,6 +421,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                     isCritical={isCritical}
                     rtl={rtl}
                     onArrowDoubleClick={onArrowDoubleClick}
+                    onArrowClick={onArrowClick}
                     handleFixDependency={handleFixDependency}
                   />
                 </svg>

@@ -8,7 +8,7 @@ export const defaultRoundDate = (
   viewMode: ViewMode,
   dateExtremity: DateExtremity
 ) => {
-  if (dateExtremity == "start") {
+  if (dateExtremity == "startOfTask") {
     return defaultRoundStartDate(date, viewMode);
   } else {
     return defaultRoundEndDate(date, viewMode);

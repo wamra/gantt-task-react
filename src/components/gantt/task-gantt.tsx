@@ -11,6 +11,8 @@ import {
   TaskContextualPaletteProps,
   Task,
   Distances,
+  DateExtremity,
+  TaskDependencyContextualPaletteProps,
 } from "../../types/public-types";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener/ClickAwayListener";
 
@@ -76,6 +78,63 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
     ]
   );
 
+  const [arrowAnchorEl, setArrowAnchorEl] = React.useState<null | SVGElement>(
+    null
+  );
+  const [selectedDependency, setSelectedDependency] = React.useState<{
+    taskFrom: Task;
+    extremityFrom: DateExtremity;
+    taskTo: Task;
+    extremityTo: DateExtremity;
+  }>(null);
+  const isArrowContextualPaletteOpened = Boolean(arrowAnchorEl);
+  const onClickArrow: (
+    taskFrom: Task,
+    extremityFrom: DateExtremity,
+    taskTo: Task,
+    extremityTo: DateExtremity,
+    event: React.MouseEvent<SVGElement>
+  ) => void = (taskFrom, extremityFrom, taskTo, extremityTo, event) => {
+    setArrowAnchorEl(event.currentTarget);
+    setSelectedDependency({ taskFrom, extremityFrom, taskTo, extremityTo });
+  };
+
+  const onCloseArrowContextualPalette = () => {
+    setArrowAnchorEl(null);
+  };
+
+  let arrowContextualPalette:
+    | React.FunctionComponentElement<TaskDependencyContextualPaletteProps>
+    | undefined = undefined;
+  if (barProps.TaskDependencyContextualPalette && selectedDependency) {
+    arrowContextualPalette = React.createElement(
+      barProps.TaskDependencyContextualPalette,
+      {
+        taskFrom: selectedDependency.taskFrom,
+        extremityFrom: selectedDependency.extremityFrom,
+        taskTo: selectedDependency.taskTo,
+        extremityTo: selectedDependency.extremityTo,
+        onClosePalette: onCloseArrowContextualPalette,
+      }
+    );
+  } else {
+    arrowContextualPalette = <div></div>;
+  }
+
+  const onArrowClickAway = (e: React.MouseEvent<Document, MouseEvent>) => {
+    const svgElement = e.target as SVGElement;
+    if (svgElement) {
+      const keepPalette =
+        svgElement.ownerSVGElement?.classList.contains("ArrowClassName");
+      // In a better world the contextual palette should be defined in TaskItem component but ClickAwayListener and Popper uses div that are not displayed in svg
+      // So in order to let the palette open when clicking on another task, this checks if the user clicked on another task
+      if (!keepPalette) {
+        setArrowAnchorEl(null);
+        setSelectedDependency(null);
+      }
+    }
+  };
+
   // Manage the contextual palette
   const [anchorEl, setAnchorEl] = React.useState<null | SVGElement>(null);
   const [selectedTask, setSelectedTask] = React.useState<Task>(null);
@@ -99,7 +158,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
   if (barProps.ContextualPalette && selectedTask) {
     contextualPalette = React.createElement(barProps.ContextualPalette, {
       selectedTask,
-      onClose,
+      onClosePalette: onClose,
     });
   } else {
     contextualPalette = <div></div>;
@@ -118,7 +177,6 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
       }
     }
   };
-
   return (
     <div
       className={styles.ganttTaskRoot}
@@ -143,7 +201,11 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             ref={ganttSVGRef}
           >
             <Grid {...gridProps} />
-            <TaskGanttContent {...barProps} onClick={onClickTask} />
+            <TaskGanttContent
+              {...barProps}
+              onClick={onClickTask}
+              onArrowClick={onClickArrow}
+            />
           </svg>
         </div>
         {barProps.ContextualPalette && open && (
@@ -160,6 +222,21 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             </Popper>
           </ClickAwayListener>
         )}
+        {barProps.TaskDependencyContextualPalette &&
+          isArrowContextualPaletteOpened && (
+            <ClickAwayListener onClickAway={onArrowClickAway}>
+              <Popper
+                key={`dependency-contextual-palette`}
+                open={isArrowContextualPaletteOpened}
+                anchorEl={arrowAnchorEl}
+                transition
+                disablePortal
+                placement="top"
+              >
+                <Paper>{arrowContextualPalette}</Paper>
+              </Popper>
+            </ClickAwayListener>
+          )}
       </div>
     </div>
   );
