@@ -47,12 +47,12 @@ export const getProgressPoint = (
   taskHeight: number
 ) => {
   const point = [
-    progressX - 5,
+    progressX - 7,
     taskY + taskHeight,
-    progressX + 5,
+    progressX + 7,
     taskY + taskHeight,
     progressX,
-    taskY + taskHeight - 8.66,
+    taskY + taskHeight - 11,
   ];
   return point.join(",");
 };
