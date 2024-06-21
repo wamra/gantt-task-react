@@ -171,6 +171,16 @@ export const useGetTaskCurrentState = ({
           };
         }
       }
+
+      const progressIsChanged =
+        changeInProgress &&
+        changeInProgress.changedTask.progress != currentOriginalTask.progress;
+      if (progressIsChanged) {
+        return {
+          ...currentOriginalTask,
+          progress: changeInProgress.changedTask.progress,
+        };
+      }
       return currentOriginalTask;
     },
     [
