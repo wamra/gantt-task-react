@@ -31,15 +31,19 @@ export const TaskListTableDefault: React.FC<{
   selectedTaskId: string;
   setSelectedTask: (taskId: string) => void;
   onExpanderClick: (task: Task) => void;
+  taskChildrenMap: Map<string, string[]>,
+  taskDepths: Map<string, number>
 }> = ({
-  rowHeight,
-  rowWidth,
-  tasks,
-  fontFamily,
-  fontSize,
-  locale,
-  onExpanderClick,
-}) => {
+        rowHeight,
+        rowWidth,
+        tasks,
+        fontFamily,
+        fontSize,
+        locale,
+        onExpanderClick,
+        taskChildrenMap,
+        taskDepths
+      }) => {
   const toLocaleDateString = useMemo(
     () => toLocaleDateStringFactory(locale),
     [locale]
@@ -55,10 +59,16 @@ export const TaskListTableDefault: React.FC<{
     >
       {tasks.map(t => {
         let expanderSymbol = "";
-        if (t.hideChildren === false) {
-          expanderSymbol = "▼";
-        } else if (t.hideChildren === true) {
-          expanderSymbol = "▶";
+        const depth = taskDepths.get(t.id);
+        const depthMargin = 8 * (depth ?? 0);
+
+        let hasChildren = (taskChildrenMap.get(t.id)?.length ?? 0) > 0;
+        if (hasChildren) {
+          if (t.hideChildren) {
+            expanderSymbol = "▶";
+          } else {
+            expanderSymbol = "▼";
+          }
         }
 
         return (
@@ -77,6 +87,7 @@ export const TaskListTableDefault: React.FC<{
             >
               <div className={styles.taskListNameWrapper}>
                 <div
+                  style={{marginLeft: `${depthMargin}px`}}
                   className={
                     expanderSymbol
                       ? styles.taskListExpander

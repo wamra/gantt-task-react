@@ -63,7 +63,7 @@ const App = () => {
   };
 
   const handleExpanderClick = (task: Task) => {
-    setTasks(tasks.map(t => (t.id === task.id ? task : t)));
+    // setTasks(tasks.map(t => (t.id === task.id ? task : t)));
     console.log("On expander click Id:" + task.id);
   };
 

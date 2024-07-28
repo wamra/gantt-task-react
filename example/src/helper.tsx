@@ -1,4 +1,4 @@
-import { Task } from "../../dist/types/public-types";
+import {Task} from "../../dist/types/public-types";
 
 export function initTasks() {
   const currentDate = new Date();
@@ -36,12 +36,13 @@ export function initTasks() {
       id: "Task 1",
       progress: 25,
       dependencies: ["Task 0"],
-      type: "task",
+      type: "project",
       project: "ProjectSample",
       displayOrder: 3,
+      hideChildren: false,
     },
     {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 2),
+      start: new Date((currentDate.getFullYear() - 5), currentDate.getMonth(), 2),
       end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4, 0, 0),
       name: "Task 1.1",
       id: "Task 1.1",
@@ -49,6 +50,7 @@ export function initTasks() {
       type: "task",
       project: "Task 1",
       displayOrder: 3,
+      hideChildren: false,
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 2),
@@ -58,6 +60,16 @@ export function initTasks() {
       progress: 25,
       type: "task",
       project: "Task 1",
+      displayOrder: 3,
+    },
+    {
+      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 2),
+      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4, 0, 0),
+      name: "Task 1.2.1",
+      id: "Task 1.2.1",
+      progress: 25,
+      type: "task",
+      project: "Task 1.2",
       displayOrder: 3,
     },
     {

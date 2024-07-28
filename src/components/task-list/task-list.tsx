@@ -33,7 +33,11 @@ export type TaskListProps = {
     selectedTaskId: string;
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
+    taskChildrenMap: Map<string, string[]>;
+    taskDepths: Map<string, number>;
   }>;
+  taskChildrenMap: Map<string, string[]>;
+  taskDepths: Map<string, number>;
 };
 
 export const TaskList: React.FC<TaskListProps> = ({
@@ -53,6 +57,8 @@ export const TaskList: React.FC<TaskListProps> = ({
   horizontalContainerClass,
   TaskListHeader,
   TaskListTable,
+                                                    taskChildrenMap,
+                                                    taskDepths
 }) => {
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -78,6 +84,8 @@ export const TaskList: React.FC<TaskListProps> = ({
     selectedTaskId: selectedTaskId,
     setSelectedTask,
     onExpanderClick,
+    taskChildrenMap,
+    taskDepths
   };
 
   return (
