@@ -21,8 +21,9 @@ import { convertToBarTasks } from "../../helpers/bar-helper";
 import { GanttEvent } from "../../types/gantt-task-actions";
 import { DateSetup } from "../../types/date-setup";
 import { HorizontalScroll } from "../other/horizontal-scroll";
-import { removeHiddenTasks, sortTasks } from "../../helpers/other-helper";
+import { sortTasks } from "../../helpers/other-helper";
 import styles from "./gantt.module.css";
+import {filterHiddenChildren, treeInfo} from "../other/taskTreeHelpers";
 
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
@@ -98,15 +99,21 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   const [scrollX, setScrollX] = useState(-1);
   const [ignoreScrollEvent, setIgnoreScrollEvent] = useState(false);
 
+  const [expandedSwitch, setExpandedSwitch] = useState(false);
+  const {taskMap, childrenMap: taskChildrenMap, depths: taskDepths} = useMemo(() => treeInfo(tasks), [tasks]);
+  const filteredTasks = useMemo(() => {
+    let filtered: Task[];
+    if (onExpanderClick) {
+      filtered = filterHiddenChildren(taskMap, taskChildrenMap);
+    } else {
+      filtered = tasks;
+    }
+    filtered = filtered.sort(sortTasks);
+    return filtered;
+  }, [taskMap, taskChildrenMap, expandedSwitch, onExpanderClick, tasks])
+
   // task change events
   useEffect(() => {
-    let filteredTasks: Task[];
-    if (onExpanderClick) {
-      filteredTasks = removeHiddenTasks(tasks);
-    } else {
-      filteredTasks = tasks;
-    }
-    filteredTasks = filteredTasks.sort(sortTasks);
     const [startDate, endDate] = ganttDateRange(
       filteredTasks,
       viewMode,
@@ -143,7 +150,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       )
     );
   }, [
-    tasks,
+    filteredTasks,
     viewMode,
     preStepsCount,
     rowHeight,
@@ -383,8 +390,15 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     setSelectedTask(newSelectedTask);
   };
   const handleExpanderClick = (task: Task) => {
-    if (onExpanderClick && task.hideChildren !== undefined) {
-      onExpanderClick({ ...task, hideChildren: !task.hideChildren });
+    let children = taskChildrenMap.get(task.id);
+    let originalTask = taskMap.get(task.id);
+    if (originalTask && ((children?.length ?? 0) > 0)) {
+      originalTask.hideChildren = !originalTask.hideChildren;
+      setExpandedSwitch(!expandedSwitch);
+
+      if (onExpanderClick) {
+        onExpanderClick({...task});
+      }
     }
   };
   const gridProps: GridProps = {
@@ -448,6 +462,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     onExpanderClick: handleExpanderClick,
     TaskListHeader,
     TaskListTable,
+    taskChildrenMap,
+    taskDepths
   };
   return (
     <div>
