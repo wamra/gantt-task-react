@@ -1,6 +1,6 @@
 {
   "name": "gantt-task-react",
-  "version": "3.9.1",
+  "version": "0.3.9",
   "description": "Interactive Gantt Chart for React with TypeScript",
   "author": "WAMRA <wamra@users.noreply.github.com>",
   "homepage": "https://github.com/wamra/gantt-task-react/blob/main/README.md#gantt-task-react",
