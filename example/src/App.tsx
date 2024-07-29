@@ -67,6 +67,8 @@ const App = () => {
     console.log("On expander click Id:" + task.id);
   };
 
+  let today = new Date();
+  const viewDate = new Date(today.getFullYear(), today.getMonth(), 1)
   return (
     <div className="Wrapper">
       <ViewSwitcher
@@ -77,6 +79,7 @@ const App = () => {
       <h3>Gantt With Unlimited Height</h3>
       <Gantt
         tasks={tasks}
+        viewDate={viewDate}
         viewMode={view}
         onDateChange={handleTaskChange}
         onDelete={handleTaskDelete}
