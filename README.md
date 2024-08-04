@@ -8,7 +8,7 @@ original [`MaTeMaTuK/gantt-task-react`](https://github.com/MaTeMaTuK/gantt-task-
 the [`ObeoNetwork/gantt-task-react`](https://github.com/ObeoNetwork/gantt-task-react) fork, and our current development,
 creating a comprehensive solution for managing Gantt charts.
 
-![multi-hierarchy.png](multi-hierarchy.png)
+![multi-hierarchy.png](multi-hierarchy.gif)
 
 ## Key Features
 

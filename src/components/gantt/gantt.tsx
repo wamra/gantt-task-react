@@ -266,7 +266,7 @@ export const Gantt: React.FC<GanttProps> = ({
     undefined
   );
 
-  const [sortedTasks, setSortedTasks] = useState(() =>
+  const [sortedTasks, setSortedTasks] = useState<TaskOrEmpty[]>(() =>
     [...tasks].sort(sortTasks)
   );
 
@@ -720,6 +720,32 @@ export const Gantt: React.FC<GanttProps> = ({
     },
     [onChangeExpandState]
   );
+
+  const onCollapseAll = () => {
+    setSortedTasks(prev =>
+      prev.map(task => ({ ...task, hideChildren: true }))
+    );
+  };
+
+  const onExpandFirstLevel = () => {
+    setSortedTasks((prev) =>
+      prev.map(task => {
+        // If a task is a top-level task, show its children
+        if (!task.parent) {
+          return { ...task, hideChildren: false };
+        }
+        // For non-top-level tasks, collapse them by default
+        return { ...task, hideChildren: true };
+      })
+    );
+  };
+
+
+  const onExpandAll = () => {
+    setSortedTasks(prev =>
+      prev.map(task => ({ ...task, hideChildren: false }))
+    );
+  };
 
   const getMetadata = useCallback(
     (changeAction: ChangeAction) =>
@@ -1893,6 +1919,9 @@ export const Gantt: React.FC<GanttProps> = ({
     tasks: visibleTasks,
     onResizeColumn,
     onScrollTableListContentVertically: onScrollVertically,
+    onCollapseAll,
+    onExpandFirstLevel,
+    onExpandAll
   };
 
   const displayTable = !columnsProp || columnsProp.length > 0;

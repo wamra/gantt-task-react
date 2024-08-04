@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useState } from "react";
 import type {
   ComponentType,
   MouseEvent,
@@ -26,6 +26,7 @@ import { useOptimizedList } from "../../helpers/use-optimized-list";
 
 import styles from "./task-list.module.css";
 import { useTableListResize } from "../gantt/use-tablelist-resize";
+import { TaskListHeaderActionsProps } from "./TaskListHeaderActions";
 
 // const SCROLL_DELAY = 25;
 
@@ -72,7 +73,7 @@ export type TaskListProps = {
   onScrollTableListContentVertically: (
     event: SyntheticEvent<HTMLDivElement>
   ) => void;
-};
+} & TaskListHeaderActionsProps;
 
 const TaskListInner: React.FC<TaskListProps> = ({
   canMoveTasks,
@@ -110,8 +111,11 @@ const TaskListInner: React.FC<TaskListProps> = ({
   TaskListHeader,
   TaskListTable,
   onResizeColumn,
-  onScrollTableListContentVertically,
-}) => {
+                                                  onScrollTableListContentVertically,
+                                                  onCollapseAll,
+                                                  onExpandFirstLevel,
+                                                  onExpandAll
+                                                }) => {
   // Manage the column and list table resizing
   const [
     columns,
@@ -126,6 +130,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     "scrollTop",
     fullRowHeight
   );
+
 
   return (
     <div className={styles.ganttTableRoot} ref={taskListRef}>
@@ -142,6 +147,9 @@ const TaskListInner: React.FC<TaskListProps> = ({
           columns={columns}
           onColumnResizeStart={onColumnResizeStart}
           canResizeColumns={canResizeColumns}
+          onCollapseAll={onCollapseAll}
+          onExpandFirstLevel={onExpandFirstLevel}
+          onExpandAll={onExpandAll}
         />
 
         <div
