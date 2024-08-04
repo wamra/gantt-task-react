@@ -1,0 +1,5 @@
+.relationLine {
+  stroke: grey;
+  stroke-width: 2;
+  stroke-dasharray: 4;
+}

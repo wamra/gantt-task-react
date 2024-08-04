@@ -1,0 +1,20 @@
+import { Meta, Story } from '@storybook/addon-docs';
+
+import { Gantt } from '../src';
+
+import { Warnings } from './Warnings';
+
+<Meta
+  title="Warnings"
+  component={Gantt}
+/>
+
+export const Template = (props) => {
+  return <Warnings {...props} />;
+}
+
+# Warnings example
+
+<Story name="Warnings">
+  {Template.bind({})}
+</Story>

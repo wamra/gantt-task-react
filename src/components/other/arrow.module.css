@@ -1,0 +1,18 @@
+.arrow_clickable {
+  cursor: pointer;
+}
+
+.arrow_clickable:hover .mainPath {
+  filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, .7));
+}
+
+.mainPath {
+  fill: none;
+  stroke-width: 1.5px;
+}
+
+.clickZone {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 8px;
+}

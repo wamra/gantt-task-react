@@ -1,95 +1,217 @@
-import React, { useEffect, useRef } from "react";
-import { BarTask } from "../../types/bar-task";
-import { Task } from "../../types/public-types";
+import React, { memo } from "react";
+import type {
+  ComponentType,
+  MouseEvent,
+  RefObject,
+  SyntheticEvent,
+} from "react";
+
+import {
+  ChildByLevelMap,
+  ColorStyles,
+  Column,
+  DateSetup,
+  DependencyMap,
+  Distances,
+  Icons,
+  MapTaskToNestedIndex,
+  OnResizeColumn,
+  Task,
+  TaskListHeaderProps,
+  TaskListTableProps,
+  TaskOrEmpty,
+} from "../../types/public-types";
+
+import { useOptimizedList } from "../../helpers/use-optimized-list";
+
+import styles from "./task-list.module.css";
+import { useTableListResize } from "../gantt/use-tablelist-resize";
+
+// const SCROLL_DELAY = 25;
 
 export type TaskListProps = {
-  headerHeight: number;
-  rowWidth: string;
+  canMoveTasks: boolean;
+  canResizeColumns: boolean;
+  childTasksMap: ChildByLevelMap;
+  colors: ColorStyles;
+  columnsProp: readonly Column[];
+  cutIdsMirror: Readonly<Record<string, true>>;
+  dateSetup: DateSetup;
+  dependencyMap: DependencyMap;
+  distances: Distances;
   fontFamily: string;
   fontSize: string;
-  rowHeight: number;
-  ganttHeight: number;
-  scrollY: number;
-  locale: string;
-  tasks: Task[];
-  taskListRef: React.RefObject<HTMLDivElement>;
-  horizontalContainerClass?: string;
-  selectedTask: BarTask | undefined;
-  setSelectedTask: (task: string) => void;
+  fullRowHeight: number;
+  ganttFullHeight: number;
+  getTaskCurrentState: (task: Task) => Task;
+  handleAddTask: (task: Task) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
+  handleEditTask: (task: TaskOrEmpty) => void;
+  handleMoveTaskBefore: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
+  handleMoveTaskAfter: (target: TaskOrEmpty, taskForMove: TaskOrEmpty) => void;
+  handleMoveTasksInside: (parent: Task, childs: readonly TaskOrEmpty[]) => void;
+  handleOpenContextMenu: (
+    task: TaskOrEmpty,
+    clientX: number,
+    clientY: number
+  ) => void;
+  icons?: Partial<Icons>;
+  isShowTaskNumbers: boolean;
+  mapTaskToNestedIndex: MapTaskToNestedIndex;
+  onClick?: (task: TaskOrEmpty) => void;
   onExpanderClick: (task: Task) => void;
-  TaskListHeader: React.FC<{
-    headerHeight: number;
-    rowWidth: string;
-    fontFamily: string;
-    fontSize: string;
-  }>;
-  TaskListTable: React.FC<{
-    rowHeight: number;
-    rowWidth: string;
-    fontFamily: string;
-    fontSize: string;
-    locale: string;
-    tasks: Task[];
-    selectedTaskId: string;
-    setSelectedTask: (taskId: string) => void;
-    onExpanderClick: (task: Task) => void;
-  }>;
+  scrollToTask: (task: Task) => void;
+  selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
+  selectedIdsMirror: Readonly<Record<string, true>>;
+  taskListContentRef: RefObject<HTMLDivElement>;
+  taskListRef: RefObject<HTMLDivElement>;
+  tasks: readonly TaskOrEmpty[];
+  TaskListHeader: ComponentType<TaskListHeaderProps>;
+  TaskListTable: ComponentType<TaskListTableProps>;
+  onResizeColumn?: OnResizeColumn;
+  onScrollTableListContentVertically: (
+    event: SyntheticEvent<HTMLDivElement>
+  ) => void;
 };
 
-export const TaskList: React.FC<TaskListProps> = ({
-  headerHeight,
+const TaskListInner: React.FC<TaskListProps> = ({
+  canMoveTasks,
+  canResizeColumns,
+  childTasksMap,
+  colors,
+  columnsProp,
+  cutIdsMirror,
+  dateSetup,
+  dependencyMap,
+  distances,
   fontFamily,
   fontSize,
-  rowWidth,
-  rowHeight,
-  scrollY,
-  tasks,
-  selectedTask,
-  setSelectedTask,
+  fullRowHeight,
+  ganttFullHeight,
+  getTaskCurrentState,
+  handleAddTask,
+  handleDeleteTasks,
+  handleEditTask,
+  handleMoveTaskBefore,
+  handleMoveTaskAfter,
+  handleMoveTasksInside,
+  handleOpenContextMenu,
+  icons = undefined,
+  isShowTaskNumbers,
+  mapTaskToNestedIndex,
   onExpanderClick,
-  locale,
-  ganttHeight,
+  onClick,
+  scrollToTask,
+  selectTaskOnMouseDown,
+  selectedIdsMirror,
+  taskListContentRef,
   taskListRef,
-  horizontalContainerClass,
+  tasks,
   TaskListHeader,
   TaskListTable,
+  onResizeColumn,
+  onScrollTableListContentVertically,
 }) => {
-  const horizontalContainerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (horizontalContainerRef.current) {
-      horizontalContainerRef.current.scrollTop = scrollY;
-    }
-  }, [scrollY]);
+  // Manage the column and list table resizing
+  const [
+    columns,
+    taskListWidth,
+    tableWidth,
+    onTableResizeStart,
+    onColumnResizeStart,
+  ] = useTableListResize(columnsProp, distances, onResizeColumn);
 
-  const headerProps = {
-    headerHeight,
-    fontFamily,
-    fontSize,
-    rowWidth,
-  };
-  const selectedTaskId = selectedTask ? selectedTask.id : "";
-  const tableProps = {
-    rowHeight,
-    rowWidth,
-    fontFamily,
-    fontSize,
-    tasks,
-    locale,
-    selectedTaskId: selectedTaskId,
-    setSelectedTask,
-    onExpanderClick,
-  };
+  const renderedIndexes = useOptimizedList(
+    taskListContentRef,
+    "scrollTop",
+    fullRowHeight
+  );
 
   return (
-    <div ref={taskListRef}>
-      <TaskListHeader {...headerProps} />
+    <div className={styles.ganttTableRoot} ref={taskListRef}>
       <div
-        ref={horizontalContainerRef}
-        className={horizontalContainerClass}
-        style={ganttHeight ? { height: ganttHeight } : {}}
+        className={styles.ganttTableWrapper}
+        style={{
+          width: tableWidth,
+        }}
       >
-        <TaskListTable {...tableProps} />
+        <TaskListHeader
+          headerHeight={distances.headerHeight}
+          fontFamily={fontFamily}
+          fontSize={fontSize}
+          columns={columns}
+          onColumnResizeStart={onColumnResizeStart}
+          canResizeColumns={canResizeColumns}
+        />
+
+        <div
+          className={styles.taskListContent}
+          ref={taskListContentRef}
+          onScroll={onScrollTableListContentVertically}
+        >
+          <div
+            style={{
+              height: Math.max(
+                ganttFullHeight,
+                distances.minimumRowDisplayed * distances.rowHeight
+              ),
+              backgroundSize: `100% ${fullRowHeight * 2}px`,
+              backgroundImage: `linear-gradient(to bottom, transparent ${fullRowHeight}px, #f5f5f5 ${fullRowHeight}px)`,
+              overflow: "hidden",
+            }}
+          >
+            <TaskListTable
+              canMoveTasks={canMoveTasks}
+              childTasksMap={childTasksMap}
+              colors={colors}
+              columns={columns}
+              cutIdsMirror={cutIdsMirror}
+              dateSetup={dateSetup}
+              dependencyMap={dependencyMap}
+              distances={distances}
+              fontFamily={fontFamily}
+              fontSize={fontSize}
+              fullRowHeight={fullRowHeight}
+              ganttFullHeight={ganttFullHeight}
+              getTaskCurrentState={getTaskCurrentState}
+              handleAddTask={handleAddTask}
+              handleDeleteTasks={handleDeleteTasks}
+              handleEditTask={handleEditTask}
+              handleMoveTaskBefore={handleMoveTaskBefore}
+              handleMoveTaskAfter={handleMoveTaskAfter}
+              handleMoveTasksInside={handleMoveTasksInside}
+              handleOpenContextMenu={handleOpenContextMenu}
+              icons={icons}
+              isShowTaskNumbers={isShowTaskNumbers}
+              mapTaskToNestedIndex={mapTaskToNestedIndex}
+              onClick={onClick}
+              onExpanderClick={onExpanderClick}
+              renderedIndexes={renderedIndexes}
+              scrollToTask={scrollToTask}
+              selectTaskOnMouseDown={selectTaskOnMouseDown}
+              selectedIdsMirror={selectedIdsMirror}
+              taskListWidth={taskListWidth}
+              tasks={tasks}
+            />
+          </div>
+        </div>
       </div>
+
+      <div
+        className={styles.taskListResizer}
+        onMouseDown={event => {
+          onTableResizeStart(event.clientX);
+        }}
+        onTouchStart={event => {
+          const firstTouch = event.touches[0];
+
+          if (firstTouch) {
+            onTableResizeStart(firstTouch.clientX);
+          }
+        }}
+      />
     </div>
   );
 };
+
+export const TaskList = memo(TaskListInner);

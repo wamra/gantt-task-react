@@ -1,0 +1,36 @@
+import { Meta, Story } from '@storybook/addon-docs';
+
+import { Gantt } from '../src';
+
+import { StressTest } from './StressTest';
+
+<Meta
+  title="StressTest"
+  component={Gantt}
+  argTypes={{
+    numberOfRoots: {
+      control: 'number',
+    },
+    numberOfSubtasks: {
+      control: 'number',
+    },
+    depth: {
+      control: 'number',
+    },
+  }}
+  args={{
+    numberOfRoots: 4,
+    numberOfSubtasks: 4,
+    depth: 4,
+  }}
+/>
+
+export const Template = (props) => {
+  return <StressTest {...props} />;
+}
+
+# Stress test example
+
+<Story name="StressTest">
+  {Template.bind({})}
+</Story>

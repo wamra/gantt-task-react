@@ -15,6 +15,10 @@
   visibility: hidden;
 }
 
+.barHandle:hover {
+  fill: #a2a2a2;
+}
+
 .barBackground {
   user-select: none;
   stroke-width: 0;

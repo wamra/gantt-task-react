@@ -1,8 +1,12 @@
 import React from "react";
+import type {
+  ReactNode,
+} from "react";
+
 import styles from "./calendar.module.css";
 
 type TopPartOfCalendarProps = {
-  value: string;
+  value: ReactNode | null;
   x1Line: number;
   y1Line: number;
   y2Line: number;
@@ -26,16 +30,17 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
         x2={x1Line}
         y2={y2Line}
         className={styles.calendarTopTick}
-        key={value + "line"}
       />
-      <text
-        key={value + "text"}
-        y={yText}
-        x={xText}
-        className={styles.calendarTopText}
-      >
-        {value}
-      </text>
+
+      {value !== null && (
+        <text
+          y={yText}
+          x={xText}
+          className={styles.calendarTopText}
+        >
+          {value}
+        </text>
+      )}
     </g>
   );
 };

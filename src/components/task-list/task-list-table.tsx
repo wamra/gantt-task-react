@@ -1,49 +1,148 @@
-import React, { useMemo } from "react";
+import React, { memo, useMemo, useState } from "react";
+import type { ReactNode } from "react";
+
+import { checkHasChildren } from "../../helpers/check-has-children";
+import { Task, TaskListTableProps } from "../../types/public-types";
+import { TaskListTableRow } from "./task-list-table-row";
+
 import styles from "./task-list-table.module.css";
-import { Task } from "../../types/public-types";
 
-const localeDateStringCache = {};
-const toLocaleDateStringFactory =
-  (locale: string) =>
-  (date: Date, dateTimeOptions: Intl.DateTimeFormatOptions) => {
-    const key = date.toString();
-    let lds = localeDateStringCache[key];
-    if (!lds) {
-      lds = date.toLocaleDateString(locale, dateTimeOptions);
-      localeDateStringCache[key] = lds;
-    }
-    return lds;
-  };
-const dateTimeOptions: Intl.DateTimeFormatOptions = {
-  weekday: "short",
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-};
-
-export const TaskListTableDefault: React.FC<{
-  rowHeight: number;
-  rowWidth: string;
-  fontFamily: string;
-  fontSize: string;
-  locale: string;
-  tasks: Task[];
-  selectedTaskId: string;
-  setSelectedTask: (taskId: string) => void;
-  onExpanderClick: (task: Task) => void;
-}> = ({
-  rowHeight,
-  rowWidth,
-  tasks,
+const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
+  canMoveTasks,
+  childTasksMap,
+  colors,
+  columns,
+  cutIdsMirror,
+  dateSetup,
+  dependencyMap,
+  distances,
   fontFamily,
   fontSize,
-  locale,
+  fullRowHeight,
+  getTaskCurrentState,
+  handleAddTask,
+  handleDeleteTasks,
+  handleEditTask,
+  handleMoveTaskBefore,
+  handleMoveTaskAfter,
+  handleMoveTasksInside,
+  handleOpenContextMenu,
+  icons,
+  isShowTaskNumbers,
+  mapTaskToNestedIndex,
+  onClick,
   onExpanderClick,
+  renderedIndexes,
+  scrollToTask,
+  selectTaskOnMouseDown,
+  selectedIdsMirror,
+  tasks,
 }) => {
-  const toLocaleDateString = useMemo(
-    () => toLocaleDateStringFactory(locale),
-    [locale]
+  const renderedTasks = useMemo(
+    /**
+     * TO DO: maybe consider tasks on other levels?
+     */
+    () =>
+      tasks.filter(task => !task.comparisonLevel || task.comparisonLevel === 1),
+    [tasks]
   );
+
+  const [draggedTask, setDraggedTask] = useState(null);
+
+  const renderedListWithOffset = useMemo(() => {
+    if (!renderedIndexes) {
+      return null;
+    }
+
+    const [start, end] = renderedIndexes;
+
+    const renderedList: ReactNode[] = [];
+
+    for (let index = start; index <= end; ++index) {
+      const task = renderedTasks[index];
+
+      if (!task) {
+        break;
+      }
+
+      const { id, comparisonLevel = 1 } = task;
+
+      const indexesOnLevel = mapTaskToNestedIndex.get(comparisonLevel);
+
+      if (!indexesOnLevel) {
+        throw new Error(`Indexes are not found for level ${comparisonLevel}`);
+      }
+
+      const taskIndex = indexesOnLevel.get(id);
+
+      if (!taskIndex) {
+        throw new Error(`Index is not found for task ${id}`);
+      }
+
+      const [depth, indexStr] = taskIndex;
+
+      renderedList.push(
+        <TaskListTableRow
+          canMoveTasks={canMoveTasks}
+          colors={colors}
+          columns={columns}
+          dateSetup={dateSetup}
+          dependencyMap={dependencyMap}
+          depth={depth}
+          distances={distances}
+          fullRowHeight={fullRowHeight}
+          getTaskCurrentState={getTaskCurrentState}
+          handleAddTask={handleAddTask}
+          handleDeleteTasks={handleDeleteTasks}
+          handleEditTask={handleEditTask}
+          handleMoveTaskBefore={handleMoveTaskBefore}
+          handleMoveTaskAfter={handleMoveTaskAfter}
+          handleMoveTasksInside={handleMoveTasksInside}
+          handleOpenContextMenu={handleOpenContextMenu}
+          hasChildren={checkHasChildren(task, childTasksMap)}
+          icons={icons}
+          indexStr={indexStr}
+          isClosed={Boolean((task as Task)?.hideChildren)}
+          isCut={cutIdsMirror[id]}
+          isEven={index % 2 === 1}
+          isSelected={selectedIdsMirror[id]}
+          isShowTaskNumbers={isShowTaskNumbers}
+          onClick={onClick}
+          onExpanderClick={onExpanderClick}
+          scrollToTask={scrollToTask}
+          selectTaskOnMouseDown={selectTaskOnMouseDown}
+          task={task}
+          key={id}
+          tasks={tasks}
+          draggedTask={draggedTask}
+          setDraggedTask={setDraggedTask}
+        />
+      );
+    }
+
+    return (
+      <>
+        <div
+          style={{
+            height: fullRowHeight * start,
+          }}
+        />
+
+        {renderedList}
+      </>
+    );
+  }, [
+    colors,
+    columns,
+    cutIdsMirror,
+    fullRowHeight,
+    getTaskCurrentState,
+    renderedIndexes,
+    renderedTasks,
+    selectTaskOnMouseDown,
+    selectedIdsMirror,
+    draggedTask,
+  ]);
 
   return (
     <div
@@ -53,63 +152,9 @@ export const TaskListTableDefault: React.FC<{
         fontSize: fontSize,
       }}
     >
-      {tasks.map(t => {
-        let expanderSymbol = "";
-        if (t.hideChildren === false) {
-          expanderSymbol = "▼";
-        } else if (t.hideChildren === true) {
-          expanderSymbol = "▶";
-        }
-
-        return (
-          <div
-            className={styles.taskListTableRow}
-            style={{ height: rowHeight }}
-            key={`${t.id}row`}
-          >
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-              title={t.name}
-            >
-              <div className={styles.taskListNameWrapper}>
-                <div
-                  className={
-                    expanderSymbol
-                      ? styles.taskListExpander
-                      : styles.taskListEmptyExpander
-                  }
-                  onClick={() => onExpanderClick(t)}
-                >
-                  {expanderSymbol}
-                </div>
-                <div>{t.name}</div>
-              </div>
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-            >
-              &nbsp;{toLocaleDateString(t.start, dateTimeOptions)}
-            </div>
-            <div
-              className={styles.taskListCell}
-              style={{
-                minWidth: rowWidth,
-                maxWidth: rowWidth,
-              }}
-            >
-              &nbsp;{toLocaleDateString(t.end, dateTimeOptions)}
-            </div>
-          </div>
-        );
-      })}
+      {renderedListWithOffset}
     </div>
   );
 };
+
+export const TaskListTableDefault = memo(TaskListTableDefaultInner);

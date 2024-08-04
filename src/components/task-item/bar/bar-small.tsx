@@ -1,48 +1,81 @@
-import React from "react";
-import { getProgressPoint } from "../../../helpers/bar-helper";
+import React, { useCallback } from "react";
+import stylesRelationHandle from "./bar-relation-handle.module.css";
 import { BarDisplay } from "./bar-display";
-import { BarProgressHandle } from "./bar-progress-handle";
-import { TaskItemProps } from "../task-item";
-import styles from "./bar.module.css";
+import type { TaskItemProps } from "../task-item";
 
-export const BarSmall: React.FC<TaskItemProps> = ({
-  task,
-  isProgressChangeable,
-  isDateChangeable,
-  onEventStart,
+import styles from "./bar.module.css";
+import { BarDateHandle } from "./bar-date-handle";
+import { BarMoveAction } from "../../../types/public-types";
+
+export const BarSmall: React.FC<
+  TaskItemProps & {
+    onTaskEventStart: (action: BarMoveAction, clientX: number) => void;
+  }
+> = ({
+  children: relationhandles,
+  colorStyles,
+  distances: { barCornerRadius, handleWidth },
+  hasChildren,
   isSelected,
+  isCritical,
+  isDateChangeable,
+  onTaskEventStart,
+  progressWidth,
+  progressX,
+  taskYOffset,
+  task,
+  taskHeight,
+  x1,
 }) => {
-  const progressPoint = getProgressPoint(
-    task.progressWidth + task.x1,
-    task.y,
-    task.height
+  const startMoveFullTask = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("move", clientX);
+    },
+    [onTaskEventStart]
   );
+
+  const startMoveEndOfTask = useCallback(
+    (clientX: number) => {
+      onTaskEventStart("end", clientX);
+    },
+    [onTaskEventStart]
+  );
+
   return (
-    <g className={styles.barWrapper} tabIndex={0}>
+    <g
+      className={`${styles.barWrapper} ${stylesRelationHandle.barRelationHandleWrapper}`}
+      tabIndex={0}
+    >
       <BarDisplay
-        x={task.x1}
-        y={task.y}
-        width={task.x2 - task.x1}
-        height={task.height}
-        progressX={task.progressX}
-        progressWidth={task.progressWidth}
-        barCornerRadius={task.barCornerRadius}
-        styles={task.styles}
+        taskName={task.name}
+        barCornerRadius={barCornerRadius}
+        hasChildren={hasChildren}
+        height={taskHeight}
+        isCritical={isCritical}
         isSelected={isSelected}
-        onMouseDown={e => {
-          isDateChangeable && onEventStart("move", task, e);
-        }}
+        progressWidth={progressWidth}
+        progressX={progressX}
+        startMoveFullTask={startMoveFullTask}
+        styles={colorStyles}
+        width={handleWidth * 2}
+        x={x1}
+        y={taskYOffset}
       />
-      <g className="handleGroup">
-        {isProgressChangeable && (
-          <BarProgressHandle
-            progressPoint={progressPoint}
-            onMouseDown={e => {
-              onEventStart("progress", task, e);
-            }}
-          />
-        )}
-      </g>
+
+      {/* right */}
+      {isDateChangeable && (
+        <BarDateHandle
+          dataTestid={`task-date-handle-right-${task.name}`}
+          barCornerRadius={barCornerRadius}
+          height={taskHeight - 2}
+          startMove={startMoveEndOfTask}
+          width={handleWidth}
+          x={x1 + handleWidth}
+          y={taskYOffset + 1}
+        />
+      )}
+
+      {relationhandles}
     </g>
   );
 };

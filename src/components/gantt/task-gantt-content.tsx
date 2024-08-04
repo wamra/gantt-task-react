@@ -1,302 +1,477 @@
-import React, { useEffect, useState } from "react";
-import { EventOption } from "../../types/public-types";
-import { BarTask } from "../../types/bar-task";
-import { Arrow } from "../other/arrow";
-import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
-import { isKeyboardEvent } from "../../helpers/other-helper";
-import { TaskItem } from "../task-item/task-item";
+import React, { useMemo } from "react";
+import type { MouseEvent, ReactNode } from "react";
+
 import {
   BarMoveAction,
-  GanttContentMoveAction,
-  GanttEvent,
-} from "../../types/gantt-task-actions";
+  ChildByLevelMap,
+  ChildOutOfParentWarnings,
+  ColorStyles,
+  CriticalPaths,
+  DependencyMap,
+  DependentMap,
+  Distances,
+  FixPosition,
+  GlobalRowIndexToTaskMap,
+  RelationKind,
+  DateExtremity,
+  Task,
+  TaskContextualPaletteProps,
+  TaskCoordinates,
+  TaskOrEmpty,
+  TaskToHasDependencyWarningMap,
+  TaskDependencyContextualPaletteProps,
+} from "../../types/public-types";
+import { Arrow } from "../other/arrow";
+import { RelationLine } from "../other/relation-line";
+import { TaskItem } from "../task-item/task-item";
+import { GanttRelationEvent } from "../../types/gantt-task-actions";
+import { checkHasChildren } from "../../helpers/check-has-children";
+import { checkTaskHasDependencyWarning } from "../../helpers/check-task-has-dependency-warning";
+import type { OptimizedListParams } from "../../helpers/use-optimized-list";
 
 export type TaskGanttContentProps = {
-  tasks: BarTask[];
-  dates: Date[];
-  ganttEvent: GanttEvent;
-  selectedTask: BarTask | undefined;
-  rowHeight: number;
-  columnWidth: number;
-  timeStep: number;
-  svg?: React.RefObject<SVGSVGElement>;
-  svgWidth: number;
-  taskHeight: number;
-  arrowColor: string;
-  arrowIndent: number;
-  fontSize: string;
+  authorizedRelations: RelationKind[];
+  additionalLeftSpace: number;
+  additionalRightSpace: number;
+  childOutOfParentWarnings: ChildOutOfParentWarnings | null;
+  childTasksMap: ChildByLevelMap;
+  colorStyles: ColorStyles;
+  comparisonLevels: number;
+  criticalPaths: CriticalPaths | null;
+  dependencyMap: DependencyMap;
+  dependentMap: DependentMap;
+  distances: Distances;
+  fixEndPosition?: FixPosition;
+  fixStartPosition?: FixPosition;
   fontFamily: string;
+  fontSize: string;
+  fullRowHeight: number;
+  ganttRelationEvent: GanttRelationEvent | null;
+  getTaskCoordinates: (task: Task) => TaskCoordinates;
+  getTaskGlobalIndexByRef: (task: Task) => number;
+  handleBarRelationStart: (target: DateExtremity, task: Task) => void;
+  handleDeleteTasks: (task: TaskOrEmpty[]) => void;
+  handleFixDependency: (task: Task, delta: number) => void;
+  handleTaskDragStart: (
+    action: BarMoveAction,
+    task: Task,
+    clientX: number,
+    taskRootNode: Element
+  ) => void;
+  isShowDependencyWarnings: boolean;
+  mapGlobalRowIndexToTask: GlobalRowIndexToTaskMap;
+  onArrowClick?: (
+    taskFrom: Task,
+    extremityFrom: DateExtremity,
+    taskTo: Task,
+    extremityTo: DateExtremity,
+    event: React.MouseEvent<SVGElement>
+  ) => void;
+  onArrowDoubleClick: (taskFrom: Task, taskTo: Task) => void;
+  onClick?: (task: Task, event: React.MouseEvent<SVGElement>) => void;
+  onDoubleClick?: (task: Task) => void;
+  renderedRowIndexes: OptimizedListParams | null;
   rtl: boolean;
-  setGanttEvent: (value: GanttEvent) => void;
-  setFailedTask: (value: BarTask | null) => void;
-  setSelectedTask: (taskId: string) => void;
-} & EventOption;
+  selectTaskOnMouseDown: (taskId: string, event: MouseEvent) => void;
+  selectedIdsMirror: Readonly<Record<string, true>>;
+  setTooltipTask: (task: Task | null, element: Element | null) => void;
+  taskToHasDependencyWarningMap: TaskToHasDependencyWarningMap | null;
+  taskYOffset: number;
+  visibleTasksMirror: Readonly<Record<string, true>>;
+  taskHeight: number;
+  taskHalfHeight: number;
+  ContextualPalette?: React.FC<TaskContextualPaletteProps>;
+  TaskDependencyContextualPalette?: React.FC<TaskDependencyContextualPaletteProps>;
+};
 
 export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
-  tasks,
-  dates,
-  ganttEvent,
-  selectedTask,
-  rowHeight,
-  columnWidth,
-  timeStep,
-  svg,
-  taskHeight,
-  arrowColor,
-  arrowIndent,
+  authorizedRelations,
+  additionalLeftSpace,
+  additionalRightSpace,
+  childOutOfParentWarnings,
+  childTasksMap,
+  colorStyles,
+  comparisonLevels,
+  criticalPaths,
+  dependencyMap,
+  dependentMap,
+  distances,
+  fixEndPosition = undefined,
+  fixStartPosition = undefined,
   fontFamily,
   fontSize,
-  rtl,
-  setGanttEvent,
-  setFailedTask,
-  setSelectedTask,
-  onDateChange,
-  onProgressChange,
+  fullRowHeight,
+  ganttRelationEvent,
+  getTaskCoordinates,
+  getTaskGlobalIndexByRef,
+  handleBarRelationStart,
+  handleDeleteTasks,
+  handleFixDependency,
+  handleTaskDragStart,
+  isShowDependencyWarnings,
+  mapGlobalRowIndexToTask,
+  onArrowDoubleClick,
+  onArrowClick,
   onDoubleClick,
   onClick,
-  onDelete,
+  renderedRowIndexes,
+  rtl,
+  selectTaskOnMouseDown,
+  selectedIdsMirror,
+  setTooltipTask,
+  taskToHasDependencyWarningMap,
+  taskYOffset,
+  taskHeight,
+  taskHalfHeight,
+  visibleTasksMirror,
 }) => {
-  const point = svg?.current?.createSVGPoint();
-  const [xStep, setXStep] = useState(0);
-  const [initEventX1Delta, setInitEventX1Delta] = useState(0);
-  const [isMoving, setIsMoving] = useState(false);
-
-  // create xStep
-  useEffect(() => {
-    const dateDelta =
-      dates[1].getTime() -
-      dates[0].getTime() -
-      dates[1].getTimezoneOffset() * 60 * 1000 +
-      dates[0].getTimezoneOffset() * 60 * 1000;
-    const newXStep = (timeStep * columnWidth) / dateDelta;
-    setXStep(newXStep);
-  }, [columnWidth, dates, timeStep]);
-
-  useEffect(() => {
-    const handleMouseMove = async (event: MouseEvent) => {
-      if (!ganttEvent.changedTask || !point || !svg?.current) return;
-      event.preventDefault();
-
-      point.x = event.clientX;
-      const cursor = point.matrixTransform(
-        svg?.current.getScreenCTM()?.inverse()
-      );
-
-      const { isChanged, changedTask } = handleTaskBySVGMouseEvent(
-        cursor.x,
-        ganttEvent.action as BarMoveAction,
-        ganttEvent.changedTask,
-        xStep,
-        timeStep,
-        initEventX1Delta,
-        rtl
-      );
-      if (isChanged) {
-        setGanttEvent({ action: ganttEvent.action, changedTask });
-      }
-    };
-
-    const handleMouseUp = async (event: MouseEvent) => {
-      const { action, originalSelectedTask, changedTask } = ganttEvent;
-      if (!changedTask || !point || !svg?.current || !originalSelectedTask)
-        return;
-      event.preventDefault();
-
-      point.x = event.clientX;
-      const cursor = point.matrixTransform(
-        svg?.current.getScreenCTM()?.inverse()
-      );
-      const { changedTask: newChangedTask } = handleTaskBySVGMouseEvent(
-        cursor.x,
-        action as BarMoveAction,
-        changedTask,
-        xStep,
-        timeStep,
-        initEventX1Delta,
-        rtl
-      );
-
-      const isNotLikeOriginal =
-        originalSelectedTask.start !== newChangedTask.start ||
-        originalSelectedTask.end !== newChangedTask.end ||
-        originalSelectedTask.progress !== newChangedTask.progress;
-
-      // remove listeners
-      svg.current.removeEventListener("mousemove", handleMouseMove);
-      svg.current.removeEventListener("mouseup", handleMouseUp);
-      setGanttEvent({ action: "" });
-      setIsMoving(false);
-
-      // custom operation start
-      let operationSuccess = true;
-      if (
-        (action === "move" || action === "end" || action === "start") &&
-        onDateChange &&
-        isNotLikeOriginal
-      ) {
-        try {
-          const result = await onDateChange(
-            newChangedTask,
-            newChangedTask.barChildren
-          );
-          if (result !== undefined) {
-            operationSuccess = result;
-          }
-        } catch (error) {
-          operationSuccess = false;
-        }
-      } else if (onProgressChange && isNotLikeOriginal) {
-        try {
-          const result = await onProgressChange(
-            newChangedTask,
-            newChangedTask.barChildren
-          );
-          if (result !== undefined) {
-            operationSuccess = result;
-          }
-        } catch (error) {
-          operationSuccess = false;
-        }
-      }
-
-      // If operation is failed - return old state
-      if (!operationSuccess) {
-        setFailedTask(originalSelectedTask);
-      }
-    };
-
-    if (
-      !isMoving &&
-      (ganttEvent.action === "move" ||
-        ganttEvent.action === "end" ||
-        ganttEvent.action === "start" ||
-        ganttEvent.action === "progress") &&
-      svg?.current
-    ) {
-      svg.current.addEventListener("mousemove", handleMouseMove);
-      svg.current.addEventListener("mouseup", handleMouseUp);
-      setIsMoving(true);
+  const [renderedTasks, renderedArrows, renderedSelectedTasks] = useMemo(() => {
+    if (!renderedRowIndexes) {
+      return [null, null, null];
     }
-  }, [
-    ganttEvent,
-    xStep,
-    initEventX1Delta,
-    onProgressChange,
-    timeStep,
-    onDateChange,
-    svg,
-    isMoving,
-    point,
-    rtl,
-    setFailedTask,
-    setGanttEvent,
-  ]);
 
-  /**
-   * Method is Start point of task change
-   */
-  const handleBarEventStart = async (
-    action: GanttContentMoveAction,
-    task: BarTask,
-    event?: React.MouseEvent | React.KeyboardEvent
-  ) => {
-    if (!event) {
-      if (action === "select") {
-        setSelectedTask(task.id);
+    const [start, end] = renderedRowIndexes;
+
+    const tasksRes: ReactNode[] = [];
+    const arrowsRes: ReactNode[] = [];
+    const selectedTasksRes: ReactNode[] = [];
+
+    // task id -> true
+    const addedSelectedTasks: Record<string, true> = {};
+
+    // avoid duplicates
+    // comparison level -> task from id -> task to id -> true
+    const addedDependencies: Record<
+      string,
+      Record<string, Record<string, true>>
+    > = {};
+
+    for (let index = start; index <= end; ++index) {
+      const task = mapGlobalRowIndexToTask.get(index);
+
+      if (!task) {
+        continue;
       }
-    }
-    // Keyboard events
-    else if (isKeyboardEvent(event)) {
-      if (action === "delete") {
-        if (onDelete) {
-          try {
-            const result = await onDelete(task);
-            if (result !== undefined && result) {
-              setGanttEvent({ action, changedTask: task });
+
+      const { comparisonLevel = 1, id: taskId } = task;
+
+      if (selectedIdsMirror[taskId] && !addedSelectedTasks[taskId]) {
+        addedSelectedTasks[taskId] = true;
+
+        selectedTasksRes.push(
+          <rect
+            x={0}
+            y={Math.floor(index / comparisonLevels) * fullRowHeight}
+            width="100%"
+            height={fullRowHeight}
+            fill={colorStyles.selectedTaskBackgroundColor}
+            key={taskId}
+          />
+        );
+      }
+
+      if (comparisonLevel > comparisonLevels) {
+        continue;
+      }
+
+      if (task.type === "empty") {
+        continue;
+      }
+
+      const key = `${comparisonLevel}_${task.id}`;
+
+      const criticalPathOnLevel = criticalPaths
+        ? criticalPaths.get(comparisonLevel)
+        : undefined;
+
+      const isCritical = criticalPathOnLevel
+        ? criticalPathOnLevel.tasks.has(task.id)
+        : false;
+
+      const {
+        containerX,
+        containerWidth,
+        innerX1,
+        innerX2,
+        width,
+        levelY,
+        progressWidth,
+        x1: taskX1,
+        x2: taskX2,
+      } = getTaskCoordinates(task);
+
+      tasksRes.push(
+        <svg
+          id={task.id}
+          className="TaskItemClassName"
+          x={containerX + (additionalLeftSpace || 0)}
+          y={levelY}
+          width={containerWidth}
+          height={fullRowHeight}
+          key={key}
+        >
+          <TaskItem
+            getTaskGlobalIndexByRef={getTaskGlobalIndexByRef}
+            hasChildren={checkHasChildren(task, childTasksMap)}
+            hasDependencyWarning={
+              taskToHasDependencyWarningMap
+                ? checkTaskHasDependencyWarning(
+                    task,
+                    taskToHasDependencyWarningMap
+                  )
+                : false
             }
-          } catch (error) {
-            console.error("Error on Delete. " + error);
-          }
-        }
-      }
-    }
-    // Mouse Events
-    else if (action === "mouseenter") {
-      if (!ganttEvent.action) {
-        setGanttEvent({
-          action,
-          changedTask: task,
-          originalSelectedTask: task,
-        });
-      }
-    } else if (action === "mouseleave") {
-      if (ganttEvent.action === "mouseenter") {
-        setGanttEvent({ action: "" });
-      }
-    } else if (action === "dblclick") {
-      !!onDoubleClick && onDoubleClick(task);
-    } else if (action === "click") {
-      !!onClick && onClick(task);
-    }
-    // Change task event start
-    else if (action === "move") {
-      if (!svg?.current || !point) return;
-      point.x = event.clientX;
-      const cursor = point.matrixTransform(
-        svg.current.getScreenCTM()?.inverse()
+            progressWidth={progressWidth}
+            progressX={rtl ? innerX2 : innerX1}
+            selectTaskOnMouseDown={selectTaskOnMouseDown}
+            task={task}
+            taskYOffset={taskYOffset}
+            width={width}
+            x1={innerX1}
+            x2={innerX2}
+            childOutOfParentWarnings={childOutOfParentWarnings}
+            distances={distances}
+            taskHeight={taskHeight}
+            taskHalfHeight={taskHalfHeight}
+            isProgressChangeable={!task.isDisabled}
+            isDateChangeable={!task.isDisabled}
+            isRelationChangeable={!task.isRelationDisabled}
+            authorizedRelations={authorizedRelations}
+            ganttRelationEvent={ganttRelationEvent}
+            isDelete={!task.isDisabled}
+            onDoubleClick={onDoubleClick}
+            onClick={onClick}
+            onEventStart={handleTaskDragStart}
+            setTooltipTask={setTooltipTask}
+            onRelationStart={handleBarRelationStart}
+            isSelected={Boolean(selectedIdsMirror[taskId])}
+            isCritical={isCritical}
+            rtl={rtl}
+            fixStartPosition={fixStartPosition}
+            fixEndPosition={fixEndPosition}
+            handleDeleteTasks={handleDeleteTasks}
+            colorStyles={colorStyles}
+          />
+        </svg>
       );
-      setInitEventX1Delta(cursor.x - task.x1);
-      setGanttEvent({
-        action,
-        changedTask: task,
-        originalSelectedTask: task,
-      });
-    } else {
-      setGanttEvent({
-        action,
-        changedTask: task,
-        originalSelectedTask: task,
-      });
+
+      const addedDependenciesAtLevel = addedDependencies[comparisonLevel] || {};
+      if (!addedDependencies[comparisonLevel]) {
+        addedDependencies[comparisonLevel] = addedDependenciesAtLevel;
+      }
+
+      const addedDependenciesAtTask = addedDependenciesAtLevel[taskId] || {};
+      if (!addedDependenciesAtLevel[taskId]) {
+        addedDependenciesAtLevel[taskId] = addedDependenciesAtTask;
+      }
+
+      const dependenciesAtLevel = dependencyMap.get(comparisonLevel);
+
+      if (!dependenciesAtLevel) {
+        continue;
+      }
+
+      const dependenciesByTask = dependenciesAtLevel.get(taskId);
+
+      if (dependenciesByTask) {
+        const criticalPathForTask = criticalPathOnLevel
+          ? criticalPathOnLevel.dependencies.get(task.id)
+          : undefined;
+
+        dependenciesByTask
+          .filter(({ source }) => visibleTasksMirror[source.id])
+          .forEach(
+            ({
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              marginBetweenTasks,
+              ownTarget,
+              source,
+              sourceTarget,
+            }) => {
+              if (addedDependenciesAtTask[source.id]) {
+                return;
+              }
+
+              addedDependenciesAtTask[source.id] = true;
+
+              const isCritical = criticalPathForTask
+                ? criticalPathForTask.has(source.id)
+                : false;
+
+              const { x1: fromX1, x2: fromX2 } = getTaskCoordinates(source);
+
+              const containerX = Math.min(fromX1, taskX1) - 300;
+              const containerWidth =
+                Math.max(fromX2, taskX2) - containerX + 300;
+
+              arrowsRes.push(
+                <svg
+                  className="ArrowClassName"
+                  x={containerX + (additionalLeftSpace || 0)}
+                  y={containerY}
+                  width={containerWidth}
+                  height={containerHeight}
+                  key={`Arrow from ${source.id} to ${taskId} on ${comparisonLevel}`}
+                >
+                  <Arrow
+                    colorStyles={colorStyles}
+                    distances={distances}
+                    taskFrom={source}
+                    extremityFrom={sourceTarget}
+                    fromX1={fromX1 - containerX}
+                    fromX2={fromX2 - containerX}
+                    fromY={innerFromY}
+                    taskTo={task}
+                    extremityTo={ownTarget}
+                    toX1={taskX1 - containerX}
+                    toX2={taskX2 - containerX}
+                    toY={innerToY}
+                    marginBetweenTasks={marginBetweenTasks}
+                    fullRowHeight={fullRowHeight}
+                    taskHeight={taskHeight}
+                    isShowDependencyWarnings={isShowDependencyWarnings}
+                    isCritical={isCritical}
+                    rtl={rtl}
+                    onArrowDoubleClick={onArrowDoubleClick}
+                    onArrowClick={onArrowClick}
+                    handleFixDependency={handleFixDependency}
+                  />
+                </svg>
+              );
+            }
+          );
+      }
+
+      const dependentsAtLevel = dependentMap.get(comparisonLevel);
+
+      if (!dependentsAtLevel) {
+        continue;
+      }
+
+      const dependentsByTask = dependentsAtLevel.get(taskId);
+
+      if (dependentsByTask) {
+        dependentsByTask
+          .filter(({ dependent }) => visibleTasksMirror[dependent.id])
+          .forEach(
+            ({
+              containerHeight,
+              containerY,
+              innerFromY,
+              innerToY,
+              marginBetweenTasks,
+              ownTarget,
+              dependent,
+              dependentTarget,
+            }) => {
+              const addedDependenciesAtDependent =
+                addedDependenciesAtLevel[dependent.id] || {};
+              if (!addedDependenciesAtLevel[dependent.id]) {
+                addedDependenciesAtLevel[dependent.id] =
+                  addedDependenciesAtDependent;
+              }
+
+              if (addedDependenciesAtDependent[taskId]) {
+                return;
+              }
+
+              addedDependenciesAtDependent[taskId] = true;
+
+              const criticalPathForTask = criticalPathOnLevel
+                ? criticalPathOnLevel.dependencies.get(dependent.id)
+                : undefined;
+
+              const isCritical = criticalPathForTask
+                ? criticalPathForTask.has(task.id)
+                : false;
+
+              const { x1: toX1, x2: toX2 } = getTaskCoordinates(dependent);
+
+              const containerX = Math.min(toX1, taskX1) - 300;
+              const containerWidth = Math.max(toX2, taskX2) - containerX + 300;
+
+              arrowsRes.push(
+                <svg
+                  x={containerX + (additionalLeftSpace || 0)}
+                  y={containerY}
+                  width={containerWidth}
+                  height={containerHeight}
+                  key={`Arrow from ${taskId} to ${dependent.id} on ${comparisonLevel}`}
+                >
+                  <Arrow
+                    colorStyles={colorStyles}
+                    distances={distances}
+                    taskFrom={task}
+                    extremityFrom={ownTarget}
+                    fromX1={taskX1 - containerX}
+                    fromX2={taskX2 - containerX}
+                    fromY={innerFromY}
+                    taskTo={dependent}
+                    extremityTo={dependentTarget}
+                    toX1={toX1 - containerX}
+                    toX2={toX2 - containerX}
+                    toY={innerToY}
+                    marginBetweenTasks={marginBetweenTasks}
+                    fullRowHeight={fullRowHeight}
+                    taskHeight={taskHeight}
+                    isShowDependencyWarnings={isShowDependencyWarnings}
+                    isCritical={isCritical}
+                    rtl={rtl}
+                    onArrowDoubleClick={onArrowDoubleClick}
+                    onArrowClick={onArrowClick}
+                    handleFixDependency={handleFixDependency}
+                  />
+                </svg>
+              );
+            }
+          );
+      }
     }
-  };
+
+    return [tasksRes, arrowsRes, selectedTasksRes];
+  }, [
+    additionalLeftSpace,
+    additionalRightSpace,
+    colorStyles,
+    dependencyMap,
+    dependentMap,
+    fullRowHeight,
+    ganttRelationEvent,
+    getTaskCoordinates,
+    mapGlobalRowIndexToTask,
+    renderedRowIndexes,
+    selectTaskOnMouseDown,
+    selectedIdsMirror,
+    visibleTasksMirror,
+  ]);
 
   return (
     <g className="content">
-      <g className="arrows" fill={arrowColor} stroke={arrowColor}>
-        {tasks.map(task => {
-          return task.barChildren.map(child => {
-            return (
-              <Arrow
-                key={`Arrow from ${task.id} to ${tasks[child.index].id}`}
-                taskFrom={task}
-                taskTo={tasks[child.index]}
-                rowHeight={rowHeight}
-                taskHeight={taskHeight}
-                arrowIndent={arrowIndent}
-                rtl={rtl}
-              />
-            );
-          });
-        })}
+      {renderedSelectedTasks}
+
+      <g
+        className="arrows"
+        fill={colorStyles.arrowColor}
+        stroke={colorStyles.arrowColor}
+      >
+        {renderedArrows}
       </g>
+
       <g className="bar" fontFamily={fontFamily} fontSize={fontSize}>
-        {tasks.map(task => {
-          return (
-            <TaskItem
-              task={task}
-              arrowIndent={arrowIndent}
-              taskHeight={taskHeight}
-              isProgressChangeable={!!onProgressChange && !task.isDisabled}
-              isDateChangeable={!!onDateChange && !task.isDisabled}
-              isDelete={!task.isDisabled}
-              onEventStart={handleBarEventStart}
-              key={task.id}
-              isSelected={!!selectedTask && task.id === selectedTask.id}
-              rtl={rtl}
-            />
-          );
-        })}
+        {renderedTasks}
       </g>
+
+      {ganttRelationEvent && (
+        <RelationLine
+          x1={ganttRelationEvent.startX}
+          x2={ganttRelationEvent.endX}
+          y1={ganttRelationEvent.startY}
+          y2={ganttRelationEvent.endY}
+        />
+      )}
     </g>
   );
 };

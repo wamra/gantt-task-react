@@ -1,0 +1,7 @@
+.buttonEntries {
+  display: grid;
+  grid-template-columns: repeat(3, 36px);
+  grid-template-rows: 28px;
+  grid-auto-rows: 28px;
+  place-items: center;
+}

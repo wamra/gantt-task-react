@@ -1,18 +1,10 @@
-import { BarTask } from "./bar-task";
+import { Task, DateExtremity } from "./public-types";
 
-export type BarMoveAction = "progress" | "end" | "start" | "move";
-export type GanttContentMoveAction =
-  | "mouseenter"
-  | "mouseleave"
-  | "delete"
-  | "dblclick"
-  | "click"
-  | "select"
-  | ""
-  | BarMoveAction;
-
-export type GanttEvent = {
-  changedTask?: BarTask;
-  originalSelectedTask?: BarTask;
-  action: GanttContentMoveAction;
+export type GanttRelationEvent = {
+  extremity: DateExtremity;
+  task: Task;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 };
