@@ -26,6 +26,7 @@ import { useOptimizedList } from "../../helpers/use-optimized-list";
 
 import styles from "./task-list.module.css";
 import { useTableListResize } from "../gantt/use-tablelist-resize";
+import { TaskListHeaderActionsProps } from "./TaskListHeaderActions";
 
 // const SCROLL_DELAY = 25;
 
@@ -72,46 +73,50 @@ export type TaskListProps = {
   onScrollTableListContentVertically: (
     event: SyntheticEvent<HTMLDivElement>
   ) => void;
-};
+} & TaskListHeaderActionsProps;
 
-const TaskListInner: React.FC<TaskListProps> = ({
-  canMoveTasks,
-  canResizeColumns,
-  childTasksMap,
-  colors,
-  columnsProp,
-  cutIdsMirror,
-  dateSetup,
-  dependencyMap,
-  distances,
-  fontFamily,
-  fontSize,
-  fullRowHeight,
-  ganttFullHeight,
-  getTaskCurrentState,
-  handleAddTask,
-  handleDeleteTasks,
-  handleEditTask,
-  handleMoveTaskBefore,
-  handleMoveTaskAfter,
-  handleMoveTasksInside,
-  handleOpenContextMenu,
-  icons = undefined,
-  isShowTaskNumbers,
-  mapTaskToNestedIndex,
-  onExpanderClick,
-  onClick,
-  scrollToTask,
-  selectTaskOnMouseDown,
-  selectedIdsMirror,
-  taskListContentRef,
-  taskListRef,
-  tasks,
-  TaskListHeader,
-  TaskListTable,
-  onResizeColumn,
-  onScrollTableListContentVertically,
-}) => {
+const TaskListInner: React.FC<TaskListProps & TaskListHeaderActionsProps> = (
+  {
+    canMoveTasks,
+    canResizeColumns,
+    childTasksMap,
+    colors,
+    columnsProp,
+    cutIdsMirror,
+    dateSetup,
+    dependencyMap,
+    distances,
+    fontFamily,
+    fontSize,
+    fullRowHeight,
+    ganttFullHeight,
+    getTaskCurrentState,
+    handleAddTask,
+    handleDeleteTasks,
+    handleEditTask,
+    handleMoveTaskBefore,
+    handleMoveTaskAfter,
+    handleMoveTasksInside,
+    handleOpenContextMenu,
+    icons = undefined,
+    isShowTaskNumbers,
+    mapTaskToNestedIndex,
+    onExpanderClick,
+    onClick,
+    scrollToTask,
+    selectTaskOnMouseDown,
+    selectedIdsMirror,
+    taskListContentRef,
+    taskListRef,
+    tasks,
+    TaskListHeader,
+    TaskListTable,
+    onResizeColumn,
+    onScrollTableListContentVertically,
+    onCollapseAll,
+    onExpandFirstLevel,
+    onExpandAll
+  }) => {
   // Manage the column and list table resizing
   const [
     columns,
@@ -126,6 +131,7 @@ const TaskListInner: React.FC<TaskListProps> = ({
     "scrollTop",
     fullRowHeight
   );
+
 
   return (
     <div className={styles.ganttTableRoot} ref={taskListRef}>
@@ -142,6 +148,9 @@ const TaskListInner: React.FC<TaskListProps> = ({
           columns={columns}
           onColumnResizeStart={onColumnResizeStart}
           canResizeColumns={canResizeColumns}
+          onCollapseAll={onCollapseAll}
+          onExpandFirstLevel={onExpandFirstLevel}
+          onExpandAll={onExpandAll}
         />
 
         <div

@@ -11,6 +11,17 @@
   margin-left: -2px;
 }
 
+
+.ganttTable_HeaderContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ganttTable_HeaderTitle {
+
+}
+
 .ganttTable_HeaderItem {
   position: relative;
   box-sizing: border-box;
@@ -21,6 +32,8 @@
   vertical-align: -webkit-baseline-middle;
   vertical-align: middle;
 }
+
+
 
 .resizer {
   position: absolute;

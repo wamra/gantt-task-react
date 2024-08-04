@@ -3,6 +3,7 @@ import type { ComponentType, MouseEvent, ReactNode } from "react";
 import type { Locale as DateLocale } from "date-fns";
 
 import { OptimizedListParams } from "../helpers/use-optimized-list";
+import { TaskListHeaderActionsProps } from "../components/task-list/TaskListHeaderActions";
 
 export enum ViewMode {
   Hour = "Hour",
@@ -646,7 +647,7 @@ export interface TaskListTableProps {
   tasks: readonly TaskOrEmpty[];
 }
 
-export interface TaskListHeaderProps {
+export interface TaskListHeaderProps extends TaskListHeaderActionsProps{
   headerHeight: number;
   columns: readonly Column[];
   fontFamily: string;

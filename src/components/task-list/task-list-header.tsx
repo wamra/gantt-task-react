@@ -3,14 +3,18 @@ import React, { Fragment, memo } from "react";
 import { TaskListHeaderProps } from "../../types/public-types";
 
 import styles from "./task-list-header.module.css";
+import { TaskListHeaderActions, TaskListHeaderActionsProps } from "./TaskListHeaderActions";
 
-const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
+const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps & TaskListHeaderActionsProps> = ({
   headerHeight,
   fontFamily,
   fontSize,
   columns,
   canResizeColumns,
   onColumnResizeStart,
+  onCollapseAll,
+  onExpandFirstLevel,
+  onExpandAll
 }) => {
   return (
     <div
@@ -42,7 +46,16 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps> = ({
                 maxWidth: width,
               }}
             >
-              {title}
+              <div className={styles.ganttTable_HeaderContent}>
+                <div className={styles.ganttTable_HeaderTitle}>
+                  {title}
+                </div>
+
+                {title === "Name" && <TaskListHeaderActions
+                  onCollapseAll={onCollapseAll}
+                  onExpandFirstLevel={onExpandFirstLevel}
+                  onExpandAll={onExpandAll} />}
+              </div>
 
               {canResizeColumns && canResize !== false && (
                 <div
