@@ -2,8 +2,6 @@
 
 ## Interactive Gantt Chart for React with TypeScript.
 
-![example](https://user-images.githubusercontent.com/26743903/88215863-f35d5f00-cc64-11ea-81db-e829e6e9b5c8.png)
-
 ## Install
 
 ```
@@ -83,17 +81,17 @@ npm start
 
 ### DisplayOption
 
-| Parameter Name      | Type    | Description                                                                                                 |
-| :------------------ | :------ | :---------------------------------------------------------------------------------------------------------- |
-| viewMode            | enum    | Specifies the time scale. Hour, Quarter Day, Half Day, Day, Week(ISO-8601, 1st day is Monday), Month, Year. |
-| viewDate            | date    | Specifies display date and time for display.                                                                |
-| preStepsCount       | number  | Specifies empty space before the fist task                                                                  |
-| locale              | string  | Specifies the month name language. Able formats: ISO 639-2, Java Locale.                                    |
-| monthCalendarFormat | string  | Specifies the month display on calendar                                                                     |
-| monthTaskListFormat | string  | Specifies the month display on list.                                                                        |
-| rtl                 | boolean | Sets rtl mode.                                                                                              |
-| roundDate           |         | Allow to customize the way the date start/end are rounded                                                   |
-| checkIsHoliday      |         | Tells if a date is a holday. It impacts the style of the day and the way the date is adjusted to working days|
+| Parameter Name      | Type    | Description                                                                                                                             |
+| :------------------ | :------ |:----------------------------------------------------------------------------------------------------------------------------------------|
+| viewMode            | enum    | Specifies the time scale. Hour, Quarter Day, Half Day, Day, Week(ISO-8601, 1st day is Monday), Month, QuarterYear, Year.                |
+| viewDate            | date    | Specifies display date and time for display.                                                                                            |
+| preStepsCount       | number  | Specifies empty space before the fist task                                                                                              |
+| locale              | string  | Specifies the month name language. Able formats: ISO 639-2, Java Locale.                                                                |
+| monthCalendarFormat | string  | Specifies the month display on calendar                                                                                                 |
+| monthTaskListFormat | string  | Specifies the month display on list.                                                                                                    |
+| rtl                 | boolean | Sets rtl mode.                                                                                                                          |
+| roundDate           |         | Allow to customize the way the date start/end are rounded                                                                               |
+| checkIsHoliday      |         | Tells if a date is a holday. It impacts the style of the day and the way the date is adjusted to working days                           |
 | dateMoveStep        |         | An object that corresponds to a duration. It gives the step to ajust to the working day when moving the date allowing a smooth feedback |
 
 ### StylingOption
