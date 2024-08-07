@@ -29,6 +29,7 @@ import { BarFixWidth, fixWidthContainerClass } from "../other/bar-fix-width";
 import { BarRelationHandle } from "./bar/bar-relation-handle";
 
 export type TaskItemProps = {
+  children?: React.ReactNode
   getTaskGlobalIndexByRef: (task: Task) => number;
   hasChildren: boolean;
   hasDependencyWarning: boolean;
