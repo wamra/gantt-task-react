@@ -1,0 +1,63 @@
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+import "./global.css";
+import { Gantt } from "../src";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import React from "react";
+import { initTasks } from "./helper";
+
+<Meta
+  title="Themes"
+  component={Gantt}
+/>
+
+export const materialDarkTheme = createTheme({
+  palette: {
+    mode: "dark"
+  }
+});
+
+export const tasks = initTasks();
+
+export const WithDarkTheme = (props) => {
+  return <ThemeProvider theme={materialDarkTheme}>
+    <CssBaseline />
+    <Gantt
+      {...props}
+      tasks={tasks}
+    />
+  </ThemeProvider>;
+};
+
+export const Template = (props) => {
+  return <WithDarkTheme {...props} />;
+}
+
+# Dark Theme example
+
+Unfortunately the component is not ready for dark theming yet, and when using MUI dark palette themes,
+the background 'white' and text color 'black' are hard coded into the control.
+
+  ```jsx
+import { createTheme } from "@mui/material";
+import { initTasks } from "./helper";
+import { Gantt } from '@wamra/gantt-task-react';
+
+  const materialDarkTheme = createTheme({
+    palette: {
+      mode: "dark"
+    }
+  });
+
+  const tasks = initTasks()
+
+    <Gantt
+          {...props}
+          tasks={tasks}
+        />
+  ```
+
+<Canvas style={{ width: '100%' }}>
+  <Story name="Dark Theme">
+    <WithDarkTheme />
+  </Story>
+</Canvas>

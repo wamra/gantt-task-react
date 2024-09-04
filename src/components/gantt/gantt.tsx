@@ -1934,6 +1934,8 @@ export const Gantt: React.FC<GanttProps> = ({
       data-testid={`gantt-main`}
       style={{
         gridTemplateColumns: `${displayTable ? "max-content" : ""} auto`,
+        background: 'white',
+        color: 'black'
       }}
     >
       {/* {columns.length > 0 && <TaskList {...tableProps} />} */}
