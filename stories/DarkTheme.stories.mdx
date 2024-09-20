@@ -37,7 +37,7 @@ export const Template = (props) => {
 Unfortunately the component is not ready for dark theming yet, and when using MUI dark palette themes,
 the background 'white' and text color 'black' are hard coded into the control.
 
-  ```jsx
+```jsx
 import { createTheme } from "@mui/material";
 import { initTasks } from "./helper";
 import { Gantt } from '@wamra/gantt-task-react';
@@ -56,8 +56,110 @@ import { Gantt } from '@wamra/gantt-task-react';
         />
   ```
 
+# Other Theme
+
+```tsx
+  const newColorStyles = {
+          arrowColor: '#004d40',
+          arrowCriticalColor: '#d32f2f',
+          arrowWarningColor: '#ff9800',
+          barLabelColor: '#000',
+          barProgressColor: '#00796b',
+          barProgressCriticalColor: '#d32f2f',
+          barProgressSelectedColor: '#004d40',
+          barProgressSelectedCriticalColor: '#b71c1c',
+          barBackgroundColor: '#80cbc4',
+          barBackgroundCriticalColor: '#ef9a9a',
+          barBackgroundSelectedColor: '#004d40',
+          barBackgroundSelectedCriticalColor: '#c62828',
+          groupProgressColor: '#00796b',
+          groupProgressCriticalColor: '#d32f2f',
+          groupProgressSelectedColor: '#004d40',
+          groupProgressSelectedCriticalColor: '#b71c1c',
+          groupBackgroundColor: '#80cbc4',
+          groupBackgroundCriticalColor: '#ef9a9a',
+          groupBackgroundSelectedColor: '#004d40',
+          groupBackgroundSelectedCriticalColor: '#c62828',
+          projectProgressColor: '#00796b',
+          projectProgressCriticalColor: '#d32f2f',
+          projectProgressSelectedColor: '#004d40',
+          projectProgressSelectedCriticalColor: '#b71c1c',
+          projectBackgroundColor: '#80cbc4',
+          projectBackgroundCriticalColor: '#ef9a9a',
+          projectBackgroundSelectedColor: '#004d40',
+          projectBackgroundSelectedCriticalColor: '#c62828',
+          milestoneBackgroundColor: '#004d40',
+          milestoneBackgroundCriticalColor: '#d32f2f',
+          milestoneBackgroundSelectedColor: '#00796b',
+          milestoneBackgroundSelectedCriticalColor: '#c62828',
+          evenTaskBackgroundColor: '#e0f2f1',
+          holidayBackgroundColor: '#ffccbc',
+          taskDragColor: '#80cbc4',
+          selectedTaskBackgroundColor: '#09E6DE',
+          todayColor: '#FF6E1E',
+          contextMenuBoxShadow: 'rgba(0, 0, 0, 0.2)',
+          contextMenuBgColor: '#004d40',
+          contextMenuTextColor: '#ffffff'
+        };
+```
+
 <Canvas style={{ width: '100%' }}>
   <Story name="Dark Theme">
     <WithDarkTheme />
+  </Story>
+
+  <Story name="Teal Theme">
+    {
+      (props) => {
+        const newColorStyles = {
+          arrowColor: '#004d40',
+          arrowCriticalColor: '#d32f2f',
+          arrowWarningColor: '#ff9800',
+          barLabelColor: '#000',
+          barProgressColor: '#00796b',
+          barProgressCriticalColor: '#d32f2f',
+          barProgressSelectedColor: '#004d40',
+          barProgressSelectedCriticalColor: '#b71c1c',
+          barBackgroundColor: '#80cbc4',
+          barBackgroundCriticalColor: '#ef9a9a',
+          barBackgroundSelectedColor: '#004d40',
+          barBackgroundSelectedCriticalColor: '#c62828',
+          groupProgressColor: '#00796b',
+          groupProgressCriticalColor: '#d32f2f',
+          groupProgressSelectedColor: '#004d40',
+          groupProgressSelectedCriticalColor: '#b71c1c',
+          groupBackgroundColor: '#80cbc4',
+          groupBackgroundCriticalColor: '#ef9a9a',
+          groupBackgroundSelectedColor: '#004d40',
+          groupBackgroundSelectedCriticalColor: '#c62828',
+          projectProgressColor: '#00796b',
+          projectProgressCriticalColor: '#d32f2f',
+          projectProgressSelectedColor: '#004d40',
+          projectProgressSelectedCriticalColor: '#b71c1c',
+          projectBackgroundColor: '#80cbc4',
+          projectBackgroundCriticalColor: '#ef9a9a',
+          projectBackgroundSelectedColor: '#004d40',
+          projectBackgroundSelectedCriticalColor: '#c62828',
+          milestoneBackgroundColor: '#004d40',
+          milestoneBackgroundCriticalColor: '#d32f2f',
+          milestoneBackgroundSelectedColor: '#00796b',
+          milestoneBackgroundSelectedCriticalColor: '#c62828',
+          evenTaskBackgroundColor: '#e0f2f1',
+          holidayBackgroundColor: '#ffccbc',
+          taskDragColor: '#80cbc4',
+          selectedTaskBackgroundColor: '#09E6DE',
+          todayColor: '#FF6E1E',
+          contextMenuBoxShadow: 'rgba(0, 0, 0, 0.2)',
+          contextMenuBgColor: '#004d40',
+          contextMenuTextColor: '#ffffff'
+        }
+        return <Gantt
+          {...props}
+          isAdjustToWorkingDates={true}
+          colors={newColorStyles}
+          tasks={tasks}
+        />
+      }
+    }
   </Story>
 </Canvas>

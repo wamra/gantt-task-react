@@ -90,6 +90,8 @@ const defaultColors: ColorStyles = {
   arrowColor: "grey",
   arrowCriticalColor: "#ff0000",
   arrowWarningColor: "#ffbc00",
+  barLabelColor: "#000",
+  barLabelWhenOutsideColor: "#555",
   barProgressColor: "#a3a3ff",
   barProgressCriticalColor: "#ff1919",
   barProgressSelectedColor: "#8282f5",

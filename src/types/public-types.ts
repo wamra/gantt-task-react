@@ -72,6 +72,8 @@ export interface ColorStyles {
   arrowColor: string;
   arrowCriticalColor: string;
   arrowWarningColor: string;
+  barLabelColor: string;
+  barLabelWhenOutsideColor: string;
   barProgressColor: string;
   barProgressCriticalColor: string;
   barProgressSelectedColor: string;

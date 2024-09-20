@@ -383,6 +383,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     >
       {taskItem}
       <text
+        fill={isTextInside ? styles.barLabelColor : styles.barLabelWhenOutsideColor}
         x={x}
         y={taskYOffset + taskHeight * 0.5}
         className={
