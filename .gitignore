@@ -33,3 +33,5 @@ yarn-error.log*
 # storybook
 storybook-static
 .idea/**/*
+
+*storybook.log
