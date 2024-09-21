@@ -1,10 +1,5 @@
+import type { ComponentType, MouseEvent, RefObject, SyntheticEvent } from "react";
 import React, { memo } from "react";
-import type {
-  ComponentType,
-  MouseEvent,
-  RefObject,
-  SyntheticEvent,
-} from "react";
 
 import {
   ChildByLevelMap,
@@ -19,7 +14,7 @@ import {
   Task,
   TaskListHeaderProps,
   TaskListTableProps,
-  TaskOrEmpty,
+  TaskOrEmpty
 } from "../../types/public-types";
 
 import { useOptimizedList } from "../../helpers/use-optimized-list";
@@ -123,7 +118,7 @@ const TaskListInner: React.FC<TaskListProps & TaskListHeaderActionsProps> = (
     taskListWidth,
     tableWidth,
     onTableResizeStart,
-    onColumnResizeStart,
+    onColumnResizeStart
   ] = useTableListResize(columnsProp, distances, onResizeColumn);
 
   const renderedIndexes = useOptimizedList(
@@ -138,7 +133,7 @@ const TaskListInner: React.FC<TaskListProps & TaskListHeaderActionsProps> = (
       <div
         className={styles.ganttTableWrapper}
         style={{
-          width: tableWidth,
+          width: tableWidth
         }}
       >
         <TaskListHeader
@@ -151,6 +146,7 @@ const TaskListInner: React.FC<TaskListProps & TaskListHeaderActionsProps> = (
           onCollapseAll={onCollapseAll}
           onExpandFirstLevel={onExpandFirstLevel}
           onExpandAll={onExpandAll}
+          colors={colors}
         />
 
         <div
@@ -166,9 +162,10 @@ const TaskListInner: React.FC<TaskListProps & TaskListHeaderActionsProps> = (
               ),
               backgroundSize: `100% ${fullRowHeight * 2}px`,
               backgroundImage: `linear-gradient(to bottom, transparent ${fullRowHeight}px, #f5f5f5 ${fullRowHeight}px)`,
-              overflow: "hidden",
+              overflow: "hidden"
             }}
           >
+
             <TaskListTable
               canMoveTasks={canMoveTasks}
               childTasksMap={childTasksMap}

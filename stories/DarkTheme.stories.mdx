@@ -19,42 +19,140 @@ export const materialDarkTheme = createTheme({
 export const tasks = initTasks();
 
 export const WithDarkTheme = (props) => {
+  const darkThemeColorStyles = {
+    arrowColor: '#90caf9',
+    arrowCriticalColor: '#f44336',
+    arrowWarningColor: '#ff9800',
+    barLabelColor: '#fff',
+    barLabelWhenOutsideColor: '#000000',
+    barProgressColor: '#42a5f5',
+    barProgressCriticalColor: '#e57373',
+    barProgressSelectedColor: '#64b5f6',
+    barProgressSelectedCriticalColor: '#ef5350',
+    barBackgroundColor: '#424242',
+    barBackgroundCriticalColor: '#f44336',
+    barBackgroundSelectedColor: '#1976d2',
+    barBackgroundSelectedCriticalColor: '#d32f2f',
+    groupProgressColor: '#42a5f5',
+    groupProgressCriticalColor: '#f44336',
+    groupProgressSelectedColor: '#64b5f6',
+    groupProgressSelectedCriticalColor: '#d32f2f',
+    groupBackgroundColor: '#616161',
+    groupBackgroundCriticalColor: '#e57373',
+    groupBackgroundSelectedColor: '#1976d2',
+    groupBackgroundSelectedCriticalColor: '#d32f2f',
+    projectProgressColor: '#42a5f5',
+    projectProgressCriticalColor: '#f44336',
+    projectProgressSelectedColor: '#64b5f6',
+    projectProgressSelectedCriticalColor: '#d32f2f',
+    projectBackgroundColor: '#616161',
+    projectBackgroundCriticalColor: '#f44336',
+    projectBackgroundSelectedColor: '#1976d2',
+    projectBackgroundSelectedCriticalColor: '#d32f2f',
+    milestoneBackgroundColor: '#42a5f5',
+    milestoneBackgroundCriticalColor: '#f44336',
+    milestoneBackgroundSelectedColor: '#1976d2',
+    milestoneBackgroundSelectedCriticalColor: '#d32f2f',
+    evenTaskBackgroundColor: '#424242', // Dark grey for even tasks
+    oddTaskBackgroundColor: '#303030',  // Slightly darker grey for odd tasks
+    holidayBackgroundColor: '#757575',
+    taskDragColor: '#424242',
+    selectedTaskBackgroundColor: '#484848',
+    todayColor: '#bbdefb',
+    contextMenuBoxShadow: 'rgba(0, 0, 0, 0.8)',
+    contextMenuBgColor: '#424242',
+    contextMenuTextColor: '#ffffff',
+  };
   return <ThemeProvider theme={materialDarkTheme}>
     <CssBaseline />
+
     <Gantt
+      colors={darkThemeColorStyles}
       {...props}
       tasks={tasks}
     />
   </ThemeProvider>;
 };
-
 export const Template = (props) => {
   return <WithDarkTheme {...props} />;
 }
 
+[//]: # (<Canvas style={{ width: '100%' }}>)
+
+[//]: # (  <Story name="Dark Theme">)
+
+[//]: # (    <WithDarkTheme />)
+
+[//]: # (  </Story>)
+
+[//]: # (</Canvas>)
+
 # Dark Theme example
 
-Unfortunately the component is not ready for dark theming yet, and when using MUI dark palette themes,
-the background 'white' and text color 'black' are hard coded into the control.
+Here is an example of Dark themes. BETA!
 
 ```jsx
 import { createTheme } from "@mui/material";
 import { initTasks } from "./helper";
 import { Gantt } from '@wamra/gantt-task-react';
 
-  const materialDarkTheme = createTheme({
-    palette: {
-      mode: "dark"
-    }
-  });
-
   const tasks = initTasks()
+  const darkThemeColorStyles = {
+      arrowColor: '#90caf9',
+      arrowCriticalColor: '#f44336',
+      arrowWarningColor: '#ff9800',
+      barLabelColor: '#fff',
+      barLabelWhenOutsideColor: '#000000',
+      barProgressColor: '#42a5f5',
+      barProgressCriticalColor: '#e57373',
+      barProgressSelectedColor: '#64b5f6',
+      barProgressSelectedCriticalColor: '#ef5350',
+      barBackgroundColor: '#424242',
+      barBackgroundCriticalColor: '#f44336',
+      barBackgroundSelectedColor: '#1976d2',
+      barBackgroundSelectedCriticalColor: '#d32f2f',
+      groupProgressColor: '#42a5f5',
+      groupProgressCriticalColor: '#f44336',
+      groupProgressSelectedColor: '#64b5f6',
+      groupProgressSelectedCriticalColor: '#d32f2f',
+      groupBackgroundColor: '#616161',
+      groupBackgroundCriticalColor: '#e57373',
+      groupBackgroundSelectedColor: '#1976d2',
+      groupBackgroundSelectedCriticalColor: '#d32f2f',
+      projectProgressColor: '#42a5f5',
+      projectProgressCriticalColor: '#f44336',
+      projectProgressSelectedColor: '#64b5f6',
+      projectProgressSelectedCriticalColor: '#d32f2f',
+      projectBackgroundColor: '#616161',
+      projectBackgroundCriticalColor: '#f44336',
+      projectBackgroundSelectedColor: '#1976d2',
+      projectBackgroundSelectedCriticalColor: '#d32f2f',
+      milestoneBackgroundColor: '#42a5f5',
+      milestoneBackgroundCriticalColor: '#f44336',
+      milestoneBackgroundSelectedColor: '#1976d2',
+      milestoneBackgroundSelectedCriticalColor: '#d32f2f',
+      evenTaskBackgroundColor: '#424242', // Dark grey for even tasks
+      oddTaskBackgroundColor: '#303030',  // Slightly darker grey for odd tasks
+      holidayBackgroundColor: '#757575',
+      taskDragColor: '#424242',
+      selectedTaskBackgroundColor: '#484848',
+      todayColor: '#bbdefb',
+      contextMenuBoxShadow: 'rgba(0, 0, 0, 0.8)',
+      contextMenuBgColor: '#424242',
+      contextMenuTextColor: '#ffffff',
+    };
 
     <Gantt
           {...props}
           tasks={tasks}
+          colors={darkThemeColorStyles}
         />
   ```
+<Canvas style={{ width: '100%' }}>
+  <Story name="Dark Theme">
+    <WithDarkTheme />
+  </Story>
+</Canvas>
 
 # Other Theme
 
@@ -104,10 +202,6 @@ import { Gantt } from '@wamra/gantt-task-react';
 ```
 
 <Canvas style={{ width: '100%' }}>
-  <Story name="Dark Theme">
-    <WithDarkTheme />
-  </Story>
-
   <Story name="Teal Theme">
     {
       (props) => {

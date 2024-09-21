@@ -5,17 +5,19 @@ import { TaskListHeaderProps } from "../../types/public-types";
 import styles from "./task-list-header.module.css";
 import { TaskListHeaderActions, TaskListHeaderActionsProps } from "./TaskListHeaderActions";
 
-const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps & TaskListHeaderActionsProps> = ({
-  headerHeight,
-  fontFamily,
-  fontSize,
-  columns,
-  canResizeColumns,
-  onColumnResizeStart,
-  onCollapseAll,
-  onExpandFirstLevel,
-  onExpandAll
-}) => {
+const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps & TaskListHeaderActionsProps> = (props) => {
+  const {
+    headerHeight,
+    fontFamily,
+    fontSize,
+    columns,
+    canResizeColumns,
+    onColumnResizeStart,
+    onCollapseAll,
+    onExpandFirstLevel,
+    onExpandAll,
+    colors
+  } = props;
   return (
     <div
       className={styles.ganttTable_Header}
@@ -33,7 +35,7 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps & TaskListHeaderA
                 className={styles.ganttTable_HeaderSeparator}
                 style={{
                   height: headerHeight * 0.5,
-                  marginTop: headerHeight * 0.2,
+                  marginTop: headerHeight * 0.2
                 }}
               />
             )}
@@ -43,18 +45,19 @@ const TaskListHeaderDefaultInner: React.FC<TaskListHeaderProps & TaskListHeaderA
               className={styles.ganttTable_HeaderItem}
               style={{
                 minWidth: width,
-                maxWidth: width,
+                maxWidth: width
               }}
             >
               <div className={styles.ganttTable_HeaderContent}>
-                <div className={styles.ganttTable_HeaderTitle}>
+                <div className={styles.ganttTable_HeaderTitle} >
                   {title}
                 </div>
 
                 {title === "Name" && <TaskListHeaderActions
                   onCollapseAll={onCollapseAll}
                   onExpandFirstLevel={onExpandFirstLevel}
-                  onExpandAll={onExpandAll} />}
+                  onExpandAll={onExpandAll}
+                  colors={colors} />}
               </div>
 
               {canResizeColumns && canResize !== false && (

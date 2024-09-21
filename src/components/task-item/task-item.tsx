@@ -360,6 +360,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     setTooltipTask(null, null);
   }, [setTooltipTask]);
 
+  let barLabelFill = (isTextInside || task.type == "milestone") ? styles.barLabelColor : styles.barLabelWhenOutsideColor;
   return (
     <g
       className={fixWidthContainerClass}
@@ -383,7 +384,7 @@ const TaskItemInner: React.FC<TaskItemProps> = props => {
     >
       {taskItem}
       <text
-        fill={isTextInside ? styles.barLabelColor : styles.barLabelWhenOutsideColor}
+        fill={barLabelFill}
         x={x}
         y={taskYOffset + taskHeight * 0.5}
         className={

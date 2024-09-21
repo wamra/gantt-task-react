@@ -4,15 +4,18 @@ import { ColumnProps } from "../../../types/public-types";
 
 import styles from "./delete-column.module.css";
 
-export const DeleteColumn: React.FC<ColumnProps> = ({
-  data: { handleDeleteTasks, icons, task },
-}) => {
+export const DeleteColumn: React.FC<ColumnProps> = (props) => {
+  const {
+    data: { handleDeleteTasks, icons, style, task }
+  } = props;
   const onClick = useCallback(() => {
     handleDeleteTasks([task]);
   }, [task, handleDeleteTasks]);
 
   return (
-    <button type="button" onClick={onClick} className={styles.button}>
+    <button type="button" onClick={onClick} style={{
+      "color": style.barLabelColor
+    }} className={styles.button}>
       {icons?.renderDeleteIcon ? icons.renderDeleteIcon(task) : "-"}
     </button>
   );

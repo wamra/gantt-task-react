@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { CSSProperties, useCallback } from "react";
 
 import { ColumnProps, Icons, TaskOrEmpty } from "../../../types/public-types";
 
@@ -21,19 +21,21 @@ const getExpanderSymbol = (
   return icons?.renderOpenedIcon ? icons.renderOpenedIcon(task) : "⊟";
 };
 
-export const TitleColumn: React.FC<ColumnProps> = ({
-  data: {
-    distances: { expandIconWidth, nestedTaskNameOffset },
-    icons,
-    isShowTaskNumbers,
-    hasChildren,
-    isClosed,
-    depth,
-    indexStr,
-    task,
-    onExpanderClick,
-  },
-}) => {
+export const TitleColumn: React.FC<ColumnProps> = (props) => {
+  const {
+    data: {
+      distances: { expandIconWidth, nestedTaskNameOffset },
+      icons,
+      isShowTaskNumbers,
+      hasChildren,
+      isClosed,
+      depth,
+      indexStr,
+      task,
+      onExpanderClick,
+      style
+    }
+  } = props;
   const { name } = task;
 
   const expanderSymbol = getExpanderSymbol(task, hasChildren, isClosed, icons);
@@ -66,8 +68,9 @@ export const TitleColumn: React.FC<ColumnProps> = ({
       >
         {expanderSymbol}
       </div>
-
-      <div className={styles.taskName}>
+      <div style={{
+        color: style.barLabelColor
+      }} className={styles.taskName}>
         {isShowTaskNumbers && <b>{indexStr} </b>}
 
         {name}

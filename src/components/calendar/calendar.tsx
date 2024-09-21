@@ -6,7 +6,7 @@ import {
   ViewMode,
   RenderTopHeader,
   RenderBottomHeader,
-  Distances,
+  Distances, ColorStyles
 } from "../../types/public-types";
 import { TopPartOfCalendar } from "./top-part-of-calendar";
 import { getDaysInMonth } from "../../helpers/date-helper";
@@ -29,6 +29,7 @@ export type CalendarProps = {
   renderTopHeader?: RenderTopHeader;
   rtl: boolean;
   startColumnIndex: number;
+  colors: Partial<ColorStyles>;
 };
 
 export const Calendar: React.FC<CalendarProps> = ({
@@ -47,6 +48,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   renderTopHeader = defaultRenderTopHeader,
   rtl,
   startColumnIndex,
+  colors
 }) => {
   const renderBottomHeaderByDate = useCallback(
     (date: Date, index: number) =>
@@ -80,6 +82,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
+          style={{ fill: colors.barLabelColor }}
         >
           {bottomValue}
         </text>
@@ -100,6 +103,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             y2Line={headerHeight}
             xText={0}
             yText={0}
+            colors={colors}
           />
         );
       }
@@ -123,6 +127,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={additionalLeftSpace + columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
+          style={{ fill: colors.barLabelColor }}
         >
           {quarter}
         </text>
@@ -149,6 +154,7 @@ export const Calendar: React.FC<CalendarProps> = ({
               columnWidth * (startQuarter + 1.5) // Center the text
             }
             yText={topDefaultHeight * 0.9}
+            colors={colors}
           />
         );
       }
@@ -171,6 +177,8 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={additionalLeftSpace + columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
+          style={{ fill: colors.barLabelColor }}
+
         >
           {bottomValue}
         </text>
@@ -198,6 +206,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             y2Line={topDefaultHeight}
             xText={additionalLeftSpace + xText}
             yText={topDefaultHeight * 0.9}
+            colors={colors}
           />
         );
       }
@@ -233,6 +242,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={additionalLeftSpace + columnWidth * (i + +rtl)}
           className={styles.calendarBottomText}
+          style={{ fill: colors.barLabelColor }}
         >
           {bottomValue}
         </text>
@@ -254,6 +264,7 @@ export const Calendar: React.FC<CalendarProps> = ({
               columnWidth * weeksCount * 0.5
             }
             yText={topDefaultHeight * 0.9}
+            colors={colors}
           />
         );
 
@@ -285,6 +296,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           y={headerHeight * 0.8}
           x={additionalLeftSpace + columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
+          style={{ fill: colors.barLabelColor }}
         >
           {bottomValue}
         </text>
@@ -314,6 +326,7 @@ export const Calendar: React.FC<CalendarProps> = ({
                 (startIndexOrZero + (endIndex - startIndexOrZero) / 2)
             }
             yText={topDefaultHeight * 0.9}
+            colors={colors}
           />
         );
       }
@@ -338,6 +351,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           x={additionalLeftSpace + columnWidth * (i + +rtl)}
           className={styles.calendarBottomText}
           fontFamily={fontFamily}
+          style={{ fill: colors.barLabelColor }}
         >
           {bottomValue}
         </text>
@@ -360,6 +374,7 @@ export const Calendar: React.FC<CalendarProps> = ({
               additionalLeftSpace + columnWidth * i + ticks * columnWidth * 0.5
             }
             yText={topDefaultHeight * 0.9}
+            colors={colors}
           />
         );
       }
@@ -387,6 +402,7 @@ export const Calendar: React.FC<CalendarProps> = ({
           x={additionalLeftSpace + columnWidth * (i + +rtl)}
           className={styles.calendarBottomText}
           fontFamily={fontFamily}
+          style={{ fill: colors.barLabelColor }}
         >
           {bottomValue}
         </text>
@@ -412,6 +428,7 @@ export const Calendar: React.FC<CalendarProps> = ({
             y2Line={topDefaultHeight}
             xText={additionalLeftSpace + columnWidth * (i + topPosition)}
             yText={topDefaultHeight * 0.9}
+            colors={colors}
           />
         );
       }

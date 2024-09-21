@@ -1,5 +1,5 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
 import type { CSSProperties, MouseEvent } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 
 import {
   ColorStyles,
@@ -10,7 +10,7 @@ import {
   Distances,
   Icons,
   Task,
-  TaskOrEmpty,
+  TaskOrEmpty
 } from "../../types/public-types";
 
 import styles from "./task-list-table-row.module.css";
@@ -55,42 +55,43 @@ type TaskListTableRowProps = {
   setDraggedTask: React.Dispatch<any>;
 };
 
-const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
-  canMoveTasks,
-  colors,
-  columns,
-  dateSetup,
-  dependencyMap,
-  depth,
-  distances,
-  fullRowHeight,
-  getTaskCurrentState,
-  handleAddTask,
-  handleDeleteTasks,
-  handleEditTask,
-  handleMoveTaskBefore,
-  handleMoveTaskAfter,
-  handleMoveTasksInside,
-  handleOpenContextMenu,
-  hasChildren,
-  icons = undefined,
-  indexStr,
-  isClosed,
-  isCut,
-  isEven,
-  isSelected,
-  isShowTaskNumbers,
-  onClick,
-  onExpanderClick,
-  scrollToTask,
-  selectTaskOnMouseDown,
-  style = undefined,
-  task,
-  tasks,
-  draggedTask,
-  setDraggedTask,
-}) => {
-  const { id, comparisonLevel = 1 } = task;
+const TaskListTableRowInner: React.FC<TaskListTableRowProps> =
+  ({
+     canMoveTasks,
+     colors,
+     columns,
+     dateSetup,
+     dependencyMap,
+     depth,
+     distances,
+     fullRowHeight,
+     getTaskCurrentState,
+     handleAddTask,
+     handleDeleteTasks,
+     handleEditTask,
+     handleMoveTaskBefore,
+     handleMoveTaskAfter,
+     handleMoveTasksInside,
+     handleOpenContextMenu,
+     hasChildren,
+     icons = undefined,
+     indexStr,
+     isClosed,
+     isCut,
+     isEven,
+     isSelected,
+     isShowTaskNumbers,
+     onClick,
+     onExpanderClick,
+     scrollToTask,
+     selectTaskOnMouseDown,
+     style = undefined,
+     task,
+     tasks,
+     draggedTask,
+     setDraggedTask
+   }) => {
+    const { id, comparisonLevel = 1 } = task;
 
   const onRootMouseDown = useCallback(
     (event: MouseEvent) => {
@@ -144,7 +145,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
     return dependenciesByTask.map(({ source }) => source);
   }, [comparisonLevel, dependencyMap, id]);
 
-  const columnData: ColumnData = useMemo(
+  const columnData: ColumnData = useMemo<ColumnData>(
     () => ({
       canMoveTasks,
       dateSetup,
@@ -161,6 +162,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       isShowTaskNumbers,
       onExpanderClick,
       task, //: task.type === "empty" ? task : getTaskCurrentState(task),
+      style
     }),
     [
       canMoveTasks,
@@ -179,6 +181,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       isShowTaskNumbers,
       onExpanderClick,
       task,
+      style
     ]
   );
   const dropPreviewOffset =
@@ -193,8 +196,8 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
   let backgroundColor = isSelected
     ? colors.selectedTaskBackgroundColor
     : isEven && !hoveringState.hoveringInside
-    ? colors.evenTaskBackgroundColor
-    : undefined;
+      ? colors.evenTaskBackgroundColor
+      : colors.oddTaskBackgroundColor;
   if (
     hoveringState.hoveringInside &&
     !hoveringState.hoveringAfter &&
@@ -291,7 +294,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
     setHoveringState({
       hoveringBefore: false,
       hoveringInside: false,
-      hoveringAfter: false,
+      hoveringAfter: false
     });
   };
 
@@ -302,7 +305,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       style={{
         height: fullRowHeight,
         backgroundColor: backgroundColor,
-        ...style,
+        ...style
       }}
       onContextMenu={onContextMenu}
       draggable
@@ -310,7 +313,8 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> = ({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      {columns.map(({ Cell, width }, index) => {
+      {columns.map((column, index) => {
+        const { Cell, width }= column;
         return (
           <div
             className={styles.taskListCell}

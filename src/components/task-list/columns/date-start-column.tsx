@@ -10,7 +10,7 @@ export const DateStartColumn: React.FC<ColumnProps> = ({
       dateFormats,
       dateLocale,
     },
-
+    style,
     task,
   },
 }) => {
@@ -20,17 +20,21 @@ export const DateStartColumn: React.FC<ColumnProps> = ({
 
   try {
     return (
-      <>
+      <div style={{
+        "color": style.barLabelColor
+      }}>
         {format(task.start, dateFormats.dateColumnFormat, {
           locale: dateLocale,
         })}
-      </>
+      </div>
     );
   } catch (e) {
     return (
-      <>
+      <div style={{
+        "color": style.barLabelColor
+      }}>
         {task.start.toString()}
-      </>
+      </div>
     );
   }
 };

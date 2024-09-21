@@ -38,6 +38,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
   selectedIdsMirror,
   tasks,
 }) => {
+
   const renderedTasks = useMemo(
     /**
      * TO DO: maybe consider tasks on other levels?
@@ -116,6 +117,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           tasks={tasks}
           draggedTask={draggedTask}
           setDraggedTask={setDraggedTask}
+          style={colors}
         />
       );
     }

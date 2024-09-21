@@ -12,7 +12,7 @@ import {
   Task,
   Distances,
   DateExtremity,
-  TaskDependencyContextualPaletteProps,
+  TaskDependencyContextualPaletteProps, ColorStyles
 } from "../../types/public-types";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 
@@ -31,23 +31,26 @@ export type TaskGanttProps = {
   onScrollGanttContentVertically: (
     event: SyntheticEvent<HTMLDivElement>
   ) => void;
+  colors: Partial<ColorStyles>
 };
 
-const TaskGanttInner: React.FC<TaskGanttProps> = ({
-  barProps,
-  barProps: { additionalLeftSpace },
-  calendarProps,
-  fullRowHeight,
-  fullSvgWidth,
-  ganttFullHeight,
-  ganttSVGRef,
-  gridProps,
-  distances: { columnWidth, rowHeight, minimumRowDisplayed },
-  ganttTaskContentRef,
-  onVerticalScrollbarScrollX,
-  ganttTaskRootRef,
-  onScrollGanttContentVertically: onScrollVertically,
-}) => {
+const TaskGanttInner: React.FC<TaskGanttProps> = (props) => {
+  const {
+    barProps,
+    barProps: { additionalLeftSpace },
+    calendarProps,
+    fullRowHeight,
+    fullSvgWidth,
+    ganttFullHeight,
+    ganttSVGRef,
+    gridProps,
+    distances: { columnWidth, rowHeight, minimumRowDisplayed },
+    ganttTaskContentRef,
+    onVerticalScrollbarScrollX,
+    ganttTaskRootRef,
+    onScrollGanttContentVertically: onScrollVertically,
+    colors
+  } = props;
   const containerStyle: CSSProperties = {
     // In order to see the vertical scrollbar of the gantt content,
     // we resize dynamically the width of the gantt content
@@ -184,7 +187,7 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
       onScroll={onVerticalScrollbarScrollX}
       dir="ltr"
     >
-      <Calendar {...calendarProps} />
+      <Calendar {...calendarProps} colors={colors} />
 
       <div
         ref={ganttTaskContentRef}
@@ -199,6 +202,9 @@ const TaskGanttInner: React.FC<TaskGanttProps> = ({
             height={ganttFullHeight}
             fontFamily={barProps.fontFamily}
             ref={ganttSVGRef}
+            style={{
+              background: colors.oddTaskBackgroundColor
+            }}
           >
             <Grid {...gridProps} />
             <TaskGanttContent
