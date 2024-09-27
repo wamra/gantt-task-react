@@ -2,7 +2,7 @@ import React, { memo, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import { checkHasChildren } from "../../helpers/check-has-children";
-import { Task, TaskListTableProps } from "../../types/public-types";
+import { Task, TaskListTableProps, TaskOrEmpty } from "../../types/public-types";
 import { TaskListTableRow } from "./task-list-table-row";
 
 import styles from "./task-list-table.module.css";
@@ -48,7 +48,7 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
     [tasks]
   );
 
-  const [draggedTask, setDraggedTask] = useState(null);
+  const [draggedTask, setDraggedTask] = useState<TaskOrEmpty>(null);
 
   const renderedListWithOffset = useMemo(() => {
     if (!renderedIndexes) {
@@ -117,7 +117,6 @@ const TaskListTableDefaultInner: React.FC<TaskListTableProps> = ({
           tasks={tasks}
           draggedTask={draggedTask}
           setDraggedTask={setDraggedTask}
-          style={colors}
         />
       );
     }

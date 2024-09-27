@@ -204,11 +204,11 @@ export type OnArrowDoubleClick = (
 
 export type OnRelationChange = (
   /**
-   * Task, targer, index
+   * Task, target, index
    */
   from: [Task, DateExtremity, number],
   /**
-   * Task, targer, index
+   * Task, target, index
    */
   to: [Task, DateExtremity, number],
   /**
@@ -819,7 +819,7 @@ export type ColumnData = {
   isShowTaskNumbers: boolean;
   onExpanderClick: (task: Task) => void;
   task: TaskOrEmpty;
-  style: Partial<ColorStyles>;
+  colors: Partial<ColorStyles>;
 };
 
 export type ColumnProps = {

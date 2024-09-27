@@ -6,7 +6,7 @@ import styles from "./delete-column.module.css";
 
 export const DeleteColumn: React.FC<ColumnProps> = (props) => {
   const {
-    data: { handleDeleteTasks, icons, style, task }
+    data: { handleDeleteTasks, icons, colors, task }
   } = props;
   const onClick = useCallback(() => {
     handleDeleteTasks([task]);
@@ -14,7 +14,7 @@ export const DeleteColumn: React.FC<ColumnProps> = (props) => {
 
   return (
     <button type="button" onClick={onClick} style={{
-      "color": style.barLabelColor
+      "color": colors.barLabelColor
     }} className={styles.button}>
       {icons?.renderDeleteIcon ? icons.renderDeleteIcon(task) : "-"}
     </button>

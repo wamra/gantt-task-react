@@ -10,10 +10,11 @@ export const Comparison: React.FC = props => {
   const [tasks, setTasks] = useState<readonly TaskOrEmpty[]>(() => {
     const firstLevelTasks = initTasks();
 
-    const secondLevelTasks = firstLevelTasks.map<TaskOrEmpty>(task => ({
-      ...task,
-      comparisonLevel: 2,
-    }));
+    const secondLevelTasks = firstLevelTasks.map(
+      (task) => ({
+        ...task,
+        comparisonLevel: 2
+      } as TaskOrEmpty));
 
     return [...firstLevelTasks, ...secondLevelTasks];
   });

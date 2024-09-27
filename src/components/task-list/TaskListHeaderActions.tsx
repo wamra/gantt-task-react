@@ -1,6 +1,6 @@
 import React from "react";
 import { UnfoldLess, UnfoldMore, UnfoldMoreDouble } from "@mui/icons-material";
-import { createTheme, IconButton, ThemeProvider, Tooltip } from "@mui/material";
+import { createTheme, IconButton, Theme, ThemeOptions, ThemeProvider, Tooltip } from "@mui/material";
 import style from "./TaskListHeaderActions.module.css";
 import { ColorStyles } from "../../types/public-types";
 
@@ -19,7 +19,7 @@ export const TaskListHeaderActions: React.FC<TaskListHeaderActionsProps> =
      colors
    }) => {
 
-    const materialLightTheme = createTheme({
+    let themeOptions: ThemeOptions = {
       palette: {
         primary: {
           main: colors.barLabelColor // Maps to a primary color (e.g., task bar background)
@@ -34,22 +34,6 @@ export const TaskListHeaderActions: React.FC<TaskListHeaderActionsProps> =
         text: {
           primary: colors.barLabelColor, // Main text color (bar labels, etc.)
           secondary: colors.barLabelColor // Context menu text color
-        },
-        error: {
-          main: colors.arrowCriticalColor // Critical task color
-        },
-        warning: {
-          main: colors.arrowWarningColor // Warning color (e.g., for dependencies)
-        },
-        success: {
-          main: colors.projectProgressColor // Progress color for successful project completion
-        },
-        info: {
-          main: colors.todayColor // Info color used for today's highlight
-        },
-        icon: {
-          primary: colors.barLabelColor, // Color for primary icons
-          secondary: colors.barLabelColor, // Color for secondary icons
         },
       },
       components: {
@@ -79,7 +63,8 @@ export const TaskListHeaderActions: React.FC<TaskListHeaderActionsProps> =
           },
         },
       }
-    });
+    };
+    const materialLightTheme: Theme = createTheme(themeOptions);
 
     return (
       <ThemeProvider theme={materialLightTheme}>

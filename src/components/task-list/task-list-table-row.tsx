@@ -162,7 +162,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> =
       isShowTaskNumbers,
       onExpanderClick,
       task, //: task.type === "empty" ? task : getTaskCurrentState(task),
-      style
+      colors
     }),
     [
       canMoveTasks,
@@ -181,7 +181,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> =
       isShowTaskNumbers,
       onExpanderClick,
       task,
-      style
+      colors
     ]
   );
   const dropPreviewOffset =
@@ -300,7 +300,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> =
 
   return (
     <div
-      className={`${styles.taskListTableRow} ${isCut ? styles.isCut : ""}`}
+      className={`${styles.taskListTableRow} ${isCut ? styles.cut : ""}`}
       onMouseDown={onRootMouseDown}
       style={{
         height: fullRowHeight,
@@ -315,6 +315,7 @@ const TaskListTableRowInner: React.FC<TaskListTableRowProps> =
     >
       {columns.map((column, index) => {
         const { Cell, width }= column;
+        // noinspection TypeScriptValidateTypes
         return (
           <div
             className={styles.taskListCell}

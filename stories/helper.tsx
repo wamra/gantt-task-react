@@ -5,11 +5,11 @@ import startOfMinute from "date-fns/startOfMinute";
 import startOfDay from "date-fns/startOfDay";
 import endOfDay from "date-fns/endOfDay";
 
-import { Task, TaskOrEmpty } from "../src";
+import { EmptyTask, Task, TaskOrEmpty } from "../src";
 
 const dateFormat = "dd/MM/yyyy HH:mm";
 
-export function initTasks() {
+export function initTasks(): TaskOrEmpty[] {
   const currentDate = new Date();
   const tasks: TaskOrEmpty[] = [
     {
@@ -165,8 +165,7 @@ export function initTasks() {
   ];
 
   return tasks.map(taskOrEmpty => {
-    const task = taskOrEmpty as Task;
-    if ('start' in taskOrEmpty && 'end' in taskOrEmpty) {
+    if ("start" in taskOrEmpty && "end" in taskOrEmpty) {
       const task = taskOrEmpty as Task;
       return {
         ...task,
@@ -243,41 +242,43 @@ export const onAddTask = (parentTask: Task) => {
 export const onEditTask = (task: TaskOrEmpty) => {
   const taskFields = getTaskFields({
     name: task.name,
-    start: task.type === "empty" ? null : task.start,
-    end: task.type === "empty" ? null : task.end
+    start: task.type === "empty" ? null : (task as Task).start,
+    end: task.type === "empty" ? null : (task as Task).end
   });
 
-  const nextTask: TaskOrEmpty =
-    task.type === "task" || task.type === "empty"
-      ? taskFields.start && taskFields.end
-        ? {
-          type: "task",
-          start: taskFields.start,
-          end: taskFields.end,
-          comparisonLevel: task.comparisonLevel,
-          id: task.id,
-          name: taskFields.name || task.name,
-          progress: task.type === "empty" ? 0 : task.progress,
-          dependencies: task.type === "empty" ? undefined : task.dependencies,
-          parent: task.parent,
-          styles: task.styles,
-          isDisabled: task.isDisabled
-        }
-        : {
-          type: "empty",
-          comparisonLevel: task.comparisonLevel,
-          id: task.id,
-          name: taskFields.name || task.name,
-          parent: task.parent,
-          styles: task.styles,
-          isDisabled: task.isDisabled
-        }
-      : {
-        ...task,
+  let nextTask: TaskOrEmpty;
+  if (task.type === "task" || task.type === "empty") {
+    nextTask = taskFields.start && taskFields.end
+      ? {
+        type: "task",
+        start: taskFields.start,
+        end: taskFields.end,
+        comparisonLevel: task.comparisonLevel,
+        id: task.id,
         name: taskFields.name || task.name,
-        start: taskFields.start || task.start,
-        end: taskFields.end || task.end
-      };
+        progress: task.type === "empty" ? 0 : (task as Task).progress,
+        dependencies: task.type === "empty" ? undefined : (task as Task).dependencies,
+        parent: task.parent,
+        styles: task.styles,
+        isDisabled: task.isDisabled
+      }
+      : {
+        type: "empty",
+        comparisonLevel: task.comparisonLevel,
+        id: task.id,
+        name: taskFields.name || task.name,
+        parent: task.parent,
+        styles: task.styles,
+        isDisabled: task.isDisabled
+      } as EmptyTask;
+  } else {
+    nextTask = {
+      ...task,
+      name: taskFields.name || task.name,
+      start: taskFields.start || (task as Task).start,
+      end: taskFields.end || (task as Task).end
+    } as Task;
+  }
 
   return Promise.resolve(nextTask);
 };
