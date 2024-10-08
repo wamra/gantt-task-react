@@ -42,7 +42,7 @@ npm install @wamra/gantt-task-react
 
 ```javascript
 import { Gantt, Task, EventOption, StylingOption, ViewMode, DisplayOption } from '@wamra/gantt-task-react';
-import "@wamra/gantt-task-react/dist/index.css";
+import "@wamra/gantt-task-react/dist/style.css";
 
 let tasks: Task[] = [
   {
