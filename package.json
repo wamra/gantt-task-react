@@ -107,7 +107,7 @@
     "rollup-plugin-peer-deps-external": "2.2.4",
     "storybook": "7.6.20",
     "typescript": "~5.1.6",
-    "vite": "4.4.12",
+    "vite": "^4.5.5",
     "vitest": "0.34.6"
   },
   "files": [
