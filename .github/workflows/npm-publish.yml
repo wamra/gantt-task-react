@@ -13,12 +13,15 @@ jobs:
       - name: Begin CI...
         uses: actions/checkout@v2
 
-      - name: Use Node 16
+      - name: Use Node 18
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
-          registry-url: https://npm.pkg.github.com/
+          node-version: 18.x
+          registry-url: https://registry.npmjs.org/
 
+      - name: Create .npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+        
       - name: NPM Publish
         run: |
           if [ -e package-lock.json ]; then
