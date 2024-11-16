@@ -2,33 +2,49 @@ name: publish
 
 on:
   release:
-    types: [published, edited]
+    types: [ published, edited ]
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   release:
     name: publish
+    if: ${{ github.repository_owner == 'wamra' }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Use Node 18
-        uses: actions/setup-node@v1
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20
           registry-url: https://registry.npmjs.org/
-          
-      - name: Create .npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
-        
-      - name: NPM Publish
+          scope: '@wamra'
+          always-auth: true
+          token: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Verify npm authentication
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Install dependencies
         run: |
           if [ -e package-lock.json ]; then
-          npm ci
+            npm ci
           else
-          npm i
+            npm i
           fi
-          npm publish --access public
+
+      - name: Dry-run Publish
+        run: npm publish --dry-run
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: NPM Publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
