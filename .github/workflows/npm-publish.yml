@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: 18.x
           registry-url: https://registry.npmjs.org/
-
+          
       - name: Create .npmrc
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
-
+        
       - name: NPM Publish
         run: |
           if [ -e package-lock.json ]; then
