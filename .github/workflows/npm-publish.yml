@@ -22,8 +22,9 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
+          scope: '@wamra'
           always-auth: true
-          auth-token: ${{ secrets.NPM_AUTH_TOKEN }}
+          token: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: |
