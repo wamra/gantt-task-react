@@ -24,11 +24,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@wamra'
           always-auth: true
-
-      - name: Setup .npmrc
-        run : echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > .npmrc
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          token: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Verify npm authentication
         run: npm whoami
