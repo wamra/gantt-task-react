@@ -2,7 +2,7 @@ name: publish
 
 on:
   release:
-    types: [published, edited]
+    types: [ published, edited ]
 
 permissions:
   contents: read
@@ -24,7 +24,11 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: '@wamra'
           always-auth: true
-          token: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Setup .npmrc
+        run : echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > .npmrc
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Verify npm authentication
         run: npm whoami
@@ -42,5 +46,3 @@ jobs:
 
       - name: NPM Publish
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
