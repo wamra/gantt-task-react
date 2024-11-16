@@ -22,9 +22,8 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-
-      - name: Create .npmrc
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+          always-auth: true
+          auth-token: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: |
@@ -39,5 +38,3 @@ jobs:
 
       - name: NPM Publish
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
