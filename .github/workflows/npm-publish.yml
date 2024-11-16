@@ -28,6 +28,8 @@ jobs:
 
       - name: Verify npm authentication
         run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: |
@@ -39,6 +41,10 @@ jobs:
 
       - name: Dry-run Publish
         run: npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: NPM Publish
         run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
